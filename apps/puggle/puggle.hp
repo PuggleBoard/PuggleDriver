@@ -50,7 +50,7 @@
 // Memory addresses
 #define DDR_BASE_ADDR   						0x80000000		// ddr base address
 #define DDR_OFFSET						    	0x00001000		// ddr offset (required)
-#define DDR_ADDR                    0x9CF40000    // custom mapped ddr
+#define DDR_ADDR                    0x9CB00000    // custom mapped ddr
 
 #define OTHER_DRAM_ADDR		        	0x00000000		// address of each prus own dram
 #define OWN_DRAM_ADDR		       			0x00002000		// address for each pru to touch other's dram
