@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script src="/socket.io/socket.io.js" type="text/javascript">
+		</script>
+
+		<script type="text/javascript">
+			function capture_click(){
+				var stat_content3 = document.createTextNode("Status: Capturing... ");
+				stat_div.appendChild(stat_content3);
+				socket.emit('capture', { command: 'begin' });
+			}
+
+var stat_content = document.createTextNode("Status: Ready");
+var stat_content2 = document.createTextNode("Status: Captured");
+var ctx;
+var socket = io.connect();//'http://localhost'
+
+socket.on('status', function (data) {
+		if (data.stat=='idle'){
+		stat_div.appendChild(stat_content);
+		if (canvas.getContext){
+		ctx = canvas.getContext('2d');
+		} // canvas.getContext
+
+		ctx.strokeStyle='rgb(130,100,10)';
+
+		}
+		if (data.stat=='captured'){
+		stat_div.appendChild(stat_content2);
+		idx=0;
+		ctx.beginPath();
+		}
+		console.log(data);
+		}
+		);
+
+socket.on('results', function(data) {
+		if (idx==0)
+		{
+		ctx.beginPath();
+		ctx.moveTo(idx, data.measurement);
+		}
+		else
+		{
+		ctx.lineTo(idx, data.measurement);
+		}
+		idx++;
+		if (idx==1999)
+		{
+		//alert("finished");
+		ctx.stroke();
+		}
+		});
+
+	</script>
+
+	<title>Puggle Data Acquisition System</title>
+</head>
+<body>
+	<h1>Real-Time Data Visualizer</h1>
+	<div id="id_status"></div>
+	<script type="text/javascript">
+		var stat_div = document.getElementById("id_status");
+	</script>
+	<p>
+	<label for="id_button_capture">Capture</label>
+	<input type="submit" name="id_button_capture" id="id_button_capture" value="Go"  onclick="capture_click()">
+	</p>
+	<p>&nbsp;</p>
+	<canvas id="id_canvas" width="1000px" height="255px"> </canvas>
+	<script type="text/javascript">
+		var canvas = document.getElementById('id_canvas');
+		var idx=0;
+	</script>
+</body>
+</html>
