@@ -275,9 +275,6 @@ int main (void) {
 	prussdrv_pruintc_init(&pruss_intc_initdata);
 	printf("PRU interrupts initialized.\n");
 
-	// Initialize PRU and memory
-	//init(&info);
-
 	signal(SIGQUIT, intHandler);
 	signal(SIGINT, intHandler);
 	printf("Flags initialized.\n");
@@ -459,15 +456,16 @@ int main (void) {
 	prussdrv_map_prumem(PRUSS0_PRU0_DATARAM, &pruMem);
 	printf("Located PRU0 memory.\n");
 
-	// Execute on PRU1
+	// Generate SPI on PRU1
 	prussdrv_exec_program(PRU_NUM1, "./PRU1.bin");
 	printf("Executing PRU1.\n");
 
-	//prussdrv_exec_program(PRU_NUM0, "./blink.bin");
 	//printf("Executing Blink.\n");
+	//prussdrv_exec_program(PRU_NUM1, "./blink.bin");
 
-	prussdrv_exec_program(PRU_NUM0, "./PRU0.bin");
-	printf("Executing PRU0.\n");
+	// Transfer data on PRU0
+	prussdrv_exec_program(PRU_NUM1, "./PRU0.bin");
+	printf("Executing PRU1.\n");
 
 	prussdrv_pru_clear_event(PRU1_ARM_INTERRUPT);
 	printf("PRU1 completed transfer.\n");
@@ -476,13 +474,17 @@ int main (void) {
 	while(consumer_running) {
 		sleepms(250);
 	}
+	
+	// Wait until PRU1 has finished execution
+	printf("Waiting for PRU1 HALT command.\n");
+	prussdrv_pru_wait_event(PRU_EVTOUT_1);
 
 	// Wait until PRU0 has finished execution
-	printf("Waiting for HALT command.\n");
+	printf("Waiting for PRU0 HALT command.\n");
 	prussdrv_pru_wait_event(PRU_EVTOUT_0);
 
-	prussdrv_pru_clear_event(PRU0_ARM_INTERRUPT);
-	printf("PRU0 completed transfer.\n");
+	//prussdrv_pru_clear_event(PRU0_ARM_INTERRUPT);
+	//printf("PRU0 completed transfer.\n");
 
 	// Deinitialize everything
 	deinit(&info);

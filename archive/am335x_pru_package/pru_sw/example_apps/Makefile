@@ -1,6 +1,5 @@
 -include DIRS
 
-CROSS_COMPILE?=arm-arago-linux-gnueabi-
 LIBDIR_APP_LOADER?=../../app_loader/lib
 INCDIR_APP_LOADER?=../../app_loader/include
 BINDIR_APPLICATIONS?=../bin
