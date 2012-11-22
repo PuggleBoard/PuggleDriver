@@ -123,7 +123,9 @@ static int init(ads8331_data *info) {
 	}
 
 	info->ddr_memory = mmap(0, info->ddr_size, PROT_WRITE | 
-			PROT_READ, MAP_SHARED, info->mem_fd, info->ddr_base_location);
+			PROT_READ, MAP_SHARED, info->mem_fd, (size_t)PRU_PAGE_SIZE);
+	//info->ddr_memory = mmap(0, info->ddr_size, PROT_WRITE | 
+	//		PROT_READ, MAP_SHARED, info->mem_fd, info->ddr_base_location);
 
 	if (info->ddr_memory == NULL) {
 		printf("Failed to map the device (%s)\n", strerror(errno));
