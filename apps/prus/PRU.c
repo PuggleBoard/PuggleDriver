@@ -457,14 +457,14 @@ int main (void) {
 	printf("Located PRU0 memory.\n");
 
 	// Generate SPI on PRU1
-	prussdrv_exec_program(PRU_NUM1, "./PRU1.bin");
+	prussdrv_exec_program(PRU_NUM1, "./DataXferAgent.bin");
 	printf("Executing PRU1.\n");
 
 	//printf("Executing Blink.\n");
 	//prussdrv_exec_program(PRU_NUM1, "./blink.bin");
 
 	// Transfer data on PRU0
-	prussdrv_exec_program(PRU_NUM1, "./PRU0.bin");
+	prussdrv_exec_program(PRU_NUM1, "./SPIAgent.bin");
 	printf("Executing PRU1.\n");
 
 	prussdrv_pru_clear_event(PRU1_ARM_INTERRUPT);
