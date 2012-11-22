@@ -146,8 +146,8 @@ static int init(ads8331_data *info) {
 	info->ddr_params = &ddr[info->sample_bytes_available];
 
 	/* Retrace memory map to check for size */
-	PRINTHEX("DDR BASE POINTER", (void*)info->ddr_base_location);
-	PRINTHEX("DDRSIZE", info->sample_bytes_available);
+	PRINTHEX("MEMSET START POINTER", (void*)info->ddr_memory);
+	PRINTHEX("MEMSET SET SIZE", info->ddr_size);
 	memset((void *)info->ddr_memory, 0, info->ddr_size);
 
 	fprintf(stderr, "Writing PRU params\n");
