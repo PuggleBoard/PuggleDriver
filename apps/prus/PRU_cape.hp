@@ -52,20 +52,6 @@
   .u32	TotalPagesWritten
 .ends
 
-// High Speed Gain Stage
-//#define HSPD_GAIN_SCLK  GPIO1, 31
-//#define HSPD_GAIN_MOSI  GPIO0, 27
-//#define HSPD_GAIN_MISO  GPIO2, 1
-//#define HSPD_GAIN_CS    GPIO1, 30
-//#define HSPD_GAIN_SHDN  GPIO1, 5
-
-//.macro HSPD_GAIN_INIT
-//	SET_GPIO HSPD_GAIN_CS
-//	CLR_GPIO HSPD_GAIN_SCLK
-//	CLR_GPIO HSPD_GAIN_SHDN
-//	CLR_GPIO HSPD_GAIN_MOSI
-//.endm
-
 .macro HSPD_SET_GAIN
 .mparam gain, spi_cur_bit=R10, spi_tx=R11
     //CLR_GPIO HSPD_GAIN_CS

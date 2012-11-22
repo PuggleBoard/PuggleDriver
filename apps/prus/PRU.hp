@@ -42,11 +42,6 @@
 // Address for the Constant table Programmable Pointer Register 1(CTPPR_1)
 #define CTPPR_1         							0x2202C
 
-//#define GER_OFFSET        						0x10
-//#define HIESR_OFFSET      						0x34
-//#define SICR_OFFSET       						0x24
-//#define EISR_OFFSET       						0x28
-
 #define INTC_CHNMAP_REGS_OFFSET       0x0400
 #define INTC_HOSTMAP_REGS_OFFSET      0x0800
 #define INTC_HOSTINTPRIO_REGS_OFFSET  0x0900
