@@ -22,18 +22,6 @@
 #include "PRU.hp"
 #include "PRU_gpio.hp"
 
-// Pin mappings
-//#define HSPD_SPI_SCLK SPI0_SCLK
-//#define HSPD_SPI_MOSI SPI0_MOSI
-//#define HSPD_SPI_MISO SPI0_MISO
-//#define HSPD_SPI_CS   SPI0_CS
-
-//#define LSPD_SPI_SCLK SPI1_SCLK
-//#define LSPD_SPI_MOSI SPI1_MOSI
-//#define LSPD_SPI_MISO SPI1_MISO
-//#define LSPD_SPI_CS0  SPI1_CS0
-//#define LSPD_SPI_CS1  SPI1_CS1
-
 #define LOCAL_BUFFER_PAGE_SIZE          2048
 #define LOCAL_BUFFER_NUM_PAGES          4
 #define LOCAL_BUFFER_SIZE               (LOCAL_BUFFER_PAGE_SIZE * LOCAL_BUFFER_NUM_PAGES)
