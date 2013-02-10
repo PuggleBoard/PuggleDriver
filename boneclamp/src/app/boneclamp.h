@@ -21,6 +21,7 @@
 #include <prussdrv.h>
 #include <pruss_intc_mapping.h>
 #include "maps.h"
+#include "boneclamp.c"
 
 //Default acquisition properties
 //(MUST FIND DEF_SAMPLING PERIOD!!!!)
@@ -30,6 +31,9 @@
 #define DEF_NUMBER_OF_CHANNELS  16
 #define DEF_VOLTAGE_LIMIT       5
 
+#define DEF_RB_SIZE             32
+
+/*
 typedef struct {
     unsigned short *resolution;
     unsigned short *sampling_freq;
@@ -54,6 +58,32 @@ typedef struct {
     unsigned int *channel_15;
     unsigned int *channel_16;   
 } bc_data;
+*/
 
-bc_data bc_data_init();
+//for handling buffer output in userspace
+typedef struct {
+    int data;
+    int channelNumber;
+} data;
+
+//ring buffer structure
+typedef struct {
+    int *size;
+    int *start;
+    int *count;
+    int *end;
+    int *elems;//start of elements
+    int *elems_end;//end of elements
+} RingBuffer;
+
+//functionality to deal with ring buffers
+void rbInit(RingBuffer *rb, int size); 
+void rbFree(RingBuffer *rb); 
+int rbIsFull(RingBuffer *rb);
+int rbIsEmpty(RingBuffer *rb);
+//void rbWrite(RingBuffer *rb, int data);
+void rbRead(RingBuffer *rb, data* datapoint);
+
+
+//bc_data bc_data_init();
 

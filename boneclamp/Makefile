@@ -16,16 +16,7 @@
 
 -include DIRS
 
-# NO NEED FOR THIS!!!!
-
-# determine if cross-compilation necessary
-SYS := $(shell uname -a | grep "beaglebone")
-ifneq ($(SYS), beaglebone)
-    CROSS_COMPILE?=arm-none-linux-gnueabi-
-else
-    CROSS_COMPILE?=""
-endif
-
+CROSS_COMPILE?=""
 LIBDIR_APP_LOADER?=../loader/lib
 INCDIR_APP_LOADER?=../loader/include
 BINDIR_APPLICATIONS?=bin

@@ -17,9 +17,66 @@
 */
 
 #include "boneclamp.h"
+#include "maps.h"
+#include <prussdrv.h>
+#include <pruss_intc_mapping.h>
+
+#define PRU_NUM         0
+#define AM33XX
 
 int main()  {
-	//DO SOMETHING!
+    unsigned int ret;
+	tpruss_intc_initdata pruss_intc_initdata = PRUSS_INTC_INITDATA;
+
+    printf("\n--Test of ring buffer functionality--\n");
+
+    printf("Initializing PRU...");
+    prussdrv_init();
+    printf("\t\t\t\tDone\n");
+
+    ret = prussdrv_open(PRU_EVTOUT_0);
+    if (ret) {
+        printf("prussdrv_open failed!\n");
+    }
+
+    printf("Initializing INTC...");
+    prussdrv_prunintc_init(&pruss_intc_initdata);
+    printf("\t\t\t\tDone\n");
+
+    //create and initialize ring buffer
+    printf("Initializing ring buffer in PRU shared memory...");
+    RingBuffer *buffer = calloc(1, sizeof(RingBuffer));
+    rbInit(buffer, DEF_RB_SIZE);
+    printf("\t\t\t\tDone\n");
+
+    printf("Loading test program...\n");
+    prussdrv_exec_program(PRU_NUM, "./boneclamp.bin");
+
+    /* read stuff from ring buffer */
+    data *currentDatapoint = calloc(1, sizeof(data));
+    while(1) {
+        if (!rbIsEmpty(buffer)) {
+            rbRead(buffer, currentDatapoint)
+            printf("Channel: %i Value: %i", currentDatapoint->channelNumber, currentDatapoint->data);
+            if (currentDatapoint->data == 20) {
+                break;
+            }
+        }
+        else
+            printf("Buffer currently empty");
+    }
+
+    free(currentDatapoint);
+
+    //wait until PRU program is completed
+    printf("Test complete. Do the results make sense?");
+    prussdrv_pru_wait_event(PRU_EVTOUT_0);
+
+    //shut down the pru
+    printf("Shutting down the PRU...");
+    prussdrv_pru_disable(PRU_NUM);
+    prussdrv_exit();
+    printf("\t\t\t\tDone\n");
 
 	return 0;
 }

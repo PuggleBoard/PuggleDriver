@@ -33,32 +33,37 @@
 
 //Add this to addresses when using the constants defined below
 //in userspace!
-#define USERSPACE_OFFSET    0x4a300000
+#define USERSPACE_OFFSET        0x4a300000
 
-//Addresses from PRU perspective
-#define RESOLUTION          0x00010000
-#define SAMPLING_FREQ       0x00010004
-#define SAMPLING_PERIOD     0x00010008
-#define NUMBER_OF_CHANNELS  0x0001000C
-#define VOLTAGE_LIMIT       0x00010010
-#define CHANNEL_1           0x00010020
-#define CHANNEL_2           0x00010024
-#define CHANNEL_3           0x00010028
-#define CHANNEL_4           0x0001002C
-#define CHANNEL_5           0x00010030
-#define CHANNEL_6           0x00010034
-#define CHANNEL_7           0x00010038
-#define CHANNEL_8           0x0001003C
-#define CHANNEL_9           0x00010040
-#define CHANNEL_10          0x00010044
-#define CHANNEL_11          0x00010048
-#define CHANNEL_12          0x0001004C
-#define CHANNEL_13          0x00010050
-#define CHANNEL_14          0x00010054
-#define CHANNEL_15          0x00010058
-#define CHANNEL_16          0x0001005C
-
-#define FIFO_IN             0x00010060
+/*  Addresses from PRU perspective  */
+#define RESOLUTION              0x00010000
+#define SAMPLING_FREQ           0x00010004
+#define SAMPLING_PERIOD         0x00010008
+#define NUMBER_OF_CHANNELS      0x0001000C
+#define VOLTAGE_LIMIT           0x00010010
+#define CHANNEL_1               0x00010020
+#define CHANNEL_2               0x00010024
+#define CHANNEL_3               0x00010028
+#define CHANNEL_4               0x0001002C
+#define CHANNEL_5               0x00010030
+#define CHANNEL_6               0x00010034
+#define CHANNEL_7               0x00010038
+#define CHANNEL_8               0x0001003C
+#define CHANNEL_9               0x00010040
+#define CHANNEL_10              0x00010044
+#define CHANNEL_11              0x00010048
+#define CHANNEL_12              0x0001004C
+#define CHANNEL_13              0x00010050
+#define CHANNEL_14              0x00010054
+#define CHANNEL_15              0x00010058
+#define CHANNEL_16              0x0001005C
+//Ring buffer start
+#define RB_UTILS_SIZE           0x00010060
+#define RB_UTILS_START          0x00010064
+#define RB_UTILS_COUNT          0x00010068
+#define RB_UTILS_END            0x0001006C
+#define RB_DATA_END_ADDRESS     0x00010070
+#define RB_DATA                 0x00010074
 
 
 #endif

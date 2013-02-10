@@ -16,16 +16,7 @@
 
 -include DIRS
 
-# NO NEED FOR THIS - THIS SHOULD BE DEVELOPED ON THE BONE DIRECTLY
-
-# determine if cross-compilation necessary
-SYS := $(shell uname -a | grep "beaglebone")
-ifneq ($(SYS), beaglebone)
-    CROSS_COMPILE?=arm-none-linux-gnueabi-
-else
-    CROSS_COMPILE?=""
-endif
-
+CROSS_COMPILE?=""
 LIBDIR_APP_LOADER?=../loader/lib
 INCDIR_APP_LOADER?=../loader/include
 BINDIR?=../../bin
@@ -44,10 +35,12 @@ OBJ = $(patsubst %,$(OBJDIR)/%,$(_OBJ))
 
 $(OBJDIR)/%.o: %.c $(DEPS)
 	@mkdir -p obj
-	$(CROSS_COMPILE)gcc $(CFLAGS) -c -o $@ $< 
+	#$(CROSS_COMPILE)gcc $(CFLAGS) -c -o $@ $< 
+	gcc $(CFLAGS) -c -o $@ $< 
 
 $(TARGET): $(OBJ)
-	$(CROSS_COMPILE)gcc $(CFLAGS) -o $@ $^ $(LDFLAGS)
+	#$(CROSS_COMPILE)gcc $(CFLAGS) -o $@ $^ $(LDFLAGS)
+	gcc $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 .PHONY: clean
 

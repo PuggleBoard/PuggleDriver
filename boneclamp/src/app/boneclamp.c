@@ -18,7 +18,60 @@
 
 #include "boneclamp.h"
 
-bc_data bc_data_init()  {
+void rbInit(RingBuffer *rb, int size) {
+    //put rb into appropriate memory locations
+    rb->size = RB_UTILS_SIZE + USERSPACE_OFFSET;
+    rb->start = RB_UTILS_START + USERSPACE_OFFSET;
+    rb->count = RB_UTILS_COUNT + USERSPACE_OFFSET;
+    rb->count = RB_UTILS_END + USERSPACE_OFFSET;
+    rb->elems = RB_DATA + USERSPACE_OFFSET;
+    rb->elems_end = RB_DATA_END_ADDRESS + USERSPACE_OFFSET;
+
+    //intialize cb parameter/pointer values
+    rb->*size = size;
+    rb->*start = 0;
+    rb->*count = 0;
+    rb->*end = rb->elems + count*sizeof(data);
+    rb->*elems = 0; //is this necessary? will initialize with data!
+    rb->*elems_end = (RB_DATA + USERSPACE_OFFSET) + size*sizeof(data);
+}
+
+void rbFree(RingBuffer *rb) {
+    free(rb->elems);
+}
+
+int rbIsFull(RingBuffer *rb) {
+    return rb->count == rb->size;
+}
+
+int rbIsEmpty(RingBuffer *rb) {
+    return rb->count == 0;
+}
+
+/*
+//irrelevant for acquisition but might come in useful for transmission
+//do we want to write integers or data structs (if relevant)?
+void rbWrite(RingBuffer *rb, int data) {
+    int end = (rb->*start + rb->*count) % rb->*size; //element index
+    int endAddress = rb->*elems + end*sizeof(int);//element address
+    //rb->*end = (rb->*start + rb->*count) % rb->*size;
+    *endAddress = data;
+    if (rb->*count == rb->*size)
+        rb->*start = (rb->*start + 1) % rb->*size; //overwrite full
+    else
+        ++rb->*count;
+}
+*/
+
+//read from the ring buffer
+void rbRead(RingBuffer *rb, data *datapoint) {
+    datapoint = rb->*start;
+    rb->*start = (rb->*start + 1) % rb->*size;
+    --rb->*count;
+}
+
+//Probably don't need this
+/*bc_data bc_data_init()  {
     bc_data bc;
 
     //Memory mapping
@@ -73,4 +126,5 @@ bc_data bc_data_init()  {
 
     return bc_data;
 }
+*/
 
