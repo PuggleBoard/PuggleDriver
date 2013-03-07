@@ -1,0 +1,13 @@
+APP_DIRS :=
+
+APP_DIRS += src/app
+
+
+ASSEM_FILES :=
+
+ASSEM_FILES += src/app/acq.p
+
+
+BIN_FILES :=
+
+BIN_FILES += acq.bin 
