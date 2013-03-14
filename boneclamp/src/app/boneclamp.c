@@ -53,6 +53,6 @@ bc_data bc_data_init()  {
     *bc.channel_15 = 0;
     *bc.channel_16 = 0;
 
-    return bc;
+    return bc_data;
 }
 

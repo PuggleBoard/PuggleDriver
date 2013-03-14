@@ -40,3 +40,8 @@
 #define CHANNEL_15          0x00010058
 #define CHANNEL_16          0x0001005C
 
+#define FIFO_IN             0x00010060
+
+
+#endif
+

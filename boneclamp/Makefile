@@ -1,11 +1,18 @@
 -include DIRS
 
-CROSS_COMPILE?=arm-arago-linux-gnueabi-
-LIBDIR_APP_LOADER?=src/loader/lib
-INCDIR_APP_LOADER?=src/loader/include
+# determine if cross-compilation necessary
+SYS := $(shell uname -a | grep "beaglebone")
+ifneq ($(SYS), beaglebone)
+    CROSS_COMPILE?=arm-none-linux-gnueabi-
+else
+    CROSS_COMPILE?=""
+endif
+
+LIBDIR_APP_LOADER?=../loader/lib
+INCDIR_APP_LOADER?=../loader/include
 BINDIR_APPLICATIONS?=bin
 BINDIR_FW?=bin
-PASM?=src/utils/pasm
+PASM?=utils/pasm
 
 all:
 # Make PRU example applications

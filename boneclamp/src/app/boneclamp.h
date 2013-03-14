@@ -12,7 +12,7 @@
 #define DEF_NUMBER_OF_CHANNELS  16
 #define DEF_VOLTAGE_LIMIT       5
 
-typedef struct bc_data  {
+typedef struct {
     unsigned short *resolution;
     unsigned short *sampling_freq;
     unsigned short *voltage_limit;
@@ -35,7 +35,7 @@ typedef struct bc_data  {
     unsigned int *channel_14;
     unsigned int *channel_15;
     unsigned int *channel_16;   
-}
+} bc_data;
 
-void bc_data_init();
+bc_data bc_data_init();
 
