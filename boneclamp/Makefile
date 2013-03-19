@@ -13,6 +13,7 @@
 
 #	You should have received a copy of the CC Public Domain Dedication along with
 #	this software. If not, see <http://creativecommons.org/licenses/by-sa/3.0/legalcode>.
+
 -include DIRS
 
 # determine if cross-compilation necessary
