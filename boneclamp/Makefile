@@ -1,4 +1,3 @@
-#
 #-------------------------------------------------------------------------
 
 #	This file is part of the BoneClamp Data Conversion and Processing System
@@ -6,13 +5,14 @@
 
 #-------------------------------------------------------------------------
 
-#	Filename: Makefile for BoneClamp PRU code
+#	Filename: Makefile for BoneClamp PRU Code
 
-#	To the extent possible under law, the author(s) have dedicated all copyright and related and neighboring rights to this software to the public domain worldwide. This software is distributed without any warranty.
+#	To the extent possible under law, the author(s) have dedicated all copyright
+#	and related and neighboring rights to this software to the public domain
+#	worldwide. This software is distributed without any warranty.
 
-#	You should have received a copy of the CC Public Domain Dedication along with this software. If not, see <http://creativecommons.org/licenses/by-sa/3.0/legalcode>.
-#
-
+#	You should have received a copy of the CC Public Domain Dedication along with
+#	this software. If not, see <http://creativecommons.org/licenses/by-sa/3.0/legalcode>.
 -include DIRS
 
 # determine if cross-compilation necessary
