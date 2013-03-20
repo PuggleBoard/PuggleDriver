@@ -1,0 +1,119 @@
+// ***************************************
+// *
+// * Sage Devices general PRU Includes
+// *
+// ***************************************
+
+#ifndef _SAGE_PRU_HP_
+#define _SAGE_PRU_HP_
+
+// ***************************************
+// * Constants
+
+#define PRU0_PRU1_INTERRUPT     17
+#define PRU1_PRU0_INTERRUPT     18
+#define PRU0_ARM_INTERRUPT      19
+#define PRU1_ARM_INTERRUPT      20
+#define ARM_PRU0_INTERRUPT      21
+#define ARM_PRU1_INTERRUPT      22
+
+#define CONST_PRUCFG	     	C4
+#define CONST_PRUDRAM        	C24
+#define CONST_PRUSHAREDRAM   	C28
+#define CONST_DDR            	C31
+
+// Address for the Constant table Block Index Register (CTBIR)
+#define CTBIR          			0x22020
+// Address for the Constant table Programmable Pointer Register 0(CTPPR_0)	
+#define CTPPR_0         		0x22028 
+// Address for the Constant table Programmable Pointer Register 1(CTPPR_1)	
+#define CTPPR_1         		0x2202C 	
+
+// ***************************************
+// * Pin mappings
+
+#define SPI0_SCLK   R30.t15
+#define SPI0_MOSI   R30.t14
+#define SPI0_MISO   R31.t14
+#define SPI0_CS     R30.t5
+
+#define SPI1_SCLK   R30.t7
+#define SPI1_MOSI   R30.t2
+#define SPI1_MISO   R31.t3
+#define SPI1_CS0    R30.t0
+#define SPI1_CS1    R30.t1
+#define SPI1_CS     SPI1_CS0
+
+// ***************************************
+// * Useful defines
+
+#define NOP		    MOV R0, R0
+
+// ***************************************
+// * TI Macros
+
+.macro  LD32
+.mparam dst,src
+	LBBO    dst,src,#0x00,4
+.endm
+
+.macro  LD16
+.mparam dst,src
+	LBBO    dst,src,#0x00,2
+.endm
+
+.macro  LD8
+.mparam dst,src
+	LBBO    dst,src,#0x00,1
+.endm
+
+.macro ST32
+.mparam src,dst
+	SBBO    src,dst,#0x00,4
+.endm
+
+.macro ST16
+.mparam src,dst
+	SBBO    src,dst,#0x00,2
+.endm
+
+.macro ST8
+.mparam src,dst
+	SBBO    src,dst,#0x00,1
+.endm
+
+// ***************************************
+// * Macros
+
+.macro SLEEPUS
+.mparam us,inst,lab
+	MOV r7, (us*100)-1-inst
+lab:
+	SUB r7, r7, 1
+	QBNE lab, r7, 0
+.endm
+
+.macro delay
+.mparam loops,tempreg=r29
+	MOV tempreg, loops
+	LOOP:
+		SUB tempreg, tempreg, 1
+		QBNE LOOP, tempreg, 0
+.endm
+
+.macro delay_ns
+.mparam time_ns,tempreg=r29
+	delay time_ns/5, tempreg
+.endm
+
+.macro delay_ms
+.mparam time_ms,tempreg=r29
+	delay_ns time_ms*1000000, tempreg
+.endm
+
+.macro delay_s
+.mparam time_s,tempreg=r29
+	delay_ms time_s*1000, tempreg
+.endm
+
+#endif

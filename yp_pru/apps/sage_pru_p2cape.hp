@@ -1,0 +1,26 @@
+// ***************************************
+// *
+// * Sage Devices general PRU Includes
+// *
+// ***************************************
+
+#ifndef _SAGE_PRU_P2CAPE_HP_
+#define _SAGE_PRU_P2CAPE_HP_
+
+#include "sage_pru.hp"
+
+// ***************************************
+// * Pin mappings
+
+#define HSPD_SPI_SCLK SPI0_SCLK
+#define HSPD_SPI_MOSI SPI0_MOSI
+#define HSPD_SPI_MISO SPI0_MISO
+#define HSPD_SPI_CS   SPI0_CS
+
+#define LSPD_SPI_SCLK SPI1_SCLK
+#define LSPD_SPI_MOSI SPI1_MOSI
+#define LSPD_SPI_MISO SPI1_MISO
+#define LSPD_SPI_CS0  SPI1_CS0
+#define LSPD_SPI_CS1  SPI1_CS1
+
+#endif
