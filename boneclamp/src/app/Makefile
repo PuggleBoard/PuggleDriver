@@ -16,6 +16,8 @@
 
 -include DIRS
 
+# NO NEED FOR THIS - THIS SHOULD BE DEVELOPED ON THE BONE DIRECTLY
+
 # determine if cross-compilation necessary
 SYS := $(shell uname -a | grep "beaglebone")
 ifneq ($(SYS), beaglebone)
