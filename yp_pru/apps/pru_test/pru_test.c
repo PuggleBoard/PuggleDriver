@@ -1,5 +1,4 @@
 #include <stdio.h>
-
 #include <prussdrv.h>
 #include <pruss_intc_mapping.h>
 
