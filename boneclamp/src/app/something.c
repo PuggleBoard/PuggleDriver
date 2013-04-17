@@ -35,12 +35,16 @@ int main()  {
     printf("\t\t\t\tDone\n");
 
     ret = prussdrv_open(PRU_EVTOUT_0);
+    printf("Checking prussdrv_open()...");
     if (ret) {
         printf("prussdrv_open failed!\n");
+        printf("Aborting application!\n");
+        return 0;
     }
+    printf("\t\t\tDone\n");
 
     printf("Initializing INTC...");
-    prussdrv_prunintc_init(&pruss_intc_initdata);
+    prussdrv_pruintc_init(&pruss_intc_initdata);
     printf("\t\t\t\tDone\n");
 
     //create and initialize ring buffer
@@ -56,9 +60,9 @@ int main()  {
     data *currentDatapoint = calloc(1, sizeof(data));
     while(1) {
         if (!rbIsEmpty(buffer)) {
-            rbRead(buffer, currentDatapoint)
-            printf("Channel: %i Value: %i", currentDatapoint->channelNumber, currentDatapoint->data);
-            if (currentDatapoint->data == 20) {
+            rbRead(buffer, currentDatapoint);
+            printf("Channel: %i Value: %i", currentDatapoint->channelNumber, currentDatapoint->datap);
+            if (currentDatapoint->datap == 20) {
                 break;
             }
         }

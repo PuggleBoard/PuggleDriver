@@ -14,7 +14,7 @@
 #	You should have received a copy of the CC Public Domain Dedication along with
 #	this software. If not, see <http://creativecommons.org/licenses/by-sa/3.0/legalcode>.
 
--include DIRS
+-include ../../DIRS
 
 CROSS_COMPILE?=""
 LIBDIR_APP_LOADER?=../loader/lib
@@ -22,8 +22,8 @@ INCDIR_APP_LOADER?=../loader/include
 BINDIR?=../../bin
 PASM?=../../utils/pasm
 
-CFLAGS+= -Wall -I$(INCDIR_APP_LOADER) -D__DEBUG -O2 -mtune=cortex-a8 -march=armv7-a
-LDFLAGS+=-L$(LIBDIR_APP_LOADER) -lprussdrv -lpthread
+CFLAGS+= -Wall -I$(INCDIR_APP_LOADER) -D__DEBUG -O2 -mtune=cortex-a8 -march=armv7-a -g
+LDFLAGS+=-L$(LIBDIR_APP_LOADER) -lprussdrv -lpthread 
 OBJDIR=obj
 TARGET=$(BINDIR)
 

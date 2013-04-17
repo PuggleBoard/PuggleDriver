@@ -26,4 +26,5 @@ ASSEM_FILES += src/app/boneclamp.p
 
 BIN_FILES :=
 
-BIN_FILES += something.bin 
+BIN_FILES += something.bin
+

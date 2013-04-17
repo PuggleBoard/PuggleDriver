@@ -43,36 +43,30 @@ typedef struct data {
 
 //ring buffer structure
 typedef struct RingBuffer {
-    unsigned int *size;
-    unsigned int *start;
-    unsigned int *count;
-    unsigned int *end;
-    data *elems;//start of elements
-    //data *elems_end;//end of elements
+    int *size;
+    int *start;
+    int *count;
+    int *end;
+    int *elems;//start of elements
+    int *elems_end;//end of elements
 } RingBuffer;
 
 void rbInit(RingBuffer *rb, int size) {
     //put rb into appropriate memory locations
-    rb->size = (unsigned int *) (RB_UTILS_SIZE + USERSPACE_OFFSET);
-    rb->start = (unsigned int *) (RB_UTILS_START + USERSPACE_OFFSET);
-    rb->count = (unsigned int *) (RB_UTILS_COUNT + USERSPACE_OFFSET);
-    rb->end = (unsigned int *) (RB_UTILS_END + USERSPACE_OFFSET);
-    rb->elems = (data *) (RB_DATA + USERSPACE_OFFSET);
-    //rb->elems_end = (data *) RB_DATA_END_ADDRESS + USERSPACE_OFFSET;
+    rb->size = RB_UTILS_SIZE + USERSPACE_OFFSET;
+    rb->start = RB_UTILS_START + USERSPACE_OFFSET;
+    rb->count = RB_UTILS_COUNT + USERSPACE_OFFSET;
+    rb->count = RB_UTILS_END + USERSPACE_OFFSET;
+    rb->elems = RB_DATA + USERSPACE_OFFSET;
+    rb->elems_end = RB_DATA_END_ADDRESS + USERSPACE_OFFSET;
 
-    //intialize rb parameter/pointer values
-    data empty;
-    empty.datap = 0;
-    empty.channelNumber = 0;
-
-    unsigned int a = 1;
-
-    *(rb->size) = size;
-    *(rb->start) = size;
-    *(rb->count) = size;
-    *(rb->end) = size; 
-    *(rb->elems) = empty; //is this necessary? will initialize with data!
-    //*(rb->elems_end) = (RB_DATA + USERSPACE_OFFSET) + size*sizeof(data);
+    //intialize cb parameter/pointer values
+    rb->*size = size;
+    rb->*start = 0;
+    rb->*count = 0;
+    rb->*end = rb->elems + count*sizeof(data);
+    rb->*elems = 0; //is this necessary? will initialize with data!
+    rb->*elems_end = (RB_DATA + USERSPACE_OFFSET) + size*sizeof(data);
 }
 
 void rbFree(RingBuffer *rb) {
@@ -104,8 +98,8 @@ void rbWrite(RingBuffer *rb, int data) {
 
 //read from the ring buffer
 void rbRead(RingBuffer *rb, data *datapoint) {
-    datapoint = (data *) RB_UTILS_START + *(rb->start)*sizeof(data);
-    *(rb->start) = (*(rb->start) + sizeof(data)) % *(rb->size);
-    --*(rb->count);
+    datapoint = rb->*start;
+    rb->*start = (rb->*start + 1) % rb->*size;
+    --rb->*count;
 }
 
