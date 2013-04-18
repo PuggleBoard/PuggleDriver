@@ -24,6 +24,8 @@
 #define PRU_NUM         0
 #define AM33XX
 
+}
+
 int main()  {
     unsigned int ret;
 	tpruss_intc_initdata pruss_intc_initdata = PRUSS_INTC_INITDATA;
@@ -71,6 +73,7 @@ int main()  {
     }
 
     free(currentDatapoint);
+    rbFree(buffer);
 
     //wait until PRU program is completed
     printf("Test complete. Do the results make sense?");
