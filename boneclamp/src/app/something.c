@@ -24,8 +24,6 @@
 #define PRU_NUM         0
 #define AM33XX
 
-}
-
 int main()  {
     unsigned int ret;
 	tpruss_intc_initdata pruss_intc_initdata = PRUSS_INTC_INITDATA;
