@@ -1,6 +1,6 @@
 // ***************************************
 // *
-// * general PRU Includes
+// * Sage Devices general PRU Includes
 // *
 // ***************************************
 
@@ -8,7 +8,7 @@
 #define _SAGE_PRU_HP_
 
 // ***************************************
-// * Constants
+// * TI Constants
 
 #define PRU0_PRU1_INTERRUPT     17
 #define PRU1_PRU0_INTERRUPT     18
@@ -17,23 +17,42 @@
 #define ARM_PRU0_INTERRUPT      21
 #define ARM_PRU1_INTERRUPT      22
 
+#define CONST_PRUSSINTC 		C0
 #define CONST_PRUCFG	     	C4
-#define CONST_PRUDRAM        	C24
-#define CONST_PRUSHAREDRAM   	C28
+#define CONST_PRU_DATA0        	C24
+#define CONST_PRU_DATA1        	C25
+#define CONST_PRU_SHAREDRAM   	C28
 #define CONST_DDR            	C31
 
 // Address for the Constant table Block Index Register (CTBIR)
 #define CTBIR          			0x22020
-// Address for the Constant table Programmable Pointer Register 0(CTPPR_0)	
-#define CTPPR_0         		0x22028 
-// Address for the Constant table Programmable Pointer Register 1(CTPPR_1)	
-#define CTPPR_1         		0x2202C 	
+// Address for the Constant table Programmable Pointer Register 0(CTPPR_0)
+#define CTPPR_0         		0x22028
+// Address for the Constant table Programmable Pointer Register 1(CTPPR_1)
+#define CTPPR_1         		0x2202C
+
+#define GER_OFFSET        0x10
+#define HIESR_OFFSET      0x34
+#define SICR_OFFSET       0x24
+#define EISR_OFFSET       0x28
+
+#define INTC_CHNMAP_REGS_OFFSET       0x0400
+#define INTC_HOSTMAP_REGS_OFFSET      0x0800
+#define INTC_HOSTINTPRIO_REGS_OFFSET  0x0900
+#define INTC_HOSTNEST_REGS_OFFSET     0x1100
+
+//
+
+#define MEM_PRU_DATA0_BASE	0x00000000
+#define MEM_PRU_DATA1_BASE	0x00002000
+
+#define MEM_PRU_SHARED_BASE	0x00010000
 
 // ***************************************
 // * Pin mappings
 
 #define SPI0_SCLK   R30.t15
-#define SPI0_MOSI   R30.t14
+#define SPI0_MOSI   R30.t2    // R30.t14
 #define SPI0_MISO   R31.t14
 #define SPI0_CS     R30.t5
 

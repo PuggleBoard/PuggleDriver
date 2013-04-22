@@ -1,6 +1,6 @@
 // ***************************************
 // *
-// * general PRU Includes
+// * Sage Devices general PRU Includes
 // *
 // ***************************************
 
@@ -8,6 +8,7 @@
 #define _SAGE_PRU_P2CAPE_HP_
 
 #include "sage_pru.hp"
+#include "sage_pru_gpio.hp"
 
 // ***************************************
 // * Pin mappings
@@ -22,5 +23,80 @@
 #define LSPD_SPI_MISO SPI1_MISO
 #define LSPD_SPI_CS0  SPI1_CS0
 #define LSPD_SPI_CS1  SPI1_CS1
+
+#define LOCAL_BUFFER_PAGE_SIZE          2048
+#define LOCAL_BUFFER_NUM_PAGES          4
+
+#define LOCAL_BUFFER_SIZE               (LOCAL_BUFFER_PAGE_SIZE * LOCAL_BUFFER_NUM_PAGES)
+
+#define LOCAL_BUFFER_INFO_OFFSET        LOCAL_BUFFER_SIZE
+
+.struct HostParamsPRUMemory
+    .u32    RunFlag
+    .u32    DDRBaseAddress
+    .u32    DDRSampleBytesAvailable
+    .u32    DDRParmsLocation
+    .u32    DDRPagesAvailable
+.ends
+
+.struct PRUParamsDDRMemory
+    .u32    LastWrittenDDRPage
+    .u32    TotalPagesWritten
+.ends
+
+// ***************************************
+// * High Speed Gain Stage
+
+#define HSPD_GAIN_SCLK  GPIO1, 31
+#define HSPD_GAIN_MOSI  GPIO0, 27
+#define HSPD_GAIN_MISO  GPIO2, 1
+#define HSPD_GAIN_CS    GPIO1, 30
+#define HSPD_GAIN_SHDN  GPIO1, 5
+
+.macro HSPD_GAIN_INIT
+SET_GPIO HSPD_GAIN_CS
+CLR_GPIO HSPD_GAIN_SCLK
+CLR_GPIO HSPD_GAIN_SHDN
+CLR_GPIO HSPD_GAIN_MOSI
+.endm
+
+.macro HSPD_SET_GAIN
+.mparam gain, spi_cur_bit=R10, spi_tx=R11
+
+    CLR_GPIO HSPD_GAIN_CS
+
+    MOV spi_cur_bit, 8 // Send 8 bits total
+    MOV spi_tx, gain
+
+    delay 8000
+
+SPI_XFER_WORD_LOOP:
+
+//    Set MOSI to the current bit of SPI_TX
+    QBBS MOSI_HIGH, spi_tx, spi_cur_bit
+    CLR_GPIO HSPD_GAIN_MOSI
+    JMP MOSI_DONE
+    MOSI_HIGH:
+    SET_GPIO HSPD_GAIN_MOSI
+    MOSI_DONE:
+
+    SET_GPIO HSPD_GAIN_SCLK
+
+    delay 4000
+
+    CLR_GPIO HSPD_GAIN_SCLK
+
+    delay 4000
+
+    SUB spi_cur_bit, spi_cur_bit, 1
+    QBNE SPI_XFER_WORD_LOOP, spi_cur_bit, 0
+
+    delay 400
+
+    SET_GPIO HSPD_GAIN_CS
+
+    delay 8000
+
+.endm
 
 #endif

@@ -1,0 +1,71 @@
+// ***************************************
+// *
+// * Sage Devices GPIO PRU Includes
+// *
+// ***************************************
+
+#ifndef _SAGE_PRU_GPIO_HP_
+#define _SAGE_PRU_GPIO_HP_
+
+#define GPIO0  0x44E07000
+#define GPIO1  0x4804C000
+#define GPIO2  0x481AC000
+#define GPIO3  0x481AE000
+
+#define GPIO_CLEARDATAOUT   0x190
+#define GPIO_SETDATAOUT     0x194
+
+.macro SET_GPIO
+.mparam baseaddr,pin,reg1=r0,reg2=r1
+MOV reg1, 1 << pin
+MOV reg2, baseaddr | GPIO_SETDATAOUT
+SBBO reg1, reg2, 0, 4
+.endm
+
+.macro CLR_GPIO
+.mparam baseaddr,pin,reg1=r0,reg2=r1
+MOV reg1, 1 << pin
+MOV reg2, baseaddr | GPIO_CLEARDATAOUT
+SBBO reg1, reg2, 0, 4
+.endm
+
+// ***************************************
+// Helper macros
+
+.macro SET_GPIO0
+.mparam pin
+SET_GPIO GPIO0, pin
+.endm
+.macro CLR_GPIO0
+.mparam pin
+CLR_GPIO GPIO0, pin
+.endm
+
+.macro SET_GPIO1
+.mparam pin
+SET_GPIO GPIO1, pin
+.endm
+.macro CLR_GPIO1
+.mparam pin
+CLR_GPIO GPIO1, pin
+.endm
+
+.macro SET_GPIO2
+.mparam pin
+SET_GPIO GPIO2, pin
+.endm
+.macro CLR_GPIO2
+.mparam pin
+CLR_GPIO GPIO2, pin
+.endm
+
+.macro SET_GPIO3
+.mparam pin
+SET_GPIO GPIO3, pin
+.endm
+.macro CLR_GPIO3
+.mparam pin
+CLR_GPIO GPIO3, pin
+.endm
+
+#endif
