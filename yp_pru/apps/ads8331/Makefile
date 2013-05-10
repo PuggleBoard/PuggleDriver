@@ -5,12 +5,12 @@ BINDIR?=../bin
 CFLAGS+= -Wall -I$(INCDIR_APP_LOADER) -D__DEBUG -O2 -mtune=cortex-a8 -march=armv7-a
 LDFLAGS+=-L$(LIBDIR_APP_LOADER) -lprussdrv -lpthread
 OBJDIR=obj
-TARGET=$(BINDIR)/ads7945_test
+TARGET=$(BINDIR)/ads8331
 
 _DEPS = 
 DEPS = $(patsubst %,$(INCDIR_APP_LOADER)/%,$(_DEPS))
 
-_OBJ = ads7945_test.o
+_OBJ = ads8331.o
 OBJ = $(patsubst %,$(OBJDIR)/%,$(_OBJ))
 
 
