@@ -1,7 +1,7 @@
 .origin 0
 .entrypoint START
 
-#include "../sage_pru_p2cape.hp"
+#include "../pru_p2cape.hp"
 
 #define SCLK        HSPD_SPI_SCLK
 #define MOSI        HSPD_SPI_MOSI

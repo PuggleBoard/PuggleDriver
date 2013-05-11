@@ -1,14 +1,8 @@
-// ***************************************
-// *
-// * Sage Devices general PRU Includes
-// *
-// ***************************************
+#ifndef _PRU_P2CAPE_HP_
+#define _PRU_P2CAPE_HP_
 
-#ifndef _SAGE_PRU_P2CAPE_HP_
-#define _SAGE_PRU_P2CAPE_HP_
-
-#include "sage_pru.hp"
-#include "sage_pru_gpio.hp"
+#include "pru.hp"
+#include "pru_gpio.hp"
 
 // ***************************************
 // * Pin mappings

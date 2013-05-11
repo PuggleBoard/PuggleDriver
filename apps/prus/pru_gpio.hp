@@ -1,11 +1,5 @@
-// ***************************************
-// *
-// * Sage Devices GPIO PRU Includes
-// *
-// ***************************************
-
-#ifndef _SAGE_PRU_GPIO_HP_
-#define _SAGE_PRU_GPIO_HP_
+#ifndef _PRU_GPIO_HP_
+#define _PRU_GPIO_HP_
 
 #define GPIO0  0x44E07000
 #define GPIO1  0x4804C000

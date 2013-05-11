@@ -1,11 +1,5 @@
-// ***************************************
-// *
-// * Sage Devices general PRU Includes
-// *
-// ***************************************
-
-#ifndef _SAGE_PRU_HP_
-#define _SAGE_PRU_HP_
+#ifndef _PRU_HP_
+#define _PRU_HP_
 
 // ***************************************
 // * TI Constants
