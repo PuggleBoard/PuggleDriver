@@ -1,7 +1,7 @@
 .origin 0
 .entrypoint START
 
-#include "../pru_p2cape.hp"
+#include "../PRU_cape.hp"
 
 #define ADDR_PRURAM      r16
 #define ADDR_DDR         r17

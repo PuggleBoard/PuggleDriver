@@ -1,8 +1,8 @@
 #ifndef _PRU_P2CAPE_HP_
 #define _PRU_P2CAPE_HP_
 
-#include "pru.hp"
-#include "pru_gpio.hp"
+#include "PRU.hp"
+#include "PRU_gpio.hp"
 
 // ***************************************
 // * Pin mappings
