@@ -2,9 +2,9 @@
 #include <mach/mach.h>
 #include <stdio.h>
 
-#define reportResult(result,operation) (_reportResult((result),(operation),strrchr(__FILE__, '/')+1,__LINE__))
+#define Flag(result,operation) (_Flag((result),(operation),strrchr(__FILE__, '/')+1,__LINE__))
 
-static inline bool _reportResult(kern_return_t result, const char *operation, const char* file, int line) {
+static inline bool _Flag(kern_return_t result, const char *operation, const char* file, int line) {
     if ( result != ERR_SUCCESS ) {
         printf("%s:%d: %s: %s\n", file, line, operation, mach_error_string(result)); 
         return false;
@@ -29,7 +29,7 @@ bool BufferInit(Buffer *buffer, int length) {
                                            VM_FLAGS_ANYWHERE); // allocate anywhere it'll fit
         if ( result != ERR_SUCCESS ) {
             if ( retries-- == 0 ) {
-                reportResult(result, "Buffer allocation");
+                Flag(result, "Buffer allocation");
                 return false;
             }
             // Try again if we fail
@@ -42,7 +42,7 @@ bool BufferInit(Buffer *buffer, int length) {
                                buffer->length);
         if ( result != ERR_SUCCESS ) {
             if ( retries-- == 0 ) {
-                reportResult(result, "Buffer deallocation");
+                Flag(result, "Buffer deallocation");
                 return false;
             }
             // If at first you don't succeed, try again
@@ -66,7 +66,7 @@ bool BufferInit(Buffer *buffer, int length) {
                           VM_INHERIT_DEFAULT);
         if ( result != ERR_SUCCESS ) {
             if ( retries-- == 0 ) {
-                reportResult(result, "Remap buffer memory");
+                Flag(result, "Remap buffer memory");
                 return false;
             }
             // If this remap failed, we hit a race condition, so deallocate and try again
