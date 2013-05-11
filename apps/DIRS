@@ -1,3 +1,4 @@
+APP_DIRS :=
 
 #APP_DIRS += pru_test
 #APP_DIRS += spi_test
