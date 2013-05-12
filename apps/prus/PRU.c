@@ -11,7 +11,6 @@
 #include <time.h>
 #include "prussdrv.h"
 #include <pruss_intc_mapping.h>
-#include <math.h>
 
 #define AM33XX
 #define PRU_NUM0 	0
