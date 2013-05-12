@@ -299,9 +299,85 @@ void* consumer(void *arg) {
 
 int main (void)
 {
+	FILE *fp;
 	unsigned int ret;
 	pthread_t tid;
-	// struct pru_data	pru;ls
+	// struct pru_data	pru;
+
+	/* Set ADC SCLK */
+	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
+		printf("Cannot open GPIO file.\n");
+		return(1);
+	}
+	fprintf(fp,"36");
+	fclose(fp);
+
+	if((fp=fopen("/sys/class/gpio/gpio36/direction", "w"))==NULL){
+		printf("Cannot open GPIO direction file.\n");
+		return(1);
+	}
+	fprint(fp,"out");
+	fclose(fp);
+
+	/* Set ADC CS */
+	if ((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
+		printf("Cannot open GPIO file.\n");
+		return (1);
+	}
+	fprintf(fp,"33");
+	fclose(fp);
+	
+	if((fp=fopen("/sys/class/gpio/gpio33/direction", "w"))==null){
+		printf("cannot open gpio direction file.\n");
+		return(1);
+	}
+	fprint(fp,"out");
+	fclose(fp);
+
+	/* Set ADC SDI */
+	if ((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
+		printf("Cannot open GPIO file.\n");
+		return (1);
+	}
+	fprintf(fp,"62");
+	fclose(fp);
+
+	if((fp=fopen("/sys/class/gpio/gpio62/direction", "w"))==NULL){
+		printf("Cannot open GPIO direction file.\n");
+		return(1);
+	}
+	fprint(fp,"out");
+	fclose(fp);
+
+	/* Set ADC SDO */
+	if ((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
+		printf("Cannot open GPIO file.\n");
+		return (1);
+	}
+	fprintf(fp,"63");
+	fclose(fp);
+
+	if((fp=fopen("/sys/class/gpio/gpio63/direction", "w"))==NULL){
+		printf("Cannot open GPIO direction file.\n");
+		return(1);
+	}
+	fprint(fp,"in");
+	fclose(fp);
+
+	/* Set ADC CNV */
+	if ((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
+		printf("Cannot open GPIO file.\n");
+		return (1);
+	}
+	fprintf(fp,"37");
+	fclose(fp);
+
+	if((fp=fopen("/sys/class/gpio/gpio37/direction", "w"))==NULL){
+		printf("Cannot open GPIO direction file.\n");
+		return(1);
+	}
+	fprint(fp,"out");
+	fclose(fp);
 
 	tpruss_intc_initdata pruss_intc_initdata = PRUSS_INTC_INITDATA;
 
