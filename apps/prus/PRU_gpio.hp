@@ -23,7 +23,6 @@ MOV reg2, baseaddr | GPIO_CLEARDATAOUT
 SBBO reg1, reg2, 0, 4
 .endm
 
-// ***************************************
 // Helper macros
 
 .macro SET_GPIO0

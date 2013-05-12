@@ -11,6 +11,7 @@
 #include <time.h>
 #include "prussdrv.h"
 #include <pruss_intc_mapping.h>
+#include <math.h>
 
 #define AM33XX
 #define PRU_NUM0 	0
@@ -51,7 +52,7 @@ typedef struct {
 
 	int mem_fd;
 
-} ads7945_data;
+} ads8331_data;
 
 void sleepms(int ms) {
 	nanosleep((struct timespec[]){{0, ms*100000}}, NULL);
@@ -74,7 +75,7 @@ static uint32_t read_uint32_hex_from_file(const char *file) {
 	return value;
 }
 
-static int load_pruss_dram_info(ads7945_data *info) {
+static int load_pruss_dram_info(ads8331_data *info) {
 
 	info->ddr_size = read_uint32_hex_from_file(UIO_PRUSS_DRAM_SIZE);
 	info->ddr_base_location = read_uint32_hex_from_file(UIO_PRUSS_DRAM_ADDR);
@@ -88,7 +89,7 @@ static int load_pruss_dram_info(ads7945_data *info) {
 	return 0;
 }
 
-static int init(ads7945_data *info)
+static int init(ads8331_data *info)
 {
 
 	load_pruss_dram_info(info);
@@ -138,13 +139,13 @@ static int init(ads7945_data *info)
 	return(0);
 }
 
-void check(ads7945_data *info) {
+void check(ads8331_data *info) {
 
 }
 
-ads7945_data info;
+ads8331_data info;
 
-void deinit(ads7945_data *info) {
+void deinit(ads8331_data *info) {
 	prussdrv_pru_disable(PRU_NUM0);
 	prussdrv_pru_disable(PRU_NUM1);
 	prussdrv_exit();
@@ -304,7 +305,7 @@ int main (void)
 
 	tpruss_intc_initdata pruss_intc_initdata = PRUSS_INTC_INITDATA;
 
-	printf("\nINFO: Starting %s example.\r\n", "ads7945");
+	printf("\nINFO: Starting %s example.\r\n", "ads8331");
 	/* Initialize the PRU */
 	prussdrv_init();
 
@@ -338,10 +339,10 @@ int main (void)
 	pthread_create(&tid, NULL, &rt_print_consumer, NULL);
 
 	/* Execute example on PRU */
-	printf("\tINFO: Executing pru1.bin\r\n");
-	prussdrv_exec_program (PRU_NUM1, "./pru1.bin");
-	printf("\t\tINFO: Executing example on PRU0.\r\n");
-	prussdrv_exec_program (PRU_NUM0, "./pru0.bin");
+	printf("\tINFO: Executing PRU1\r\n");
+	prussdrv_exec_program (PRU_NUM1, "./PRU1.bin");
+	printf("\t\tINFO: Executing PRU0\r\n");
+	prussdrv_exec_program (PRU_NUM0, "./PRU0.bin");
 
 	/* Wait until PRU1 has finished execution */
 	printf("\t\tINFO: Waiting for HALT command.\r\n");
