@@ -316,22 +316,22 @@ int main (void)
 		printf("Cannot open GPIO direction file.\n");
 		return(1);
 	}
-	fprint(fp,"out");
+	fprintf(fp,"out");
 	fclose(fp);
 
 	/* Set ADC CS */
-	if ((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
+	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
 		printf("Cannot open GPIO file.\n");
 		return (1);
 	}
 	fprintf(fp,"33");
 	fclose(fp);
 	
-	if((fp=fopen("/sys/class/gpio/gpio33/direction", "w"))==null){
+	if((fp=fopen("/sys/class/gpio/gpio33/direction", "w"))==NULL){
 		printf("cannot open gpio direction file.\n");
 		return(1);
 	}
-	fprint(fp,"out");
+	fprintf(fp,"out");
 	fclose(fp);
 
 	/* Set ADC SDI */
@@ -346,11 +346,11 @@ int main (void)
 		printf("Cannot open GPIO direction file.\n");
 		return(1);
 	}
-	fprint(fp,"out");
+	fprintf(fp,"out");
 	fclose(fp);
 
 	/* Set ADC SDO */
-	if ((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
+	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
 		printf("Cannot open GPIO file.\n");
 		return (1);
 	}
@@ -361,11 +361,11 @@ int main (void)
 		printf("Cannot open GPIO direction file.\n");
 		return(1);
 	}
-	fprint(fp,"in");
+	fprintf(fp,"in");
 	fclose(fp);
 
 	/* Set ADC CNV */
-	if ((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
+	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
 		printf("Cannot open GPIO file.\n");
 		return (1);
 	}
@@ -376,7 +376,67 @@ int main (void)
 		printf("Cannot open GPIO direction file.\n");
 		return(1);
 	}
-	fprint(fp,"out");
+	fprintf(fp,"out");
+	fclose(fp);
+
+	/* set DAC SCLK */
+	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
+		printf("Cannot open GPIO file.\n");
+		return (1);
+	}
+	fprintf(fp,"47");
+	fclose(fp);
+
+	if((fp=fopen("/sys/class/gpio/gpio47/direction", "w"))==NULL){
+		printf("Cannot open GPIO direction file.\n");
+		return(1);
+	}
+	fprintf(fp,"out");
+	fclose(fp);
+
+	/* set DAC CS */
+	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
+		printf("Cannot open GPIO file.\n");
+		return (1);
+	}
+	fprintf(fp,"46");
+	fclose(fp);
+
+	if((fp=fopen("/sys/class/gpio/gpio46/direction", "w"))==NULL){
+		printf("Cannot open GPIO direction file.\n");
+		return(1);
+	}
+	fprintf(fp,"out");
+	fclose(fp);
+
+	/* set DAC SDI */
+	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
+		printf("Cannot open GPIO file.\n");
+		return (1);
+	}
+	fprintf(fp,"44");
+	fclose(fp);
+
+	if((fp=fopen("/sys/class/gpio/gpio44/direction", "w"))==NULL){
+		printf("Cannot open GPIO direction file.\n");
+		return(1);
+	}
+	fprintf(fp,"out");
+	fclose(fp);
+
+	/* set DAC SDO */
+	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
+		printf("Cannot open GPIO file.\n");
+		return (1);
+	}
+	fprintf(fp,"45");
+	fclose(fp);
+
+	if((fp=fopen("/sys/class/gpio/gpio45/direction", "w"))==NULL){
+		printf("Cannot open GPIO direction file.\n");
+		return(1);
+	}
+	fprintf(fp,"in");
 	fclose(fp);
 
 	tpruss_intc_initdata pruss_intc_initdata = PRUSS_INTC_INITDATA;
