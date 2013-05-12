@@ -14,8 +14,8 @@ ASSEM_FILES :=
 #ASSEM_FILES += 7seg_spi_test/7seg_spi_test.p
 #ASSEM_FILES += 7seg_spi_test_fifo/7seg_spi_test_fifo.p
 #ASSEM_FILES += ads7945_test/ads7945_test.p
-ASSEM_FILES += prus/pru0.p
-ASSEM_FILES += prus/pru1.p
+ASSEM_FILES += prus/PRU0.p
+ASSEM_FILES += prus/PRU1.p
 
 BIN_FILES :=
 
@@ -24,5 +24,5 @@ BIN_FILES :=
 #BIN_FILES += 7seg_spi_test/7seg_spi_test.p
 #BIN_FILES += 7seg_spi_test_fifo/7seg_spi_test_fifo.p
 #BIN_FILES += ads7945_test/ads7945_test.p
-BIN_FILES += prus/pru0.p
-BIN_FILES += prus/pru1.p
+BIN_FILES += prus/PRU0.p
+BIN_FILES += prus/PRU1.p

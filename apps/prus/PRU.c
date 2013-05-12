@@ -35,13 +35,12 @@ typedef struct {
 	volatile uint32_t total_pages_written;
 } ddr_params;
 
-
 typedef struct {
 	size_t ddr_size;
 	uint32_t ddr_base_location;
 	uint32_t ddr_params_location;
 	uint32_t sample_bytes_available;
-	uint32_t    ddr_pages_available;
+	uint32_t ddr_pages_available;
 
 	void *ddr_memory;
 	void *pru_memory;
@@ -91,13 +90,16 @@ static int load_pruss_dram_info(ads8331_data *info) {
 static int init(ads8331_data *info)
 {
 
+	printf("info1\n");
 	load_pruss_dram_info(info);
 
+	printf("info2\n");
 	info->mem_fd = open("/dev/mem", O_RDWR);
 	if (info->mem_fd < 0) {
 		printf("Failed to open /dev/mem (%s)\n", strerror(errno));
 		return -1;
 	}
+	printf("info3\n");
 
 	info->ddr_memory = mmap(0, info->ddr_size, PROT_WRITE | PROT_READ, MAP_SHARED, info->mem_fd, info->ddr_base_location);
 	if (info->ddr_memory == NULL) {
@@ -105,22 +107,29 @@ static int init(ads8331_data *info)
 		close(info->mem_fd);
 		return -1;
 	}
+	printf("info4\n");
 
 	prussdrv_map_prumem(PRUSS0_PRU0_DATARAM, (void *) &info->pru_memory);
+
+	printf("info5\n");
 
 	if (info->pru_memory == NULL) {
 		fprintf(stderr, "Cannot map PRU0 memory buffer.\n");
 		return -ENOMEM;
 	}
 
+	printf("info6\n");
 	info->pru_params = info->pru_memory;
 	uint8_t *ddr = (uint8_t *)info->ddr_memory;
 
+	printf("info7\n");
 	info->ddr_params = &ddr[info->sample_bytes_available];
 
 	fprintf(stderr, "Zeroing DDR memory\n");
 
+	//retrace memory map to check for size
 	memset((void *)info->ddr_memory, 0, info->ddr_size);
+	printf("info8\n");
 
 	fprintf(stderr, "Writing PRU params\n");
 
@@ -303,6 +312,7 @@ int main (void)
 	pthread_t tid;
 	// struct pru_data	pru;
 
+	printf("hit1\n");
 	/* Set ADC SCLK */
 	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
 		printf("Cannot open GPIO file.\n");
@@ -325,7 +335,7 @@ int main (void)
 	}
 	fprintf(fp,"33");
 	fclose(fp);
-	
+
 	if((fp=fopen("/sys/class/gpio/gpio33/direction", "w"))==NULL){
 		printf("cannot open gpio direction file.\n");
 		return(1);
@@ -438,12 +448,14 @@ int main (void)
 	fprintf(fp,"in");
 	fclose(fp);
 
+	printf("hit2\n");
 	tpruss_intc_initdata pruss_intc_initdata = PRUSS_INTC_INITDATA;
 
-	printf("\nINFO: Starting %s example.\r\n", "ads8331");
+	printf("\nINFO: Starting %s example.\r\n", "ADS8331");
 	/* Initialize the PRU */
 	prussdrv_init();
 
+	printf("hit3\n");
 	/* Open PRU Interrupt */
 	ret = prussdrv_open(PRU_EVTOUT_0);
 	if (ret)
@@ -452,6 +464,7 @@ int main (void)
 		return (ret);
 	}
 
+	printf("hit4\n");
 	/* Open PRU Interrupt */
 	ret = prussdrv_open(PRU_EVTOUT_1);
 	if (ret)
@@ -459,37 +472,48 @@ int main (void)
 		printf("prussdrv_open open failed\n");
 		return (ret);
 	}
+	printf("hit4a\n");
 
 	/* Get the interrupt initialized */
 	prussdrv_pruintc_init(&pruss_intc_initdata);
+	printf("hit4b\n");
 
 	printf("\tINFO: init\r\n");
+	printf("hit4c\n");
 
 	init(&info);
+	printf("hit4d\n");
 
 	signal (SIGQUIT, intHandler);
 	signal (SIGINT, intHandler);
 
+	printf("hit5\n");
 	//	pthread_create(&tid, NULL, &consumer, NULL);
 	pthread_create(&tid, NULL, &rt_print_consumer, NULL);
 
+
+	printf("hit6\n");
 	/* Execute example on PRU */
 	printf("\tINFO: Executing PRU1\r\n");
 	prussdrv_exec_program (PRU_NUM1, "./PRU1.bin");
 	printf("\t\tINFO: Executing PRU0\r\n");
 	prussdrv_exec_program (PRU_NUM0, "./PRU0.bin");
 
+
+	printf("hit7\n");
 	/* Wait until PRU1 has finished execution */
 	printf("\t\tINFO: Waiting for HALT command.\r\n");
 	prussdrv_pru_wait_event (PRU_EVTOUT_1);
 	printf("\t\tINFO: PRU1 completed transfer.\r\n");
 	prussdrv_pru_clear_event (PRU1_ARM_INTERRUPT);
 
+	printf("hit8\n");
 	printf("Waiting for consumer to finish");
 	while(consumer_running) {
 		sleepms(250);
 	}
 
+	printf("hit9\n");
 	/* Wait until PRU0 has finished execution */
 	printf("\tINFO: Waiting for HALT command.\r\n");
 	prussdrv_pru_wait_event (PRU_EVTOUT_0);
