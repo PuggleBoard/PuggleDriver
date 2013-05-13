@@ -1,11 +1,28 @@
+//
+//	 -------------------------------------------------------------------------
+//
+//	 This file is part of the BoneClamp Data Conversion and Processing System
+//	 Copyright (C) 2013 BoneClamp
+//
+//	 -------------------------------------------------------------------------
+//
+//	Written in 2013 by: Yogi Patel <yapatel@gatech.edu>
+//
+//	To the extent possible under law, the author(s) have dedicated all copyright
+//	and related and neighboring rights to this software to the public domain
+//	worldwide. This software is distributed without any warranty.
+//
+//	You should have received a copy of the CC Public Domain Dedication along with
+//	this software. If not, see <http://creativecommons.org/licenses/by-sa/3.0/legalcode>.
+//
+
 #ifndef _PRU_P2CAPE_HP_
 #define _PRU_P2CAPE_HP_
 
 #include "PRU.hp"
 #include "PRU_gpio.hp"
 
-// ***************************************
-// * Pin mappings
+// Pin mappings
 
 #define HSPD_SPI_SCLK SPI0_SCLK
 #define HSPD_SPI_MOSI SPI0_MOSI
@@ -38,8 +55,7 @@
     .u32    TotalPagesWritten
 .ends
 
-// ***************************************
-// * High Speed Gain Stage
+// High Speed Gain Stage
 
 #define HSPD_GAIN_SCLK  GPIO1, 31
 #define HSPD_GAIN_MOSI  GPIO0, 27
@@ -66,7 +82,7 @@ CLR_GPIO HSPD_GAIN_MOSI
 
 SPI_XFER_WORD_LOOP:
 
-//    Set MOSI to the current bit of SPI_TX
+// Set MOSI to the current bit of SPI_TX
     QBBS MOSI_HIGH, spi_tx, spi_cur_bit
     CLR_GPIO HSPD_GAIN_MOSI
     JMP MOSI_DONE
