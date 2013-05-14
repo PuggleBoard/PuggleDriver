@@ -28,6 +28,7 @@ BIN_FILES = prus/PRU0.p prus/PRU1.p
 
 all:
 	mkdir -p bin
+	make -C ../app_loader/interface
 	for dir in $(APP_DIRS); do make -C $$dir CROSS_COMPILE="${CROSS_COMPILE}" LIBDIR_APP_LOADER="${LIBDIR_APP_LOADER}" INCDIR_APP_LOADER="${INCDIR_APP_LOADER}" BINDIR="${BINDIR_APPLICATIONS}"; done
 
 	for a_file in ${ASSEM_FILES} ; \
