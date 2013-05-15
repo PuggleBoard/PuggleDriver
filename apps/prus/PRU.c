@@ -306,8 +306,11 @@ void* consumer(void *arg) {
 	return NULL;
 }
 
-int main (void)
-{
+int main (void) {
+
+	// Make sure PRU kernel module is running
+	system("modprobe uio_pruss");
+
 	FILE *fp;
 	unsigned int ret;
 	pthread_t tid;
