@@ -18,8 +18,8 @@
 //	this software. If not, see <http://creativecommons.org/licenses/by-sa/3.0/legalcode>.
 //
 
-#ifndef _PRU_P2CAPE_HP_
-#define _PRU_P2CAPE_HP_
+#ifndef _PRU_HP_
+#define _PRU_HP_
 
 #include "PRU.hp"
 #include "PRU_gpio.hp"
