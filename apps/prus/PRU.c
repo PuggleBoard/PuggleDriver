@@ -8,7 +8,7 @@
 
 	Written in 2013 by: Yogi Patel <yapatel@gatech.edu>
 
-	Additional contributions by Chris Micali of Sage Devices.
+	Additional contributions by Chris Micali of Sage Devices
 
 	To the extent possible under law, the author(s) have dedicated all copyright
 	and related and neighboring rights to this software to the public domain
@@ -107,14 +107,12 @@ static int load_pruss_dram_info(ads8331_data *info) {
 static int init(ads8331_data *info) {
 	load_pruss_dram_info(info);
 
-	printf("DDR_MEMORY: %d\n", info->ddr_memory);
 	info->mem_fd = open("/dev/mem", O_RDWR);
 	if (info->mem_fd < 0) {
 		printf("Failed to open /dev/mem (%s)\n", strerror(errno));
 		return -1;
 	}
 
-	printf("DDR_MEMORY: %d\n", info->ddr_memory);
 	info->ddr_memory = mmap(0, info->ddr_size, PROT_WRITE | PROT_READ,
 			MAP_SHARED, info->mem_fd, info->ddr_base_location);
 
@@ -124,7 +122,6 @@ static int init(ads8331_data *info) {
 		return -1;
 	}
 
-	printf("DDR_MEMORY: %d\n", info->ddr_memory);
 	prussdrv_map_prumem(PRUSS0_PRU0_DATARAM, (void *) &info->pru_memory);
 
 	if (info->pru_memory == NULL) {
@@ -132,20 +129,17 @@ static int init(ads8331_data *info) {
 		return -ENOMEM;
 	}
 
-	printf("DDR_MEMORY: %d\n", info->ddr_memory);
 	info->pru_params = info->pru_memory;
 	uint8_t *ddr = (uint8_t *)info->ddr_memory;
 
-	printf("DDR_MEMORY: %d\n", info->ddr_memory);
 	info->ddr_params = &ddr[info->sample_bytes_available];
 
 	fprintf(stderr, "Zeroing DDR memory\n");
 
 	//retrace memory map to check for size
-	//memset((void *)info->ddr_memory, 0, info->ddr_size);
 	printf("DDR_SIZE: %d\n", info->ddr_size);
 	printf("DDR_MEMORY: %d\n", info->ddr_memory);
-	//memset((void *)info->ddr_size, 0, info->ddr_memory);
+	memset((void *)info->ddr_memory, 0, info->ddr_size);
 
 	fprintf(stderr, "Writing PRU params\n");
 
@@ -501,10 +495,10 @@ int main (void) {
 
 	/* Execute example on PRU */
 	printf("\tINFO: Executing PRU1\r\n");
-	prussdrv_exec_program (PRU_NUM1, "./PRU1.bin");
+	prussdrv_exec_program (PRU_NUM1, "../bin/PRU1.bin");
 
 	printf("\t\tINFO: Executing PRU0\r\n");
-	prussdrv_exec_program (PRU_NUM0, "./PRU0.bin");
+	prussdrv_exec_program (PRU_NUM0, "../bin/PRU0.bin");
 
 	/* Wait until PRU1 has finished execution */
 	printf("\t\tINFO: Waiting for HALT command.\r\n");

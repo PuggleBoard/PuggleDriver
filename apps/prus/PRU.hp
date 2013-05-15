@@ -21,8 +21,7 @@
 #ifndef _PRU_HP_
 #define _PRU_HP_
 
-// ***************************************
-// * TI Constants
+// TI Constants
 
 #define PRU0_PRU1_INTERRUPT     17
 #define PRU1_PRU0_INTERRUPT     18

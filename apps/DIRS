@@ -1,0 +1,9 @@
+APP_DIRS += prus
+
+ASSEM_FILES :=
+ASSEM_FILES += prus/PRU0.p
+ASSEM_FILES += prus/PRU1.p
+
+BIN_FILES :=
+BIN_FILES += prus/PRU0.p
+BIN_FILES += prus/PRU1.p

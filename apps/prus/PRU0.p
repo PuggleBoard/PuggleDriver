@@ -125,7 +125,7 @@ ADD ADDR_CUR_PAGE, ADDR_CUR_PAGE, r0
 
 MOV ADDR_SHARED, 0x00010000
 
-delay 32000 // 800 instructions per clock cycle
+delay 32000 //800 instructions per clock cycle
 
 BUFFLOOP:
 // Reset current sample counter
