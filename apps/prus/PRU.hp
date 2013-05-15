@@ -18,135 +18,97 @@
 //	this software. If not, see <http://creativecommons.org/licenses/by-sa/3.0/legalcode>.
 //
 
-#ifndef _PRU_HP_
-#define _PRU_HP_
+#ifndef _PRU_P2CAPE_HP_
+#define _PRU_P2CAPE_HP_
 
-// ***************************************
-// * TI Constants
+#include "PRU.hp"
+#include "PRU_gpio.hp"
 
-#define PRU0_PRU1_INTERRUPT     17
-#define PRU1_PRU0_INTERRUPT     18
-#define PRU0_ARM_INTERRUPT      19
-#define PRU1_ARM_INTERRUPT      20
-#define ARM_PRU0_INTERRUPT      21
-#define ARM_PRU1_INTERRUPT      22
+// Pin mappings
 
-#define CONST_PRUSSINTC 		C0
-#define CONST_PRUCFG	     	C4
-#define CONST_PRU_DATA0        	C24
-#define CONST_PRU_DATA1        	C25
-#define CONST_PRU_SHAREDRAM   	C28
-#define CONST_DDR            	C31
+#define HSPD_SPI_SCLK SPI0_SCLK
+#define HSPD_SPI_MOSI SPI0_MOSI
+#define HSPD_SPI_MISO SPI0_MISO
+#define HSPD_SPI_CS   SPI0_CS
 
-// Address for the Constant table Block Index Register (CTBIR)
-#define CTBIR          			0x22020
-// Address for the Constant table Programmable Pointer Register 0(CTPPR_0)
-#define CTPPR_0         		0x22028
-// Address for the Constant table Programmable Pointer Register 1(CTPPR_1)
-#define CTPPR_1         		0x2202C
+#define LSPD_SPI_SCLK SPI1_SCLK
+#define LSPD_SPI_MOSI SPI1_MOSI
+#define LSPD_SPI_MISO SPI1_MISO
+#define LSPD_SPI_CS0  SPI1_CS0
+#define LSPD_SPI_CS1  SPI1_CS1
 
-#define GER_OFFSET        0x10
-#define HIESR_OFFSET      0x34
-#define SICR_OFFSET       0x24
-#define EISR_OFFSET       0x28
+#define LOCAL_BUFFER_PAGE_SIZE          2048
+#define LOCAL_BUFFER_NUM_PAGES          4
 
-#define INTC_CHNMAP_REGS_OFFSET       0x0400
-#define INTC_HOSTMAP_REGS_OFFSET      0x0800
-#define INTC_HOSTINTPRIO_REGS_OFFSET  0x0900
-#define INTC_HOSTNEST_REGS_OFFSET     0x1100
+#define LOCAL_BUFFER_SIZE               (LOCAL_BUFFER_PAGE_SIZE * LOCAL_BUFFER_NUM_PAGES)
 
-//
+#define LOCAL_BUFFER_INFO_OFFSET        LOCAL_BUFFER_SIZE
 
-#define MEM_PRU_DATA0_BASE	0x00000000
-#define MEM_PRU_DATA1_BASE	0x00002000
+.struct HostParamsPRUMemory
+    .u32    RunFlag
+    .u32    DDRBaseAddress
+    .u32    DDRSampleBytesAvailable
+    .u32    DDRParmsLocation
+    .u32    DDRPagesAvailable
+.ends
 
-#define MEM_PRU_SHARED_BASE	0x00010000
+.struct PRUParamsDDRMemory
+    .u32    LastWrittenDDRPage
+    .u32    TotalPagesWritten
+.ends
 
-// ***************************************
-// * Pin mappings
+// High Speed Gain Stage
 
-#define SPI0_SCLK   R30.t15
-#define SPI0_MOSI   R30.t2    // R30.t14
-#define SPI0_MISO   R31.t14
-#define SPI0_CS     R30.t5
+#define HSPD_GAIN_SCLK  GPIO1, 31
+#define HSPD_GAIN_MOSI  GPIO0, 27
+#define HSPD_GAIN_MISO  GPIO2, 1
+#define HSPD_GAIN_CS    GPIO1, 30
+#define HSPD_GAIN_SHDN  GPIO1, 5
 
-#define SPI1_SCLK   R30.t7
-#define SPI1_MOSI   R30.t2
-#define SPI1_MISO   R31.t3
-#define SPI1_CS0    R30.t0
-#define SPI1_CS1    R30.t1
-#define SPI1_CS     SPI1_CS0
-
-// ***************************************
-// * Useful defines
-
-#define NOP		    MOV R0, R0
-
-// ***************************************
-// * TI Macros
-
-.macro  LD32
-.mparam dst,src
-	LBBO    dst,src,#0x00,4
+.macro HSPD_GAIN_INIT
+SET_GPIO HSPD_GAIN_CS
+CLR_GPIO HSPD_GAIN_SCLK
+CLR_GPIO HSPD_GAIN_SHDN
+CLR_GPIO HSPD_GAIN_MOSI
 .endm
 
-.macro  LD16
-.mparam dst,src
-	LBBO    dst,src,#0x00,2
-.endm
+.macro HSPD_SET_GAIN
+.mparam gain, spi_cur_bit=R10, spi_tx=R11
 
-.macro  LD8
-.mparam dst,src
-	LBBO    dst,src,#0x00,1
-.endm
+    CLR_GPIO HSPD_GAIN_CS
 
-.macro ST32
-.mparam src,dst
-	SBBO    src,dst,#0x00,4
-.endm
+    MOV spi_cur_bit, 8 // Send 8 bits total
+    MOV spi_tx, gain
 
-.macro ST16
-.mparam src,dst
-	SBBO    src,dst,#0x00,2
-.endm
+    delay 8000
 
-.macro ST8
-.mparam src,dst
-	SBBO    src,dst,#0x00,1
-.endm
+SPI_XFER_WORD_LOOP:
 
-// ***************************************
-// * Macros
+// Set MOSI to the current bit of SPI_TX
+    QBBS MOSI_HIGH, spi_tx, spi_cur_bit
+    CLR_GPIO HSPD_GAIN_MOSI
+    JMP MOSI_DONE
+    MOSI_HIGH:
+    SET_GPIO HSPD_GAIN_MOSI
+    MOSI_DONE:
 
-.macro SLEEPUS
-.mparam us,inst,lab
-	MOV r7, (us*100)-1-inst
-lab:
-	SUB r7, r7, 1
-	QBNE lab, r7, 0
-.endm
+    SET_GPIO HSPD_GAIN_SCLK
 
-.macro delay
-.mparam loops,tempreg=r29
-	MOV tempreg, loops
-	LOOP:
-		SUB tempreg, tempreg, 1
-		QBNE LOOP, tempreg, 0
-.endm
+    delay 4000
 
-.macro delay_ns
-.mparam time_ns,tempreg=r29
-	delay time_ns/5, tempreg
-.endm
+    CLR_GPIO HSPD_GAIN_SCLK
 
-.macro delay_ms
-.mparam time_ms,tempreg=r29
-	delay_ns time_ms*1000000, tempreg
-.endm
+    delay 4000
 
-.macro delay_s
-.mparam time_s,tempreg=r29
-	delay_ms time_s*1000, tempreg
+    SUB spi_cur_bit, spi_cur_bit, 1
+    QBNE SPI_XFER_WORD_LOOP, spi_cur_bit, 0
+
+    delay 400
+
+    SET_GPIO HSPD_GAIN_CS
+
+    delay 8000
+
 .endm
 
 #endif

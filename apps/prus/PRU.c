@@ -95,8 +95,11 @@ static int load_pruss_dram_info(ads8331_data *info) {
 	info->sample_bytes_available = ALIGN_TO_PAGE_SIZE(info->ddr_size-32, PRU_PAGE_SIZE);
 	info->ddr_params_location = info->ddr_base_location + info->sample_bytes_available;
 	info->ddr_pages_available = info->sample_bytes_available / PRU_PAGE_SIZE;
-	printf("dram size: 0x%08lX, addr: 0x%08lX\n", (long unsigned int)info->ddr_size, (long unsigned int)info->ddr_base_location);
-	printf("%d bytes of ddr available, ddr size: %d", info->sample_bytes_available, info->ddr_size);
+
+	printf("DRAM SIZE: 0x%08lX, ADDR: 0x%08lX\n",
+			(long unsigned int)info->ddr_size, (long unsigned int)info->ddr_base_location);
+	printf("DDR SIZE: %d BYTES\n", info->ddr_size);
+	printf("DDR AVAILABLE: %d BYTES\n", info->sample_bytes_available);
 
 	return 0;
 }
@@ -110,7 +113,9 @@ static int init(ads8331_data *info) {
 		return -1;
 	}
 
-	info->ddr_memory = mmap(0, info->ddr_size, PROT_WRITE | PROT_READ, MAP_SHARED, info->mem_fd, info->ddr_base_location);
+	info->ddr_memory = mmap(0, info->ddr_size, PROT_WRITE | PROT_READ,
+			MAP_SHARED, info->mem_fd, info->ddr_base_location);
+
 	if (info->ddr_memory == NULL) {
 		printf("Failed to map the device (%s)\n", strerror(errno));
 		close(info->mem_fd);
@@ -132,7 +137,10 @@ static int init(ads8331_data *info) {
 	fprintf(stderr, "Zeroing DDR memory\n");
 
 	//retrace memory map to check for size
-	memset((void *)info->ddr_memory, 0, info->ddr_size);
+	//memset((void *)info->ddr_memory, 0, info->ddr_size);
+	printf("DDR_SIZE: %d\n", info->ddr_size);
+	printf("DDR_MEMORY: %d\n", info->ddr_memory);
+	memset((void *)info->ddr_size, 0, info->ddr_memory);
 
 	fprintf(stderr, "Writing PRU params\n");
 

@@ -20,7 +20,7 @@
 #define Buffer_h
 
 #include <assert.h>
-#include <libkern/OSAtomic.h>
+#include <atomic>
 #include <string.h>
 
 #ifdef __cplusplus

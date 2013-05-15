@@ -16,9 +16,19 @@
 	this software. If not, see <http://creativecommons.org/licenses/by-sa/3.0/legalcode>.
  */
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/mman.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <unistd.h>
+#include <string.h>
+#include <stdint.h>
+#include <signal.h>
+#include <pthread.h>
+#include <time.h>
 #include "Buffer.h"
 #include <mach/mach.h>
-#include <stdio.h>
 
 #define Flag(result,operation) (_Flag((result),(operation),strrchr(__FILE__, '/')+1,__LINE__))
 
