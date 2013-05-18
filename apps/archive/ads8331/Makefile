@@ -1,4 +1,4 @@
-LIBDIR_APP_LOADER?=../../app_loader/lib
+LIBDIR_APP_LOADER?=../../../app_loader/lib
 INCDIR_APP_LOADER?=../../app_loader/include
 BINDIR?=../bin
 

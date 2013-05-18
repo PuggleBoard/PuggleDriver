@@ -11,8 +11,8 @@
 #include <pthread.h>
 #include <time.h>
 
-#include "prussdrv.h"
-#include <pruss_intc_mapping.h>	 
+#include "../../../app_loader/include/prussdrv.h"
+#include "../../../app_loader/include/pruss_intc_mapping.h"
 
 #define PRU_NUM 	0
 #define AM33XX

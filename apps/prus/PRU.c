@@ -91,15 +91,23 @@ static uint32_t read_uint32_hex_from_file(const char *file) {
 
 static int load_pruss_dram_info(ads8331_data *info) {
 	info->ddr_size = read_uint32_hex_from_file(UIO_PRUSS_DRAM_SIZE);
-	info->ddr_base_location = read_uint32_hex_from_file(UIO_PRUSS_DRAM_ADDR);
-	info->sample_bytes_available = ALIGN_TO_PAGE_SIZE(info->ddr_size-32, PRU_PAGE_SIZE);
-	info->ddr_params_location = info->ddr_base_location + info->sample_bytes_available;
-	info->ddr_pages_available = info->sample_bytes_available / PRU_PAGE_SIZE;
+	printf("DDR_SIZE:%d\n", info->ddr_size);
 
-	printf("DRAM SIZE: 0x%08lX, ADDR: 0x%08lX\n",
-			(long unsigned int)info->ddr_size, (long unsigned int)info->ddr_base_location);
-	printf("DDR SIZE: %d BYTES\n", info->ddr_size);
-	printf("DDR AVAILABLE: %d BYTES\n", info->sample_bytes_available);
+	info->ddr_base_location = read_uint32_hex_from_file(UIO_PRUSS_DRAM_ADDR);
+	printf("DDR_BASE_LOCATION:%d\n", info->ddr_base_location);
+
+	info->sample_bytes_available = ALIGN_TO_PAGE_SIZE(info->ddr_size-32, PRU_PAGE_SIZE);
+	printf("SAMPLE_BYTES_AVAILABLE:%d\n", info->sample_bytes_available);
+
+	info->ddr_params_location = info->ddr_base_location + info->sample_bytes_available;
+	printf("DDR_PARAMS_LOCATION:%d\n", info->ddr_params_location);
+
+	info->ddr_pages_available = info->sample_bytes_available / PRU_PAGE_SIZE;
+	printf("DDR_PAGES_AVAILABLE:%d\n", info->ddr_pages_available);
+
+	printf("DRAM SIZE: 0x%08lX, ADDR: 0x%08lX\n", (long unsigned int)info->ddr_size, (long unsigned int)info->ddr_base_location);
+	printf("DDR RAM SIZE: %d BYTES\n", info->ddr_size);
+	printf("DDR RAM AVAILABLE: %d BYTES\n", info->sample_bytes_available);
 
 	return 0;
 }
@@ -122,7 +130,7 @@ static int init(ads8331_data *info) {
 		return -1;
 	}
 
-	prussdrv_map_prumem(PRUSS0_PRU0_DATARAM, (void *) &info->pru_memory);
+	prussdrv_map_prumem(PRUSS0_PRU0_DATARAM, (void *)&info->pru_memory);
 
 	if (info->pru_memory == NULL) {
 		fprintf(stderr, "Cannot map PRU0 memory buffer.\n");
@@ -134,12 +142,11 @@ static int init(ads8331_data *info) {
 
 	info->ddr_params = &ddr[info->sample_bytes_available];
 
-	fprintf(stderr, "Zeroing DDR memory\n");
-
 	//retrace memory map to check for size
-	printf("DDR_SIZE: %d\n", info->ddr_size);
-	printf("DDR_MEMORY: %d\n", info->ddr_memory);
-	memset((void *)info->ddr_memory, 0, info->ddr_size);
+	printf("Zeroing %d bytes of DDR memory starting at %d\n",
+			info->sample_bytes_available, info->ddr_memory);
+	memset((void *)info->ddr_memory, 0, info->sample_bytes_available);
+	//memset((void *)info->ddr_memory, 0, info->ddr_size);
 
 	fprintf(stderr, "Writing PRU params\n");
 
@@ -175,7 +182,6 @@ void deinit(ads8331_data *info) {
 	close(info->mem_fd);
 }
 
-
 void intHandler(int dummy) {
 	// Set the run flag to 0
 	info.pru_params->run_flag = 0;
@@ -195,7 +201,7 @@ void* rt_print_consumer(void *arg) {
 
 		//        if (last_written_ddr_page != last_page) {
 		last_page = last_written_ddr_page;
-		uint32_t loc = last_page * PRU_PAGE_SIZE;
+		//uint32_t loc = last_page * PRU_PAGE_SIZE;
 		uint16_t *src = &ddr[(last_page * PRU_PAGE_SIZE) - 2];
 		uint16_t sample = src[0];
 		sample >>= 2;
@@ -225,7 +231,6 @@ void* consumer(void *arg) {
 	int pages_written = 0;
 
 	while(info.pru_params->run_flag) {
-
 		sleepms(10);
 
 		uint16_t last_written_ddr_page = info.ddr_params->last_written_ddr_page;
@@ -283,12 +288,11 @@ void* consumer(void *arg) {
 				pages_written = 0;
 			}
 		}
-
 	}
 
 	int i;
 	uint16_t *b = buffer;
-	uint16_t u;
+	//uint16_t u;
 
 	// for (i = 0; i < current_pos/2; i++) {
 	//     u = b[i] >> 2;
@@ -318,13 +322,13 @@ int main (void) {
 	// Make sure PRU kernel module is running
 	system("modprobe uio_pruss");
 
-	FILE *fp;
+	//FILE *fp;
 	unsigned int ret;
 	pthread_t tid;
 	// struct pru_data	pru;
 
 	/* Set ADC SCLK */
-	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
+	/*if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
 		printf("Cannot open GPIO file.\n");
 		return(1);
 	}
@@ -336,10 +340,10 @@ int main (void) {
 		return(1);
 	}
 	fprintf(fp,"out");
-	fclose(fp);
+	fclose(fp);*/
 
 	/* Set ADC CS */
-	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
+	/*if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
 		printf("Cannot open GPIO file.\n");
 		return (1);
 	}
@@ -351,10 +355,10 @@ int main (void) {
 		return(1);
 	}
 	fprintf(fp,"out");
-	fclose(fp);
+	fclose(fp);*/
 
 	/* Set ADC SDI */
-	if ((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
+	/*if ((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
 		printf("Cannot open GPIO file.\n");
 		return (1);
 	}
@@ -366,10 +370,10 @@ int main (void) {
 		return(1);
 	}
 	fprintf(fp,"out");
-	fclose(fp);
+	fclose(fp);*/
 
 	/* Set ADC SDO */
-	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
+	/*if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
 		printf("Cannot open GPIO file.\n");
 		return (1);
 	}
@@ -381,10 +385,10 @@ int main (void) {
 		return(1);
 	}
 	fprintf(fp,"in");
-	fclose(fp);
+	fclose(fp);*/
 
 	/* Set ADC CNV */
-	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
+	/*if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
 		printf("Cannot open GPIO file.\n");
 		return (1);
 	}
@@ -396,10 +400,10 @@ int main (void) {
 		return(1);
 	}
 	fprintf(fp,"out");
-	fclose(fp);
+	fclose(fp);*/
 
 	/* set DAC SCLK */
-	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
+	/*if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
 		printf("Cannot open GPIO file.\n");
 		return (1);
 	}
@@ -411,10 +415,10 @@ int main (void) {
 		return(1);
 	}
 	fprintf(fp,"out");
-	fclose(fp);
+	fclose(fp);*/
 
 	/* set DAC CS */
-	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
+	/*if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
 		printf("Cannot open GPIO file.\n");
 		return (1);
 	}
@@ -426,10 +430,10 @@ int main (void) {
 		return(1);
 	}
 	fprintf(fp,"out");
-	fclose(fp);
+	fclose(fp);*/
 
 	/* set DAC SDI */
-	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
+	/*if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
 		printf("Cannot open GPIO file.\n");
 		return (1);
 	}
@@ -441,10 +445,10 @@ int main (void) {
 		return(1);
 	}
 	fprintf(fp,"out");
-	fclose(fp);
+	fclose(fp);*/
 
 	/* set DAC SDO */
-	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
+	/*if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
 		printf("Cannot open GPIO file.\n");
 		return (1);
 	}
@@ -456,11 +460,11 @@ int main (void) {
 		return(1);
 	}
 	fprintf(fp,"in");
-	fclose(fp);
+	fclose(fp);*/
 
 	tpruss_intc_initdata pruss_intc_initdata = PRUSS_INTC_INITDATA;
 
-	printf("\nINFO: Starting %s example.\r\n", "ADS8331");
+	printf("Starting %s.\n", "PuggleDriver...");
 	/* Initialize the PRU */
 	prussdrv_init();
 
@@ -468,7 +472,7 @@ int main (void) {
 	ret = prussdrv_open(PRU_EVTOUT_0);
 	if (ret)
 	{
-		printf("prussdrv_open open failed\n");
+		printf("Error: prussdrv_open open failed\n");
 		return (ret);
 	}
 
@@ -476,14 +480,12 @@ int main (void) {
 	ret = prussdrv_open(PRU_EVTOUT_1);
 	if (ret)
 	{
-		printf("prussdrv_open open failed\n");
+		printf("Error: prussdrv_open open failed\n");
 		return (ret);
 	}
 
 	/* Get the interrupt initialized */
 	prussdrv_pruintc_init(&pruss_intc_initdata);
-
-	printf("\tINFO: init\r\n");
 
 	init(&info);
 
@@ -494,17 +496,17 @@ int main (void) {
 	pthread_create(&tid, NULL, &rt_print_consumer, NULL);
 
 	/* Execute example on PRU */
-	printf("\tINFO: Executing PRU1\r\n");
+	printf("Executing PRU1\n");
 	prussdrv_exec_program (PRU_NUM1, "../bin/PRU1.bin");
 
-	printf("\t\tINFO: Executing PRU0\r\n");
+	printf("Executing PRU0\n");
 	prussdrv_exec_program (PRU_NUM0, "../bin/PRU0.bin");
 
 	/* Wait until PRU1 has finished execution */
-	printf("\t\tINFO: Waiting for HALT command.\r\n");
+	printf("Waiting for HALT command.\n");
 	prussdrv_pru_wait_event (PRU_EVTOUT_1);
 
-	printf("\t\tINFO: PRU1 completed transfer.\r\n");
+	printf("PRU1 completed transfer.\n");
 	prussdrv_pru_clear_event (PRU1_ARM_INTERRUPT);
 
 	printf("Waiting for consumer to finish");
@@ -513,16 +515,15 @@ int main (void) {
 	}
 
 	/* Wait until PRU0 has finished execution */
-	printf("\tINFO: Waiting for HALT command.\r\n");
+	printf("Waiting for HALT command.\n");
 	prussdrv_pru_wait_event (PRU_EVTOUT_0);
 
-	printf("\tINFO: PRU completed transfer.\r\n");
+	printf("PRU completed transfer.\n");
 	prussdrv_pru_clear_event (PRU0_ARM_INTERRUPT);
 
-	printf("CHECK\r\n");
+	printf("CHECK\n");
 	check(&info);
 
-	printf("deinit\r\n");
 	deinit(&info);
 	return(0);
 }
