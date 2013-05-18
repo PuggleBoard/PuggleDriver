@@ -58,6 +58,7 @@ int main(int argc, char *argv[])
 	/* Now the file is ready to be mmapped.
 	 *      */
 	map =(int*) mmap(0, FILESIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+	printf("%d\n",map);
 	if (map == MAP_FAILED) {
 		close(fd);
 		perror("Error mmapping the file");

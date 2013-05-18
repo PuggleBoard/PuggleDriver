@@ -29,7 +29,7 @@ PASM?=../utils/pasm
 all:
 	mkdir -p bin
 	make -C ../app_loader/interface
-	for dir in $(APP_DIRS); do make -C $$dir CROSS_COMPILE="${CROSS_COMPILE}" LIBDIR_APP_LOADER="${LIBDIR_APP_LOADER}" INCDIR_APP_LOADER="${INCDIR_APP_LOADER}" BINDIR="${BINDIR_APPLICATIONS}"; done
+	for dir in $(APP_DIRS); do make -C $$dir LIBDIR_APP_LOADER="${LIBDIR_APP_LOADER}" INCDIR_APP_LOADER="${INCDIR_APP_LOADER}" BINDIR="${BINDIR_APPLICATIONS}"; done
 	for a_file in ${ASSEM_FILES} ; do ${PASM} -b $$a_file ; done ;
 	mv *.bin ${BINDIR_FW}
 
