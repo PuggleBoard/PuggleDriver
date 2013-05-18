@@ -6,17 +6,17 @@
 
 	 -------------------------------------------------------------------------
 
-	Written in 2013 by: Yogi Patel <yapatel@gatech.edu>
+	 Written in 2013 by: Yogi Patel <yapatel@gatech.edu>
 
-	Additional contributions by Chris Micali of Sage Devices
+	 Additional contributions by Chris Micali of Sage Devices
 
-	To the extent possible under law, the author(s) have dedicated all copyright
-	and related and neighboring rights to this software to the public domain
-	worldwide. This software is distributed without any warranty.
+	 To the extent possible under law, the author(s) have dedicated all copyright
+	 and related and neighboring rights to this software to the public domain
+	 worldwide. This software is distributed without any warranty.
 
-	You should have received a copy of the CC Public Domain Dedication along with
-	this software. If not, see <http://creativecommons.org/licenses/by-sa/3.0/legalcode>.
- */
+	 You should have received a copy of the CC Public Domain Dedication along with
+	 this software. If not, see <http://creativecommons.org/licenses/by-sa/3.0/legalcode>.
+	 */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -105,10 +105,8 @@ static int load_pruss_dram_info(ads8331_data *info) {
 	info->ddr_pages_available = info->sample_bytes_available / PRU_PAGE_SIZE;
 	printf("DDR_PAGES_AVAILABLE:%d\n", info->ddr_pages_available);
 
-	printf("DRAM SIZE: 0x%08lX, ADDR: 0x%08lX\n", (long unsigned int)info->ddr_size, (long unsigned int)info->ddr_base_location);
-	printf("DDR RAM SIZE: %d BYTES\n", info->ddr_size);
-	printf("DDR RAM AVAILABLE: %d BYTES\n", info->sample_bytes_available);
-
+	printf("DRAM SIZE: 0x%08lX, ADDR: 0x%08lX\n", (long unsigned int)info->ddr_size,
+			(long unsigned int)info->ddr_base_location);
 	return 0;
 }
 
@@ -121,8 +119,8 @@ static int init(ads8331_data *info) {
 		return -1;
 	}
 
-	info->ddr_memory = mmap(0, info->ddr_size, PROT_WRITE | PROT_READ,
-			MAP_SHARED, info->mem_fd, info->ddr_base_location);
+	info->ddr_memory = mmap(0, info->ddr_size, PROT_WRITE | 
+			PROT_READ, MAP_SHARED, info->mem_fd, info->ddr_base_location);
 
 	if (info->ddr_memory == NULL) {
 		printf("Failed to map the device (%s)\n", strerror(errno));
@@ -143,10 +141,10 @@ static int init(ads8331_data *info) {
 	info->ddr_params = &ddr[info->sample_bytes_available];
 
 	//retrace memory map to check for size
-	printf("Zeroing %d bytes of DDR memory starting at %d\n",
-			info->sample_bytes_available, info->ddr_memory);
-	memset((void *)info->ddr_memory, 0, info->sample_bytes_available);
-	//memset((void *)info->ddr_memory, 0, info->ddr_size);
+	printf("DDR RAM SIZE: 0x%08lX, MMAP DDR: 0x%08lX\n",
+			(long unsigned int)info->ddr_size, (long unsigned int)info->ddr_memory);
+	//memset((void *)info->ddr_memory, 0, info->sample_bytes_available);
+	memset((void *)info->ddr_memory, 0, info->ddr_size);
 
 	fprintf(stderr, "Writing PRU params\n");
 
@@ -236,35 +234,27 @@ void* consumer(void *arg) {
 		uint16_t last_written_ddr_page = info.ddr_params->last_written_ddr_page;
 
 		if (last_written_ddr_page != last_page) {
-
 			// printf("last page: %d, new page: %d\n", last_page, last_written_ddr_page);
-
 			if (last_written_ddr_page > last_page) {
 				// We haven't wrapped yet
 				int pages = last_written_ddr_page - last_page;
 				int size = pages * PRU_PAGE_SIZE;
-
 				void *src = &ddr[last_page * PRU_PAGE_SIZE];
 				void *dst = &buffer[current_pos];
 
 				memcpy(dst, src, size);
-
 				current_pos += size;
 				pages_written += pages;
-
 			}
 			else {
-
 				int pages = info.ddr_pages_available  - last_page - 1;
 				int size = pages * PRU_PAGE_SIZE;
-
 				void *src = &ddr[last_page * PRU_PAGE_SIZE];
 				void *dst = &buffer[current_pos];
 
 				memcpy(dst, src, size);
 				current_pos += size;
 				pages_written += pages;
-
 				pages = last_written_ddr_page;
 				size = pages * PRU_PAGE_SIZE;
 
@@ -274,9 +264,7 @@ void* consumer(void *arg) {
 				memcpy(dst, src, size);
 				current_pos += size;
 				pages_written += pages;
-
 			}
-
 			last_page = last_written_ddr_page;
 
 			if (current_pos >= record_size) {
@@ -311,14 +299,12 @@ void* consumer(void *arg) {
 	}
 
 	free(buffer);
-
 	printf("Exiting consumer thread\n");
 	consumer_running = 0;
 	return NULL;
 }
 
 int main (void) {
-
 	// Make sure PRU kernel module is running
 	system("modprobe uio_pruss");
 
@@ -331,155 +317,154 @@ int main (void) {
 	/*if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
 		printf("Cannot open GPIO file.\n");
 		return(1);
-	}
-	fprintf(fp,"36");
-	fclose(fp);
+		}
+		fprintf(fp,"36");
+		fclose(fp);
 
-	if((fp=fopen("/sys/class/gpio/gpio36/direction", "w"))==NULL){
+		if((fp=fopen("/sys/class/gpio/gpio36/direction", "w"))==NULL){
 		printf("Cannot open GPIO direction file.\n");
 		return(1);
-	}
-	fprintf(fp,"out");
-	fclose(fp);*/
+		}
+		fprintf(fp,"out");
+		fclose(fp);*/
 
 	/* Set ADC CS */
 	/*if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
 		printf("Cannot open GPIO file.\n");
 		return (1);
-	}
-	fprintf(fp,"33");
-	fclose(fp);
+		}
+		fprintf(fp,"33");
+		fclose(fp);
 
-	if((fp=fopen("/sys/class/gpio/gpio33/direction", "w"))==NULL){
+		if((fp=fopen("/sys/class/gpio/gpio33/direction", "w"))==NULL){
 		printf("cannot open gpio direction file.\n");
 		return(1);
-	}
-	fprintf(fp,"out");
-	fclose(fp);*/
+		}
+		fprintf(fp,"out");
+		fclose(fp);*/
 
 	/* Set ADC SDI */
 	/*if ((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
 		printf("Cannot open GPIO file.\n");
 		return (1);
-	}
-	fprintf(fp,"62");
-	fclose(fp);
+		}
+		fprintf(fp,"62");
+		fclose(fp);
 
-	if((fp=fopen("/sys/class/gpio/gpio62/direction", "w"))==NULL){
+		if((fp=fopen("/sys/class/gpio/gpio62/direction", "w"))==NULL){
 		printf("Cannot open GPIO direction file.\n");
 		return(1);
-	}
-	fprintf(fp,"out");
-	fclose(fp);*/
+		}
+		fprintf(fp,"out");
+		fclose(fp);*/
 
 	/* Set ADC SDO */
 	/*if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
 		printf("Cannot open GPIO file.\n");
 		return (1);
-	}
-	fprintf(fp,"63");
-	fclose(fp);
+		}
+		fprintf(fp,"63");
+		fclose(fp);
 
-	if((fp=fopen("/sys/class/gpio/gpio63/direction", "w"))==NULL){
+		if((fp=fopen("/sys/class/gpio/gpio63/direction", "w"))==NULL){
 		printf("Cannot open GPIO direction file.\n");
 		return(1);
-	}
-	fprintf(fp,"in");
-	fclose(fp);*/
+		}
+		fprintf(fp,"in");
+		fclose(fp);*/
 
 	/* Set ADC CNV */
 	/*if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
 		printf("Cannot open GPIO file.\n");
 		return (1);
-	}
-	fprintf(fp,"37");
-	fclose(fp);
+		}
+		fprintf(fp,"37");
+		fclose(fp);
 
-	if((fp=fopen("/sys/class/gpio/gpio37/direction", "w"))==NULL){
+		if((fp=fopen("/sys/class/gpio/gpio37/direction", "w"))==NULL){
 		printf("Cannot open GPIO direction file.\n");
 		return(1);
-	}
-	fprintf(fp,"out");
-	fclose(fp);*/
+		}
+		fprintf(fp,"out");
+		fclose(fp);*/
 
 	/* set DAC SCLK */
 	/*if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
 		printf("Cannot open GPIO file.\n");
 		return (1);
-	}
-	fprintf(fp,"47");
-	fclose(fp);
+		}
+		fprintf(fp,"47");
+		fclose(fp);
 
-	if((fp=fopen("/sys/class/gpio/gpio47/direction", "w"))==NULL){
+		if((fp=fopen("/sys/class/gpio/gpio47/direction", "w"))==NULL){
 		printf("Cannot open GPIO direction file.\n");
 		return(1);
-	}
-	fprintf(fp,"out");
-	fclose(fp);*/
+		}
+		fprintf(fp,"out");
+		fclose(fp);*/
 
 	/* set DAC CS */
 	/*if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
 		printf("Cannot open GPIO file.\n");
 		return (1);
-	}
-	fprintf(fp,"46");
-	fclose(fp);
+		}
+		fprintf(fp,"46");
+		fclose(fp);
 
-	if((fp=fopen("/sys/class/gpio/gpio46/direction", "w"))==NULL){
+		if((fp=fopen("/sys/class/gpio/gpio46/direction", "w"))==NULL){
 		printf("Cannot open GPIO direction file.\n");
 		return(1);
-	}
-	fprintf(fp,"out");
-	fclose(fp);*/
+		}
+		fprintf(fp,"out");
+		fclose(fp);*/
 
 	/* set DAC SDI */
 	/*if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
 		printf("Cannot open GPIO file.\n");
 		return (1);
-	}
-	fprintf(fp,"44");
-	fclose(fp);
+		}
+		fprintf(fp,"44");
+		fclose(fp);
 
-	if((fp=fopen("/sys/class/gpio/gpio44/direction", "w"))==NULL){
+		if((fp=fopen("/sys/class/gpio/gpio44/direction", "w"))==NULL){
 		printf("Cannot open GPIO direction file.\n");
 		return(1);
-	}
-	fprintf(fp,"out");
-	fclose(fp);*/
+		}
+		fprintf(fp,"out");
+		fclose(fp);*/
 
 	/* set DAC SDO */
 	/*if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
 		printf("Cannot open GPIO file.\n");
 		return (1);
-	}
-	fprintf(fp,"45");
-	fclose(fp);
+		}
+		fprintf(fp,"45");
+		fclose(fp);
 
-	if((fp=fopen("/sys/class/gpio/gpio45/direction", "w"))==NULL){
+		if((fp=fopen("/sys/class/gpio/gpio45/direction", "w"))==NULL){
 		printf("Cannot open GPIO direction file.\n");
 		return(1);
-	}
-	fprintf(fp,"in");
-	fclose(fp);*/
+		}
+		fprintf(fp,"in");
+		fclose(fp);*/
 
 	tpruss_intc_initdata pruss_intc_initdata = PRUSS_INTC_INITDATA;
 
 	printf("Starting %s.\n", "PuggleDriver...");
+
 	/* Initialize the PRU */
 	prussdrv_init();
 
 	/* Open PRU Interrupt */
 	ret = prussdrv_open(PRU_EVTOUT_0);
-	if (ret)
-	{
+	if (ret) {
 		printf("Error: prussdrv_open open failed\n");
 		return (ret);
 	}
 
 	/* Open PRU Interrupt */
 	ret = prussdrv_open(PRU_EVTOUT_1);
-	if (ret)
-	{
+	if (ret) {
 		printf("Error: prussdrv_open open failed\n");
 		return (ret);
 	}
@@ -489,10 +474,10 @@ int main (void) {
 
 	init(&info);
 
-	signal (SIGQUIT, intHandler);
-	signal (SIGINT, intHandler);
+	signal(SIGQUIT, intHandler);
+	signal(SIGINT, intHandler);
 
-	//	pthread_create(&tid, NULL, &consumer, NULL);
+	//pthread_create(&tid, NULL, &consumer, NULL);
 	pthread_create(&tid, NULL, &rt_print_consumer, NULL);
 
 	/* Execute example on PRU */
