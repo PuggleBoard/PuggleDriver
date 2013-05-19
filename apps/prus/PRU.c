@@ -43,6 +43,10 @@
 #define PRU_PAGE_SIZE 										2048
 #define ALIGN_TO_PAGE_SIZE(x, pagesize)  	((x)-((x)%pagesize))
 
+#define DDR_BASEADDR 											0x00010000
+#define DDR_RESERVED 											0x00008000
+#define DDR_RES_SIZE 											0x00008000
+
 #define PRINTDEC(str,addr)								printf("%s: %d\n",str,addr);
 #define PRINTHEX(str,addr)								printf("%s: 0x%08lX\n",str,(long unsigned int)addr);
 #define handle_error(msg) do { perror(msg); exit(EXIT_FAILURE); } while (0)
@@ -77,7 +81,7 @@ void sleepms(int ms) {
 	nanosleep((struct timespec[]){{0, ms*100000}}, NULL);
 }
 
-static uint32_t read_uint32_hex_from_file(const char *file) {
+/*static uint32_t read_uint32_hex_from_file(const char *file) {
 	size_t len = 0;
 	ssize_t bytes_read;
 	char *line;
@@ -92,9 +96,9 @@ static uint32_t read_uint32_hex_from_file(const char *file) {
 	if (f) fclose(f);
 	if (line) free(line);
 	return value;
-}
+}*/
 
-static int load_pruss_dram_info(ads8331_data *info) {
+/*static int load_pruss_dram_info(ads8331_data *info) {
 	info->ddr_size = read_uint32_hex_from_file(UIO_PRUSS_DRAM_SIZE);
 	PRINTDEC("DDR_SIZE", info->ddr_size);
 
@@ -113,25 +117,25 @@ static int load_pruss_dram_info(ads8331_data *info) {
 	//PRINTHEX("DRAM SIZE", info->ddr_size);
 	//PRINTHEX("ADDR", info->ddr_base_location);
 	return 0;
-}
+}*/
 
-static int init(ads8331_data *info) {
+/*static int init(ads8331_data *info) {
 	load_pruss_dram_info(info);
 
-	/* Open device */
+	//Open device
 	info->mem_fd = open("/dev/mem", O_RDWR);
 	if (info->mem_fd < 0) {
 		printf("Failed to open /dev/mem (%s)\n", strerror(errno));
 		return -1;
 	}
 
-	/* Map the memory */
+	// Map the memory
 	//info->ddr_memory = mmap(0, info->ddr_size, PROT_WRITE | 
 	//		PROT_READ, MAP_SHARED, info->mem_fd, PRU_PAGE_SIZE);
 
-	//info->ddr_memory = mmap(0, 0x00000FFF, PROT_WRITE | 
-	//		PROT_READ, MAP_SHARED, info->mem_fd, 0x01C37000);
-
+	info->ddr_memory = mmap(0, 0x00000FFF, PROT_WRITE | 
+			PROT_READ, MAP_SHARED, info->mem_fd, 0x01C37000);
+	
 	if(info->ddr_memory == MAP_FAILED)
 		handle_error("mmap");
 
@@ -153,31 +157,31 @@ static int init(ads8331_data *info) {
 
 	info->ddr_params = &ddr[info->sample_bytes_available];
 
-	/* Retrace memory map to check for size */
+	// Retrace memory map to check for size
 	PRINTHEX("MEMSET START POINTER", (void*)info->ddr_memory);
 	PRINTHEX("MEMSET SET SIZE", info->ddr_size);
 	memset((void *)info->ddr_memory, 0, info->ddr_size);
 
 	fprintf(stderr, "Writing PRU params\n");
 
-	/* Set the run flag to 1 */
+	// Set the run flag to 1
 	info->pru_params->run_flag = 1;
 
-	/* Write DRAM base addr into PRU memory */
+	// Write DRAM base addr into PRU memory
 	info->pru_params->ddr_base_address = info->ddr_base_location;
 
-	/* Write # bytes available for samples */
+	// Write # bytes available for samples
 	info->pru_params->sample_bytes_available = info->sample_bytes_available;
 
-	/* Sample memory info struct offset */
+	// Sample memory info struct offset
 	info->pru_params->ddr_params_location = info->ddr_params_location;
 
-	/* # of pages */
+	// # of pages
 	info->pru_params->ddr_pages_available = info->ddr_pages_available;
 
 	fprintf(stderr, "Init complete\n");
 	return(0);
-}
+}*/
 
 void check(ads8331_data *info) {
 }
@@ -185,15 +189,20 @@ void check(ads8331_data *info) {
 ads8331_data info;
 
 void deinit(ads8331_data *info) {
+	printf("Disabling PRUs.\n");
 	prussdrv_pru_disable(PRU_NUM0);
 	prussdrv_pru_disable(PRU_NUM1);
 	prussdrv_exit();
+
+	printf("Unmapping memory.\n");
 	munmap(info->ddr_memory, info->ddr_size);
 	close(info->mem_fd);
+
+	printf("Goodbye.\n");
 }
 
 void intHandler(int dummy) {
-	/* Set the run flag to 0 */
+	// Set the run flag to 0
 	info.pru_params->run_flag = 0;
 }
 
@@ -302,6 +311,7 @@ void* consumer(void *arg) {
 
 	FILE *fp;
 	fp = fopen("samples.out", "wb");
+	printf("File created.\n");
 	fwrite(buffer, 1, current_pos, fp);
 	fclose(fp);
 
@@ -327,18 +337,84 @@ int mux(char *name, int val) {
 }
 
 int main (void) {
-	/* Make sure PRU kernel module is running */
+
+	PRINTDEC("HEXADDR", UIO_PRUSS_DRAM_ADDR);
+	PRINTDEC("HEXSIZE", UIO_PRUSS_DRAM_SIZE);
+
+	printf("Starting PuggleDriver.\n");
+	
+	// Make sure PRU kernel module is running
 	system("modprobe uio_pruss");
 	printf("PRU kernel module initialized.\n");
 
-	FILE *fp;
 	unsigned int ret;
 	pthread_t tid;
 	// struct pru_data	pru;
+	static void *ddrMem = 0;
+	static void *pruMem = 0;
+	static FILE *fp = 0;
+	static int mem_fd;
 
 	tpruss_intc_initdata pruss_intc_initdata = PRUSS_INTC_INITDATA;
 
-	/* Set ADC SCLK */
+	// Initialize the PRU
+	prussdrv_init();
+	printf("PRUs initialized.\n");
+
+	// Open PRU Interrupt
+	ret = prussdrv_open(PRU_EVTOUT_0);
+	if(ret) {
+		printf("Error: prussdrv_open open failed\n");
+		return (ret);
+	}
+
+	// Open PRU Interrupt
+	ret = prussdrv_open(PRU_EVTOUT_1);
+	if(ret) {
+		printf("Error: prussdrv_open open failed\n");
+		return (ret);
+	}
+	printf("PRU interrupts opened.\n");
+
+	// Get the interrupt initialized
+	prussdrv_pruintc_init(&pruss_intc_initdata);
+	printf("PRU interrupts initialized.\n");
+
+	// Initialize PRU and memory
+	//init(&info);
+
+	signal(SIGQUIT, intHandler);
+	signal(SIGINT, intHandler);
+	printf("Flags initialized.\n");
+
+	//pthread_create(&tid, NULL, &consumer, NULL);
+	pthread_create(&tid, NULL, &rt_print_consumer, NULL);
+	printf("Consumer thread created.\n");
+
+	// Open device
+	mem_fd = open("/dev/mem", O_RDWR);
+	if (mem_fd < 0) {
+		printf("Failed to open /dev/mem (%s)\n", strerror(errno));
+		return -1;
+	}
+	printf("Device opened.\n");
+
+	// Map the memory
+	ddrMem = mmap(0, DDR_RES_SIZE, PROT_WRITE |
+			PROT_READ, MAP_SHARED, mem_fd, DDR_RESERVED);
+	
+	if(ddrMem == MAP_FAILED) {
+		handle_error("mmap");
+	}
+
+	if (ddrMem == NULL) {
+		printf("Failed to map the device (%s)\n", strerror(errno));
+		close(mem_fd);
+		return -1;
+	}
+	printf("Memory mapping complete.\n");
+
+	// Set ADC SCLK
 	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
 		printf("Cannot open GPIO file.\n");
 		return(1);
@@ -352,11 +428,9 @@ int main (void) {
 	}
 	fprintf(fp,"out");
 	fclose(fp);
-
-	/* Set ADC SCLK as output */
 	mux("gpmc_ad4",0x0e);
 
-	/* Set ADC CS */
+	// Set ADC CS
 	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
 		printf("Cannot open GPIO file.\n");
 		return (1);
@@ -370,11 +444,9 @@ int main (void) {
 	}
 	fprintf(fp,"out");
 	fclose(fp);
-
-	/* Set ADC CS as output */
 	mux("gpmc_ad1",0x0e);
 
-	/* Set ADC SDI */
+	// Set ADC SDI
 	if ((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
 		printf("Cannot open GPIO file.\n");
 		return (1);
@@ -388,11 +460,9 @@ int main (void) {
 	}
 	fprintf(fp,"out");
 	fclose(fp);
-
-	/* Set ADC SDI as output */
 	mux("gpmc_csn1",0x0e);
 
-	/* Set ADC SDO */
+	// Set ADC SDO
 	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
 		printf("Cannot open GPIO file.\n");
 		return (1);
@@ -406,11 +476,9 @@ int main (void) {
 	}
 	fprintf(fp,"in");
 	fclose(fp);
-
-	/* Set ADC SDO as input */
 	mux("gpmc_csn2",0x2e);
 
-	/* Set ADC CNV */
+	// Set ADC CNV
 	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
 		printf("Cannot open GPIO file.\n");
 		return (1);
@@ -424,11 +492,9 @@ int main (void) {
 	}
 	fprintf(fp,"out");
 	fclose(fp);
-	
-	/* Set ADC CNV as output */
 	mux("gpmc_ad5",0x0e);
 
-	/* set DAC SCLK */
+	// Set DAC SCLK
 	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
 		printf("Cannot open GPIO file.\n");
 		return (1);
@@ -442,11 +508,9 @@ int main (void) {
 	}
 	fprintf(fp,"out");
 	fclose(fp);
-
-	/* Set DAC SCLK as output */
 	mux("gpmc_ad15",0x0e);
 
-	/* set DAC CS */
+	// Set DAC CS
 	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
 		printf("Cannot open GPIO file.\n");
 		return (1);
@@ -460,11 +524,9 @@ int main (void) {
 	}
 	fprintf(fp,"out");
 	fclose(fp);
-
-	/* Set DAC CS as output */
 	mux("gpmc_ad14",0x0e);
 
-	/* set DAC SDI */
+	// Set DAC SDI
 	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
 		printf("Cannot open GPIO file.\n");
 		return (1);
@@ -478,11 +540,9 @@ int main (void) {
 	}
 	fprintf(fp,"out");
 	fclose(fp);
-
-	/* Set DAC SDI as output */
 	mux("gpmc_ad12",0x0e);
 
-	/* set DAC SDO */
+	// Set DAC SDO
 	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
 		printf("Cannot open GPIO file.\n");
 		return (1);
@@ -496,70 +556,44 @@ int main (void) {
 	}
 	fprintf(fp,"in");
 	fclose(fp);
-
-	/* Set DAC SDO as output */
 	mux("gpmc_ad13",0x2e);
 
 	printf("GPIO initialized.\n");
 
-	printf("Starting PuggleDriver.\n");
+	// Locate PRU0 memory
+	prussdrv_map_prumem(PRUSS0_PRU0_DATARAM, &pruMem);
+	printf("Located PRU0 memory.\n");
 
-	/* Initialize the PRU */
-	prussdrv_init();
-
-	/* Open PRU Interrupt */
-	ret = prussdrv_open(PRU_EVTOUT_0);
-	if(ret) {
-		printf("Error: prussdrv_open open failed\n");
-		return (ret);
-	}
-
-	/* Open PRU Interrupt */
-	ret = prussdrv_open(PRU_EVTOUT_1);
-	if(ret) {
-		printf("Error: prussdrv_open open failed\n");
-		return (ret);
-	}
-
-	/* Get the interrupt initialized */
-	prussdrv_pruintc_init(&pruss_intc_initdata);
-
-	init(&info);
-
-	signal(SIGQUIT, intHandler);
-	signal(SIGINT, intHandler);
-
-	//pthread_create(&tid, NULL, &consumer, NULL);
-	pthread_create(&tid, NULL, &rt_print_consumer, NULL);
-
-	/* Execute example on PRU */
-	printf("Executing PRU1.\n");
+	// Execute example on PRU
 	prussdrv_exec_program(PRU_NUM1, "./PRU1.bin");
+	printf("Executing PRU1.\n");
 
-	printf("Executing Blink.\n");
 	prussdrv_exec_program(PRU_NUM0, "./blink.bin");
+	printf("Executing Blink.\n");
 
-	printf("Executing PRU0.\n");
 	prussdrv_exec_program(PRU_NUM0, "./PRU0.bin");
+	printf("Executing PRU0.\n");
 
-		printf("PRU1 completed transfer.\n");
 	prussdrv_pru_clear_event(PRU1_ARM_INTERRUPT);
+	printf("PRU1 completed transfer.\n");
 
 	printf("Waiting for consumer to finish\n");
 	while(consumer_running) {
 		sleepms(250);
 	}
 
-	/* Wait until PRU0 has finished execution */
+	// Wait until PRU0 has finished execution
 	printf("Waiting for HALT command.\n");
 	prussdrv_pru_wait_event(PRU_EVTOUT_0);
 
-	printf("PRU completed transfer.\n");
 	prussdrv_pru_clear_event(PRU0_ARM_INTERRUPT);
+	printf("PRU0 completed transfer.\n");
 
-	printf("CHECK\n");
+	printf("Verifying data.\n");
 	check(&info);
 
+	// Deinitialize everything
 	deinit(&info);
+	printf("Deinitialization complete.\n");
 	return(0);
 }
