@@ -29,6 +29,7 @@
 #include <signal.h>
 #include <pthread.h>
 #include <time.h>
+#include <unistd.h>
 #include "prussdrv.h"
 #include <pruss_intc_mapping.h>
 
@@ -44,6 +45,7 @@
 
 #define PRINTDEC(str,addr)								printf("%s: %d\n",str,addr);
 #define PRINTHEX(str,addr)								printf("%s: 0x%08lX\n",str,(long unsigned int)addr);
+#define handle_error(msg) do { perror(msg); exit(EXIT_FAILURE); } while (0)
 
 typedef struct {
 	uint32_t    run_flag;
@@ -122,10 +124,14 @@ static int init(ads8331_data *info) {
 		return -1;
 	}
 
-	info->ddr_memory = mmap(0, info->ddr_size, PROT_WRITE | 
-			PROT_READ, MAP_SHARED, info->mem_fd, (size_t)PRU_PAGE_SIZE);
 	//info->ddr_memory = mmap(0, info->ddr_size, PROT_WRITE | 
-	//		PROT_READ, MAP_SHARED, info->mem_fd, info->ddr_base_location);
+	//		PROT_READ, MAP_SHARED, info->mem_fd, (size_t)PRU_PAGE_SIZE);
+
+	info->ddr_memory = mmap(0, info->ddr_size, PROT_WRITE | 
+			PROT_READ, MAP_SHARED, info->mem_fd, info->ddr_base_location);
+
+	if(info->ddr_memory == MAP_FAILED)
+		handle_error("mmap");
 
 	if (info->ddr_memory == NULL) {
 		printf("Failed to map the device (%s)\n", strerror(errno));
@@ -326,14 +332,14 @@ int main (void) {
 
 	/* Open PRU Interrupt */
 	ret = prussdrv_open(PRU_EVTOUT_0);
-	if (ret) {
+	if(ret) {
 		printf("Error: prussdrv_open open failed\n");
 		return (ret);
 	}
 
 	/* Open PRU Interrupt */
 	ret = prussdrv_open(PRU_EVTOUT_1);
-	if (ret) {
+	if(ret) {
 		printf("Error: prussdrv_open open failed\n");
 		return (ret);
 	}
@@ -351,10 +357,10 @@ int main (void) {
 
 	/* Execute example on PRU */
 	printf("Executing PRU1\n");
-	prussdrv_exec_program(PRU_NUM1, "../bin/PRU1.bin");
+	prussdrv_exec_program(PRU_NUM1, "./PRU1.bin");
 
 	printf("Executing PRU0\n");
-	prussdrv_exec_program(PRU_NUM0, "../bin/PRU0.bin");
+	prussdrv_exec_program(PRU_NUM0, "./PRU0.bin");
 
 	/* Wait until PRU1 has finished execution */
 	printf("Waiting for HALT command.\n");
