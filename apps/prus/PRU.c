@@ -118,17 +118,19 @@ static int load_pruss_dram_info(ads8331_data *info) {
 static int init(ads8331_data *info) {
 	load_pruss_dram_info(info);
 
+	/* Open device */
 	info->mem_fd = open("/dev/mem", O_RDWR);
 	if (info->mem_fd < 0) {
 		printf("Failed to open /dev/mem (%s)\n", strerror(errno));
 		return -1;
 	}
 
+	/* Map the memory */
 	//info->ddr_memory = mmap(0, info->ddr_size, PROT_WRITE | 
-	//		PROT_READ, MAP_SHARED, info->mem_fd, (size_t)PRU_PAGE_SIZE);
+	//		PROT_READ, MAP_SHARED, info->mem_fd, PRU_PAGE_SIZE);
 
-	info->ddr_memory = mmap(0, info->ddr_size, PROT_WRITE | 
-			PROT_READ, MAP_SHARED, info->mem_fd, info->ddr_base_location);
+	//info->ddr_memory = mmap(0, 0x00000FFF, PROT_WRITE | 
+	//		PROT_READ, MAP_SHARED, info->mem_fd, 0x01C37000);
 
 	if(info->ddr_memory == MAP_FAILED)
 		handle_error("mmap");
@@ -314,16 +316,191 @@ void* consumer(void *arg) {
 	return NULL;
 }
 
+int mux(char *name, int val) {
+	char cmd[1024];
+	sprintf(cmd, "echo %x > /sys/kernel/debug/omap_mux/%s", val, name);
+	if (system(cmd) != 0) {
+		printf("ERROR: Failed to set pin mux %s = %x\n", name, val);
+		return -1;
+	}
+	return 0;
+}
+
 int main (void) {
 	/* Make sure PRU kernel module is running */
 	system("modprobe uio_pruss");
 	printf("PRU kernel module initialized.\n");
 
+	FILE *fp;
 	unsigned int ret;
 	pthread_t tid;
 	// struct pru_data	pru;
 
 	tpruss_intc_initdata pruss_intc_initdata = PRUSS_INTC_INITDATA;
+
+	/* Set ADC SCLK */
+	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
+		printf("Cannot open GPIO file.\n");
+		return(1);
+	}
+	fprintf(fp,"36");
+	fclose(fp);
+
+	if((fp=fopen("/sys/class/gpio/gpio36/direction", "w"))==NULL){
+		printf("Cannot open GPIO direction file.\n");
+		return(1);
+	}
+	fprintf(fp,"out");
+	fclose(fp);
+
+	/* Set ADC SCLK as output */
+	mux("gpmc_ad4",0x0e);
+
+	/* Set ADC CS */
+	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
+		printf("Cannot open GPIO file.\n");
+		return (1);
+	}
+	fprintf(fp,"33");
+	fclose(fp);
+
+	if((fp=fopen("/sys/class/gpio/gpio33/direction", "w"))==NULL){
+		printf("cannot open gpio direction file.\n");
+		return(1);
+	}
+	fprintf(fp,"out");
+	fclose(fp);
+
+	/* Set ADC CS as output */
+	mux("gpmc_ad1",0x0e);
+
+	/* Set ADC SDI */
+	if ((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
+		printf("Cannot open GPIO file.\n");
+		return (1);
+	}
+	fprintf(fp,"62");
+	fclose(fp);
+
+	if((fp=fopen("/sys/class/gpio/gpio62/direction", "w"))==NULL){
+		printf("Cannot open GPIO direction file.\n");
+		return(1);
+	}
+	fprintf(fp,"out");
+	fclose(fp);
+
+	/* Set ADC SDI as output */
+	mux("gpmc_csn1",0x0e);
+
+	/* Set ADC SDO */
+	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
+		printf("Cannot open GPIO file.\n");
+		return (1);
+	}
+	fprintf(fp,"63");
+	fclose(fp);
+
+	if((fp=fopen("/sys/class/gpio/gpio63/direction", "w"))==NULL){
+		printf("Cannot open GPIO direction file.\n");
+		return(1);
+	}
+	fprintf(fp,"in");
+	fclose(fp);
+
+	/* Set ADC SDO as input */
+	mux("gpmc_csn2",0x2e);
+
+	/* Set ADC CNV */
+	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
+		printf("Cannot open GPIO file.\n");
+		return (1);
+	}
+	fprintf(fp,"37");
+	fclose(fp);
+
+	if((fp=fopen("/sys/class/gpio/gpio37/direction", "w"))==NULL){
+		printf("Cannot open GPIO direction file.\n");
+		return(1);
+	}
+	fprintf(fp,"out");
+	fclose(fp);
+	
+	/* Set ADC CNV as output */
+	mux("gpmc_ad5",0x0e);
+
+	/* set DAC SCLK */
+	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
+		printf("Cannot open GPIO file.\n");
+		return (1);
+	}
+	fprintf(fp,"47");
+	fclose(fp);
+
+	if((fp=fopen("/sys/class/gpio/gpio47/direction", "w"))==NULL){
+		printf("Cannot open GPIO direction file.\n");
+		return(1);
+	}
+	fprintf(fp,"out");
+	fclose(fp);
+
+	/* Set DAC SCLK as output */
+	mux("gpmc_ad15",0x0e);
+
+	/* set DAC CS */
+	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
+		printf("Cannot open GPIO file.\n");
+		return (1);
+	}
+	fprintf(fp,"46");
+	fclose(fp);
+
+	if((fp=fopen("/sys/class/gpio/gpio46/direction", "w"))==NULL){
+		printf("Cannot open GPIO direction file.\n");
+		return(1);
+	}
+	fprintf(fp,"out");
+	fclose(fp);
+
+	/* Set DAC CS as output */
+	mux("gpmc_ad14",0x0e);
+
+	/* set DAC SDI */
+	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
+		printf("Cannot open GPIO file.\n");
+		return (1);
+	}
+	fprintf(fp,"44");
+	fclose(fp);
+
+	if((fp=fopen("/sys/class/gpio/gpio44/direction", "w"))==NULL){
+		printf("Cannot open GPIO direction file.\n");
+		return(1);
+	}
+	fprintf(fp,"out");
+	fclose(fp);
+
+	/* Set DAC SDI as output */
+	mux("gpmc_ad12",0x0e);
+
+	/* set DAC SDO */
+	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
+		printf("Cannot open GPIO file.\n");
+		return (1);
+	}
+	fprintf(fp,"45");
+	fclose(fp);
+
+	if((fp=fopen("/sys/class/gpio/gpio45/direction", "w"))==NULL){
+		printf("Cannot open GPIO direction file.\n");
+		return(1);
+	}
+	fprintf(fp,"in");
+	fclose(fp);
+
+	/* Set DAC SDO as output */
+	mux("gpmc_ad13",0x2e);
+
+	printf("GPIO initialized.\n");
 
 	printf("Starting PuggleDriver.\n");
 
@@ -356,20 +533,19 @@ int main (void) {
 	pthread_create(&tid, NULL, &rt_print_consumer, NULL);
 
 	/* Execute example on PRU */
-	printf("Executing PRU1\n");
+	printf("Executing PRU1.\n");
 	prussdrv_exec_program(PRU_NUM1, "./PRU1.bin");
 
-	printf("Executing PRU0\n");
+	printf("Executing Blink.\n");
+	prussdrv_exec_program(PRU_NUM0, "./blink.bin");
+
+	printf("Executing PRU0.\n");
 	prussdrv_exec_program(PRU_NUM0, "./PRU0.bin");
 
-	/* Wait until PRU1 has finished execution */
-	printf("Waiting for HALT command.\n");
-	prussdrv_pru_wait_event(PRU_EVTOUT_1);
-
-	printf("PRU1 completed transfer.\n");
+		printf("PRU1 completed transfer.\n");
 	prussdrv_pru_clear_event(PRU1_ARM_INTERRUPT);
 
-	printf("Waiting for consumer to finish");
+	printf("Waiting for consumer to finish\n");
 	while(consumer_running) {
 		sleepms(250);
 	}
