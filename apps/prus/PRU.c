@@ -568,8 +568,8 @@ int main (void) {
 	prussdrv_exec_program(PRU_NUM1, "./PRU1.bin");
 	printf("Executing PRU1.\n");
 
-	prussdrv_exec_program(PRU_NUM0, "./blink.bin");
-	printf("Executing Blink.\n");
+	//prussdrv_exec_program(PRU_NUM0, "./blink.bin");
+	//printf("Executing Blink.\n");
 
 	prussdrv_exec_program(PRU_NUM0, "./PRU0.bin");
 	printf("Executing PRU0.\n");
