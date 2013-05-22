@@ -328,17 +328,11 @@ void* consumer(void *arg) {
 
 int mux(char *name, int val) {
 	char cmd[1024];
-	printf("name %s\n", name);
-	printf("val is %d\n", val);
-	printf("here1\n");
 	sprintf(cmd, "echo %x > /sys/kernel/debug/omap_mux/%s", val, name);
-	printf("here2\n");
 	if (system(cmd) != 0) {
-	printf("here3\n");
 		printf("ERROR: Failed to set pin mux %s = %x\n", name, val);
 		return -1;
 	}
-	printf("here4\n");
 	return 0;
 }
 
@@ -394,7 +388,7 @@ int main (void) {
 	printf("Flags initialized.\n");
 
 	//pthread_create(&tid, NULL, &consumer, NULL);
-	pthread_create(&tid, NULL, &rt_print_consumer, NULL);
+	//pthread_create(&tid, NULL, &rt_print_consumer, NULL);
 	printf("Consumer thread created.\n");
 
 	// Open device
@@ -436,8 +430,6 @@ int main (void) {
 	fclose(fp);
 	mux("lcd_data6",0x0d);
 
-	printf("test1\n");
-
 	// Set ADC CS
 	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
 		printf("Cannot open GPIO file 75.\n");
@@ -453,7 +445,6 @@ int main (void) {
 	fprintf(fp,"out");
 	fclose(fp);
 	mux("lcd_data5",0x0d);
-	printf("test1\n");
 
 	// Set ADC SDI
 	if ((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
@@ -471,7 +462,6 @@ int main (void) {
 	fclose(fp);
 	mux("lcd_hsync",0x0d);
 
-	printf("test1\n");
 	// Set ADC SDO
 	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
 		printf("Cannot open GPIO file 77.\n");
@@ -487,7 +477,6 @@ int main (void) {
 	fprintf(fp,"in");
 	fclose(fp);
 	mux("lcd_data7",0x2e);
-	printf("test1\n");
 
 	// Set ADC CNV
 	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
@@ -504,7 +493,6 @@ int main (void) {
 	fprintf(fp,"out");
 	fclose(fp);
 	mux("lcd_vsync",0x0d);
-	printf("test1\n");
 
 	// Set DAC SCLK
 	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
@@ -521,7 +509,6 @@ int main (void) {
 	fprintf(fp,"out");
 	fclose(fp);
 	mux("lcd_ac_bias_en",0x0d);
-	printf("test1\n");
 
 	// Set DAC CS
 	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
@@ -538,7 +525,6 @@ int main (void) {
 	fprintf(fp,"out");
 	fclose(fp);
 	mux("lcd_pclk",0x0d);
-	printf("test1\n");
 
 	// Set DAC SDI
 	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
@@ -555,7 +541,6 @@ int main (void) {
 	fprintf(fp,"out");
 	fclose(fp);
 	mux("gpmc_csn1",0x0d);
-	printf("test1\n");
 
 	// Set DAC SDO
 	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
@@ -572,7 +557,6 @@ int main (void) {
 	fprintf(fp,"in");
 	fclose(fp);
 	mux("gpmc_csn2",0x2e);
-	printf("test1\n");
 
 	printf("GPIO initialized.\n");
 
