@@ -43,7 +43,7 @@
 #define PRU_PAGE_SIZE 										2048
 #define ALIGN_TO_PAGE_SIZE(x, pagesize)  	((x)-((x)%pagesize))
 
-#define DDR_BASEADDR 											0x00010000
+#define DDR_BASEADDR 											0x80000000
 #define DDR_RESERVED 											0x00008000
 #define DDR_RES_SIZE 											0x00008000
 
@@ -80,108 +80,6 @@ typedef struct {
 void sleepms(int ms) {
 	nanosleep((struct timespec[]){{0, ms*100000}}, NULL);
 }
-
-/*static uint32_t read_uint32_hex_from_file(const char *file) {
-	size_t len = 0;
-	ssize_t bytes_read;
-	char *line;
-	uint32_t value = 0;
-	FILE *f = fopen(file, "r");
-	if (f) {
-		bytes_read = getline(&line, &len, f);
-		if (bytes_read > 0) {
-			value = strtoul(line, NULL, 0);
-		}
-	}
-	if (f) fclose(f);
-	if (line) free(line);
-	return value;
-}*/
-
-/*static int load_pruss_dram_info(ads8331_data *info) {
-	info->ddr_size = read_uint32_hex_from_file(UIO_PRUSS_DRAM_SIZE);
-	PRINTDEC("DDR_SIZE", info->ddr_size);
-
-	info->ddr_base_location = read_uint32_hex_from_file(UIO_PRUSS_DRAM_ADDR);
-	PRINTDEC("DDR_BASE_LOCATION", info->ddr_base_location);
-
-	info->sample_bytes_available = ALIGN_TO_PAGE_SIZE(info->ddr_size-32, PRU_PAGE_SIZE);
-	PRINTDEC("SAMPLE_BYTES_AVAILABLE", info->sample_bytes_available);
-
-	info->ddr_params_location = info->ddr_base_location + info->sample_bytes_available;
-	PRINTDEC("DDR_PARAMS_LOCATION", info->ddr_params_location);
-
-	info->ddr_pages_available = info->sample_bytes_available / PRU_PAGE_SIZE;
-	PRINTDEC("DDR_PAGES_AVAILABLE", info->ddr_pages_available);
-
-	//PRINTHEX("DRAM SIZE", info->ddr_size);
-	//PRINTHEX("ADDR", info->ddr_base_location);
-	return 0;
-}*/
-
-/*static int init(ads8331_data *info) {
-	load_pruss_dram_info(info);
-
-	//Open device
-	info->mem_fd = open("/dev/mem", O_RDWR);
-	if (info->mem_fd < 0) {
-		printf("Failed to open /dev/mem (%s)\n", strerror(errno));
-		return -1;
-	}
-
-	// Map the memory
-	//info->ddr_memory = mmap(0, info->ddr_size, PROT_WRITE | 
-	//		PROT_READ, MAP_SHARED, info->mem_fd, PRU_PAGE_SIZE);
-
-	info->ddr_memory = mmap(0, 0x00000FFF, PROT_WRITE | 
-			PROT_READ, MAP_SHARED, info->mem_fd, 0x01C37000);
-	
-	if(info->ddr_memory == MAP_FAILED)
-		handle_error("mmap");
-
-	if (info->ddr_memory == NULL) {
-		printf("Failed to map the device (%s)\n", strerror(errno));
-		close(info->mem_fd);
-		return -1;
-	}
-
-	prussdrv_map_prumem(PRUSS0_PRU0_DATARAM, (void *)&info->pru_memory);
-
-	if (info->pru_memory == NULL) {
-		fprintf(stderr, "Cannot map PRU0 memory buffer.\n");
-		return -ENOMEM;
-	}
-
-	info->pru_params = info->pru_memory;
-	uint8_t *ddr = (uint8_t *)info->ddr_memory;
-
-	info->ddr_params = &ddr[info->sample_bytes_available];
-
-	// Retrace memory map to check for size
-	PRINTHEX("MEMSET START POINTER", (void*)info->ddr_memory);
-	PRINTHEX("MEMSET SET SIZE", info->ddr_size);
-	memset((void *)info->ddr_memory, 0, info->ddr_size);
-
-	fprintf(stderr, "Writing PRU params\n");
-
-	// Set the run flag to 1
-	info->pru_params->run_flag = 1;
-
-	// Write DRAM base addr into PRU memory
-	info->pru_params->ddr_base_address = info->ddr_base_location;
-
-	// Write # bytes available for samples
-	info->pru_params->sample_bytes_available = info->sample_bytes_available;
-
-	// Sample memory info struct offset
-	info->pru_params->ddr_params_location = info->ddr_params_location;
-
-	// # of pages
-	info->pru_params->ddr_pages_available = info->ddr_pages_available;
-
-	fprintf(stderr, "Init complete\n");
-	return(0);
-}*/
 
 void check(ads8331_data *info) {
 }
