@@ -30,12 +30,12 @@
 #define ARM_PRU0_INTERRUPT      21
 #define ARM_PRU1_INTERRUPT      22
 
-#define CONST_PRUSSINTC 		C0
-#define CONST_PRUCFG	     	C4
+#define CONST_PRUSSINTC 				C0
+#define CONST_PRUCFG	     			C4
 #define CONST_PRU_DATA0        	C24
 #define CONST_PRU_DATA1        	C25
 #define CONST_PRU_SHAREDRAM   	C28
-#define CONST_DDR            	C31
+#define CONST_DDR            		C31
 
 // Address for the Constant table Block Index Register (CTBIR)
 #define CTBIR          			0x22020
@@ -56,31 +56,28 @@
 
 #define MEM_PRU_DATA0_BASE	0x00000000
 #define MEM_PRU_DATA1_BASE	0x00002000
-
 #define MEM_PRU_SHARED_BASE	0x00010000
 
-// ***************************************
-// * Pin mappings
+// Pin mappings for custom SPI
 
-#define SPI0_SCLK   R30.t15
-#define SPI0_MOSI   R30.t2    // R30.t14
-#define SPI0_MISO   R31.t14
-#define SPI0_CS     R30.t5
+// SPI0 = DAC
+#define SPI0_SCLK		R30.t11
+#define SPI0_CS			R30.t10
+#define SPI0_MOSI   R30.t12
+#define SPI0_MISO   R31.t13
 
-#define SPI1_SCLK   R30.t7
-#define SPI1_MOSI   R30.t2
-#define SPI1_MISO   R31.t3
-#define SPI1_CS0    R30.t0
-#define SPI1_CS1    R30.t1
-#define SPI1_CS     SPI1_CS0
+// SPI1 = ADC
+#define SPI1_SCLK   R30.t6
+#define SPI1_CS     R30.t5
+#define SPI1_MOSI   R30.t9
+#define SPI1_MISO   R31.t7
+#define SPI1_CNV    R30.t8
 
-// ***************************************
-// * Useful defines
+// Useful defines
 
 #define NOP		    MOV R0, R0
 
-// ***************************************
-// * TI Macros
+// TI Macros
 
 .macro  LD32
 .mparam dst,src
@@ -112,8 +109,7 @@
 	SBBO    src,dst,#0x00,1
 .endm
 
-// ***************************************
-// * Macros
+// Macros
 
 .macro SLEEPUS
 .mparam us,inst,lab
