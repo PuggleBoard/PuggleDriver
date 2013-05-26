@@ -43,9 +43,10 @@
 #define PRU_PAGE_SIZE 										2048
 #define ALIGN_TO_PAGE_SIZE(x, pagesize)  	((x)-((x)%pagesize))
 
-#define DDR_BASEADDR 											0x80000000
+#define DDR_BASEADDR 											0x00080000
 #define DDR_RESERVED 											0x00008000
 #define DDR_RES_SIZE 											0x00008000
+#define DDR_SHIFT													0x00080000
 
 #define PRINTDEC(str,addr)								printf("%s: %d\n",str,addr);
 #define PRINTHEX(str,addr)								printf("%s: 0x%08lX\n",str,(long unsigned int)addr);
@@ -253,6 +254,7 @@ int main (void) {
 	static FILE *fp = 0;
 	static int mem_fd;
 
+	// Initialize data
 	tpruss_intc_initdata pruss_intc_initdata = PRUSS_INTC_INITDATA;
 
 	// Initialize the PRU
