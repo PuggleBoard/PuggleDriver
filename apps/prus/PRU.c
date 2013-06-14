@@ -8,8 +8,6 @@
 
 	 Written in 2013 by: Yogi Patel <yapatel@gatech.edu>
 
-	 Additional contributions by Chris Micali of Sage Devices
-
 	 To the extent possible under law, the author(s) have dedicated all copyright
 	 and related and neighboring rights to this software to the public domain
 	 worldwide. This software is distributed without any warranty.
@@ -79,10 +77,8 @@ typedef struct {
 } ads8331_data;
 
 void sleepms(int ms) {
-	nanosleep((struct timespec[]){{0, ms*100000}}, NULL);
-}
-
-void check(ads8331_data *info) {
+	nanosleep((struct timespec[]) {
+			{0, ms*100000}}, NULL);
 }
 
 ads8331_data info;
@@ -96,7 +92,6 @@ void deinit(ads8331_data *info) {
 	printf("Unmapping memory.\n");
 	munmap(info->ddr_memory, info->ddr_size);
 	close(info->mem_fd);
-
 	printf("Goodbye.\n");
 }
 
@@ -464,7 +459,7 @@ int main (void) {
 	prussdrv_map_prumem(PRUSS0_PRU0_DATARAM, &pruMem);
 	printf("Located PRU0 memory.\n");
 
-	// Execute example on PRU
+	// Execute on PRU1
 	prussdrv_exec_program(PRU_NUM1, "./PRU1.bin");
 	printf("Executing PRU1.\n");
 
@@ -488,9 +483,6 @@ int main (void) {
 
 	prussdrv_pru_clear_event(PRU0_ARM_INTERRUPT);
 	printf("PRU0 completed transfer.\n");
-
-	printf("Verifying data.\n");
-	check(&info);
 
 	// Deinitialize everything
 	deinit(&info);

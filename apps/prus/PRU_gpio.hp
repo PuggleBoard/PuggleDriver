@@ -8,8 +8,6 @@
 //
 //	Written in 2013 by: Yogi Patel <yapatel@gatech.edu>
 //
-//	Additional contributions by Chris Micali of Sage Devices.
-//
 //	To the extent possible under law, the author(s) have dedicated all copyright
 //	and related and neighboring rights to this software to the public domain
 //	worldwide. This software is distributed without any warranty.
@@ -21,64 +19,73 @@
 #ifndef _PRU_GPIO_HP_
 #define _PRU_GPIO_HP_
 
+// Define GPIO addresses
 #define GPIO0  0x44E07000
 #define GPIO1  0x4804C000
 #define GPIO2  0x481AC000
 #define GPIO3  0x481AE000
 
+// Define Default Addresses
 #define GPIO_CLEARDATAOUT   0x190
 #define GPIO_SETDATAOUT     0x194
 
+// GPIO Macros
 .macro SET_GPIO
 .mparam baseaddr,pin,reg1=r0,reg2=r1
-MOV reg1, 1 << pin
-MOV reg2, baseaddr | GPIO_SETDATAOUT
-SBBO reg1, reg2, 0, 4
+	MOV reg1, 1 << pin
+	MOV reg2, baseaddr | GPIO_SETDATAOUT
+	SBBO reg1, reg2, 0, 4
 .endm
 
 .macro CLR_GPIO
 .mparam baseaddr,pin,reg1=r0,reg2=r1
-MOV reg1, 1 << pin
-MOV reg2, baseaddr | GPIO_CLEARDATAOUT
-SBBO reg1, reg2, 0, 4
+	MOV reg1, 1 << pin
+	MOV reg2, baseaddr | GPIO_CLEARDATAOUT
+	SBBO reg1, reg2, 0, 4
 .endm
 
-// Helper macros
-
+// GPIO0 Macros
 .macro SET_GPIO0
 .mparam pin
-SET_GPIO GPIO0, pin
+	SET_GPIO GPIO0, pin
 .endm
+
 .macro CLR_GPIO0
 .mparam pin
-CLR_GPIO GPIO0, pin
+	CLR_GPIO GPIO0, pin
 .endm
 
+// GPIO1 Macros
 .macro SET_GPIO1
 .mparam pin
-SET_GPIO GPIO1, pin
+	SET_GPIO GPIO1, pin
 .endm
+
 .macro CLR_GPIO1
 .mparam pin
-CLR_GPIO GPIO1, pin
+	CLR_GPIO GPIO1, pin
 .endm
 
+// GPIO2 Macros
 .macro SET_GPIO2
 .mparam pin
-SET_GPIO GPIO2, pin
-.endm
-.macro CLR_GPIO2
-.mparam pin
-CLR_GPIO GPIO2, pin
+	SET_GPIO GPIO2, pin
 .endm
 
+.macro CLR_GPIO2
+.mparam pin
+	CLR_GPIO GPIO2, pin
+.endm
+
+// GPIO3 Macros
 .macro SET_GPIO3
 .mparam pin
-SET_GPIO GPIO3, pin
+	SET_GPIO GPIO3, pin
 .endm
+
 .macro CLR_GPIO3
 .mparam pin
-CLR_GPIO GPIO3, pin
+	CLR_GPIO GPIO3, pin
 .endm
 
 #endif
