@@ -236,7 +236,7 @@ int main (void) {
 	PRINTDEC("HEXSIZE", UIO_PRUSS_DRAM_SIZE);
 
 	printf("Starting PuggleDriver.\n");
-	
+
 	// Make sure PRU kernel module is running
 	system("modprobe uio_pruss");
 	printf("PRU kernel module initialized.\n");
@@ -297,7 +297,7 @@ int main (void) {
 	// Map the memory
 	ddrMem = mmap(0, DDR_RES_SIZE, PROT_WRITE |
 			PROT_READ, MAP_SHARED, mem_fd, DDR_RESERVED);
-	
+
 	if(ddrMem == MAP_FAILED) {
 		handle_error("mmap");
 	}
