@@ -21,7 +21,12 @@
 
 #include "PRU_cape.hp"
 
-#define ADC
+#define CHAN_NUM        r7
+#define DAC_CH1	        r8
+#define DAC_CH2        	r9
+#define DAC_CH3	        r10
+#define DAC_CH4	        r11
+
 #define CUR_OFFSET      r16
 #define RUN_FLAG        r17
 #define ADDR_PRURAM     r18
@@ -37,7 +42,8 @@
 #define ADDR_SHARED     r28
 
 // Set as number of cycles to delay, each cycle is 5ns with 50% duty cycle
-#define SCLK_FREQ       5  // 20MHz
+// 20 MHz
+#define SCLK_FREQ       5 
 
 START:
 
@@ -52,15 +58,28 @@ SET SPI0_CS
 CLR SPI0_MOSI
 CLR SPI0_MISO
 
-SET_CHANNEL:
-
-
 // Set loop count
-MOV r2, 32
+MOV r1, 32
 MOV CUR_SAMPLE, 1000
-MOV SPI_TX, 65536
 
 delay 1
+
+// Set channel registers
+SET_CHANNEL:
+
+  QBEQ DAC_1, r7, 1
+  QBEQ DAC_2, r7, 2 
+  QBEQ DAC_3, r7, 3 
+  QBEQ DAC_4, r7, 4
+
+  DAC_1:
+    MOV SPI_TX, DAC_CH1
+  DAC_2:
+    MOV SPI_TX, DAC_CH2
+  DAC_3:
+    MOV SPI_TX, DAC_CH3
+  DAC_4:
+    MOV SPI_TX, DAC_CH4
 
 // Start SPI
 LOOP: 
@@ -82,7 +101,6 @@ LOOP:
     SET SPI0_MOSI
 
   MOSI_DONE:
-  //LSL SPI_TX, SPI_TX, 1
 
   delay 2
   SET SPI_SCLK
@@ -90,7 +108,9 @@ LOOP:
 
   // Keep running?
   SUB r1, r1, 1
-  QBNE LOOP, r1, 0
+  //QBNE LOOP, r1, 0
+  ADD CHAN_NUM, CHAN_NUM, 1
+  QBNE SET_CHANNEL, r1, 0
   JMP RESET
 
 EXIT:
@@ -101,15 +121,14 @@ EXIT:
   MOV r31.b0, PRU1_ARM_INTERRUPT+16
   HALT
 
-// Initialize SPI busses
 RESET:
-SET SPI_SCLK
-SET SPI0_CS
-CLR SPI0_MOSI
-CLR SPI0_MISO
-MOV r1, 32
-MOV SPI_TX, 65536
-delay 100
-SUB CUR_SAMPLE, CUR_SAMPLE, 1
-QBNE LOOP, CUR_SAMPLE, 0
-JMP EXIT
+  SET SPI_SCLK
+  SET SPI0_CS
+  CLR SPI0_MOSI
+  CLR SPI0_MISO
+  MOV r1, 32
+  MOV SPI_TX, 65536
+  SUB CUR_SAMPLE, CUR_SAMPLE, 1
+  //QBNE LOOP, CUR_SAMPLE, 0
+  QBNE SET_CHANNEL, CUR_SAMPLE, 0
+  JMP EXIT

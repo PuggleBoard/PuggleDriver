@@ -1,14 +1,12 @@
 ##
 ##	 -------------------------------------------------------------------------
 ##
-##	 This file is part of the BoneClamp Data Conversion and Processing System
-##	 Copyright (C) 2013 BoneClamp
+##	 This file is part of the Puggle Data Conversion and Processing System
+##	 Copyright (C) 2013 Puggle
 ##
 ##	 -------------------------------------------------------------------------
 ##
 ##	Written in 2013 by: Yogi Patel <yapatel@gatech.edu>
-##
-## 	Additional contributions by Chris Micali of Sage Devices
 ##
 ##	To the extent possible under law, the author(s) have dedicated all copyright
 ##	and related and neighboring rights to this software to the public domain
@@ -35,4 +33,4 @@ all:
 
 clean:
 	for dir in $(APP_DIRS); do make -C $$dir clean LIBDIR_APP_LOADER="${LIBDIR_APP_LOADER}" LIBDIR_EDMA_DRIVER="${LIBDIR_EDMA_DRIVER}" INCDIR_APP_LOADER="${INCDIR_APP_LOADER}" INCDIR_EDMA_DRIVER="${INCDIR_EDMA_DRIVER}" BINDIR="${BINDIR_APPLICATIONS}"; done
-	for bin_file in ${BIN_FILES}; do rm -fr ${BINDIR_FW}/$$bin_file; done
+	for bins in ${BINDIR_FW};	do rm -rf ${BINDIR_FW}/${bins}; done
