@@ -41,20 +41,18 @@
 START:
 
 // Set loop count
-MOV r1, 100
+MOV r1, 1000
 
 LOOP:
   // Start SCLK
+  CLR SPI_SCLK
   SET SPI_SCLK
   delay SCLK_FREQ
   CLR SPI_SCLK
   delay SCLK_FREQ
+  QBNE LOOP, r1, 1
+  JMP EXIT
 
-// Check loop
-QBNE LOOP, r1, 1
-JMP EXIT
-
-// Done
 EXIT:
   MOV r31.b0, PRU0_ARM_INTERRUPT+16
   HALT

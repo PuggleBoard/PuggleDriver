@@ -452,23 +452,23 @@ int main (void) {
 
 	printf("GPIO initialized.\n");
 
-	// Locate PRU0 memory
-	prussdrv_map_prumem(PRUSS0_PRU0_DATARAM, &pruMem);
-	printf("Located PRU0 memory.\n");
+	// Locate PRU1 memory
+	prussdrv_map_prumem(PRUSS0_PRU1_DATARAM, &pruMem);
+	printf("Located PRU1 memory.\n");
 
 	// Generate SPI on PRU1
-	prussdrv_exec_program(PRU_NUM1, "./DataXferAgent.bin");
+	prussdrv_exec_program(PRU_NUM1, "./SPIAgent.bin");
 	printf("Executing PRU1.\n");
 
 	//printf("Executing Blink.\n");
 	//prussdrv_exec_program(PRU_NUM1, "./blink.bin");
 
 	// Transfer data on PRU0
-	prussdrv_exec_program(PRU_NUM1, "./SPIAgent.bin");
-	printf("Executing PRU1.\n");
+	prussdrv_exec_program(PRU_NUM0, "./DataXferAgent.bin");
+	printf("Executing PRU0.\n");
 
 	prussdrv_pru_clear_event(PRU1_ARM_INTERRUPT);
-	printf("PRU1 completed transfer.\n");
+	printf("PRU1 completed SPI generation.\n");
 
 	printf("Waiting for consumer to finish\n");
 	while(consumer_running) {

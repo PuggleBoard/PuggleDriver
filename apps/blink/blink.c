@@ -32,12 +32,10 @@ int main (void)
 	unsigned int ret;
 	tpruss_intc_initdata pruss_intc_initdata = PRUSS_INTC_INITDATA;
 
-	printf("\nINFO: Starting %s example.\r\n", "blink");
 	/* Initialize the PRU */
 	prussdrv_init ();		
 
-	// Set ADC CS
-	
+	// Set ADC SCLK
 	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
 		printf("Cannot open GPIO file 76.\n");
 		return(1);
@@ -46,7 +44,7 @@ int main (void)
 	fclose(fp);
 
 	if((fp=fopen("/sys/class/gpio/gpio76/direction", "w"))==NULL){
-		printf("Cannot open GPIO direction file 76.\n");
+		printf("Cannot open GPIO direction file 76.");
 		return(1);
 	}
 	fprintf(fp,"out");
@@ -57,22 +55,22 @@ int main (void)
 	ret = prussdrv_open(PRU_EVTOUT_0);
 	if (ret)
 	{
-		printf("prussdrv_open open failed\n");
+		printf("prussdrv_open open failed.\n");
 		return (ret);
     }
     /* Get the interrupt initialized */
     prussdrv_pruintc_init(&pruss_intc_initdata);
 
     /* Execute example on PRU */
-    printf("\tINFO: Executing example.\r\n");
+    printf("Executing example.\n");
     prussdrv_exec_program (PRU_NUM, "./blink.bin");
     
     /* Wait until PRU1 has finished execution */
-    printf("\tINFO: Waiting for HALT command.\r\n");
+    printf("Waiting for HALT command.\n");
     prussdrv_pru_wait_event(PRU_EVTOUT_1);
 
-    printf("\tINFO: PRU completed transfer.\r\n");
-    prussdrv_pru_clear_event(PRU0_ARM_INTERRUPT);
+    printf("PRU1 completed transfer.\n");
+    prussdrv_pru_clear_event(PRU1_ARM_INTERRUPT);
 
     /* Disable PRU and close memory mapping*/
     prussdrv_pru_disable(PRU_NUM);
