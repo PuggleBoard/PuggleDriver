@@ -1,8 +1,8 @@
 /*
 	 -------------------------------------------------------------------------
 
-	 This file is part of the BoneClamp Data Conversion and Processing System
-	 Copyright (C) 2013 BoneClamp
+	 This file is part of the Puggle Data Conversion and Processing System
+	 Copyright (C) 2013 Puggle
 
 	 -------------------------------------------------------------------------
 
