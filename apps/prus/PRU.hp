@@ -53,14 +53,15 @@
 
 // Pin mappings for custom SPI
 
+// SPI SCLK
+#define SPI_SCLK											R30.t11
+
 // SPI0 = DAC
-#define SPI0_SCLK											R30.t11
 #define SPI0_CS												R30.t10
 #define SPI0_MOSI   									R30.t12
 #define SPI0_MISO   									R31.t13
 
 // SPI1 = ADC
-#define SPI1_SCLK 									  R30.t6
 #define SPI1_CS     									R30.t5
 #define SPI1_MOSI   									R30.t9
 #define SPI1_MISO   									R31.t7
