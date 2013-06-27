@@ -52,13 +52,14 @@ CLR SPI0_MOSI
 CLR SPI0_MISO
 
 // Set loop count
-MOV r1, 16
+MOV r2, 32
 MOV CUR_SAMPLE, 1000
+MOV SPI_TX, 65536
 
 delay 1
 
 // Start SPI
-//LOOP: 
+LOOP: 
   // Enable CS
   CLR SPI0_CS
 
@@ -66,18 +67,29 @@ delay 1
   CLR SPI_SCLK
 
   // Enable MOSI
-  SET SPI0_MOSI
+  QBBS MOSI_HIGH, SPI_TX, r1
+  QBBC MOSI_LOW, SPI_TX, r1
 
-  //delay 2
+  MOSI_LOW:
+    CLR SPI0_MOSI
+    JMP MOSI_DONE
+
+  MOSI_HIGH:
+    SET SPI0_MOSI
+
+  MOSI_DONE:
+  //LSL SPI_TX, SPI_TX, 1
+
+  delay 2
   SET SPI_SCLK
-  //delay 2
+  delay 1
 
   // Keep running?
-  //SUB r1, r1, 1
-  //QBNE LOOP, r1, 0
-  //JMP RESET
+  SUB r1, r1, 1
+  QBNE LOOP, r1, 0
+  JMP RESET
 
-//EXIT:
+EXIT:
   SET SPI_SCLK
   SET SPI0_CS
   CLR SPI0_MOSI
@@ -91,8 +103,9 @@ SET SPI_SCLK
 SET SPI0_CS
 CLR SPI0_MOSI
 CLR SPI0_MISO
-MOV r1, 16
-delay 1000
+MOV r1, 32
+MOV SPI_TX, 65536
+delay 100
 SUB CUR_SAMPLE, CUR_SAMPLE, 1
-//QBNE LOOP, r21, 0
-//JMP EXIT
+QBNE LOOP, CUR_SAMPLE, 0
+JMP EXIT
