@@ -46,38 +46,53 @@ CLR r0, r0, 4
 SBCO r0, CONST_PRUCFG, 4, 4
 
 // Initialize SPI busses
-CLR SPI_SCLK
-SET SPI1_CS
-CLR SPI1_MOSI
-CLR SPI1_MISO
-CLR SPI1_CNV
+SET SPI_SCLK
+SET SPI0_CS
+CLR SPI0_MOSI
+CLR SPI0_MISO
 
 // Set loop count
-MOV r1, 100000000
+MOV r1, 16
+MOV CUR_SAMPLE, 1000
+
+delay 1
 
 // Start SPI
-LOOP:
-  // Enable SCLK
-  SET SPI_SCLK
-
+//LOOP: 
   // Enable CS
-  CLR SPI1_CS
+  CLR SPI0_CS
+
+  // Enable SCLK
+  CLR SPI_SCLK
 
   // Enable MOSI
-  SET SPI1_MOSI
+  SET SPI0_MOSI
 
-  // Enable MISO
-  SET SPI1_MISO
-
-  delay 2
-  CLR SPI_SCLK
-  delay 1
+  //delay 2
+  SET SPI_SCLK
+  //delay 2
 
   // Keep running?
-  SUB r1, r1, 1
-  QBNE LOOP, r1, 0
-  JMP EXIT
+  //SUB r1, r1, 1
+  //QBNE LOOP, r1, 0
+  //JMP RESET
 
-EXIT:
+//EXIT:
+  SET SPI_SCLK
+  SET SPI0_CS
+  CLR SPI0_MOSI
+  CLR SPI0_MISO
   MOV r31.b0, PRU1_ARM_INTERRUPT+16
   HALT
+
+// Initialize SPI busses
+RESET:
+SET SPI_SCLK
+SET SPI0_CS
+CLR SPI0_MOSI
+CLR SPI0_MISO
+MOV r1, 16
+delay 1000
+SUB CUR_SAMPLE, CUR_SAMPLE, 1
+//QBNE LOOP, r21, 0
+//JMP EXIT

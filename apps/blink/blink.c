@@ -52,7 +52,7 @@ int main (void)
 	mux("lcd_data6",0x0d);
 
 	/* Open PRU Interrupt */
-	ret = prussdrv_open(PRU_EVTOUT_0);
+	ret = prussdrv_open(PRU_EVTOUT_1);
 	if (ret)
 	{
 		printf("prussdrv_open open failed.\n");

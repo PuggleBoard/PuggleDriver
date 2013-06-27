@@ -447,24 +447,24 @@ int main (void) {
 	prussdrv_exec_program(PRU_NUM1, "./SPIAgent.bin");
 
 	// Transfer data on PRU0
-	prussdrv_exec_program(PRU_NUM0, "./blink.bin");
+	//prussdrv_exec_program(PRU_NUM0, "./blink.bin");
 	//prussdrv_exec_program(PRU_NUM0, "./DataXferAgent.bin");
 
 	prussdrv_pru_clear_event(PRU1_ARM_INTERRUPT);
-	prussdrv_pru_clear_event(PRU0_ARM_INTERRUPT);
+	//prussdrv_pru_clear_event(PRU0_ARM_INTERRUPT);
 
 	/*printf("Waiting for consumer to finish\n");
-	while(consumer_running) {
-		sleepms(250);
-	}*/
+	//while(consumer_running) {
+	//	sleepms(250);
+	//}*/
 	
 	// Wait until PRU1 has finished execution
 	prussdrv_pru_wait_event(PRU_EVTOUT_1);
 	printf("SPI Agent complete.\n");
 
 	// Wait until PRU0 has finished execution
-	prussdrv_pru_wait_event(PRU_EVTOUT_0);
-	printf("Data transfer complete.\n");
+	//prussdrv_pru_wait_event(PRU_EVTOUT_0);
+	//printf("Data transfer complete.\n");
 
 	//prussdrv_pru_clear_event(PRU0_ARM_INTERRUPT);
 	//printf("PRU0 completed transfer.\n");
