@@ -21,6 +21,7 @@
 
 #include "PRU_cape.hp"
 
+#define ADC
 #define CUR_OFFSET      r16
 #define RUN_FLAG        r17
 #define ADDR_PRURAM     r18
@@ -50,6 +51,9 @@ SET SPI_SCLK
 SET SPI0_CS
 CLR SPI0_MOSI
 CLR SPI0_MISO
+
+SET_CHANNEL:
+
 
 // Set loop count
 MOV r2, 32
