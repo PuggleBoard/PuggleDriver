@@ -141,11 +141,10 @@ QBGT XFER_LOOP, CUR_PRU1_PAGE, NUM_PAGES
 // Jump to XFER_LOOP if CUR_PRU1_PAGE < NUM_PAGES
 QBGT PAGE_START, CUR_DDR_PAGE, NUM_DDR_PAGES
 
-// Flip back to page 0
-JMP DDR_PAGE_START
+  // Flip back to page 0
+  JMP DDR_PAGE_START
 
 EXIT:
-// Tell the host program we are DONE
-MOV r31.b0, PRU1_ARM_INTERRUPT+16
-
-HALT
+  // Tell the host program we are DONE
+  MOV r31.b0, PRU0_ARM_INTERRUPT+16
+  HALT

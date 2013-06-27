@@ -112,7 +112,7 @@ int __prussdrv_memmap_init(void)
         break;
     case PRUSS_V2:
         {
-            printf("AM33XX\n");
+            //printf("AM33XX\n");
             prussdrv.pru0_dataram_phy_base = AM33XX_DATARAM0_PHYS_BASE;
             prussdrv.pru1_dataram_phy_base = AM33XX_DATARAM1_PHYS_BASE;
             prussdrv.intc_phy_base = AM33XX_INTC_PHYS_BASE;

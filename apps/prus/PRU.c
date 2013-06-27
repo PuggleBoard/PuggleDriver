@@ -84,12 +84,9 @@ void sleepms(int ms) {
 ads8331_data info;
 
 void deinit(ads8331_data *info) {
-	printf("Disabling PRUs.\n");
 	prussdrv_pru_disable(PRU_NUM0);
 	prussdrv_pru_disable(PRU_NUM1);
 	prussdrv_exit();
-
-	printf("Unmapping memory.\n");
 	munmap(info->ddr_memory, info->ddr_size);
 	close(info->mem_fd);
 	printf("Goodbye.\n");
@@ -232,14 +229,12 @@ int mux(char *name, int val) {
 
 int main (void) {
 
-	PRINTDEC("HEXADDR", UIO_PRUSS_DRAM_ADDR);
-	PRINTDEC("HEXSIZE", UIO_PRUSS_DRAM_SIZE);
-
+	//PRINTDEC("HEXADDR", UIO_PRUSS_DRAM_ADDR);
+	//PRINTDEC("HEXSIZE", UIO_PRUSS_DRAM_SIZE);
 	printf("Starting PuggleDriver.\n");
 
 	// Make sure PRU kernel module is running
 	system("modprobe uio_pruss");
-	printf("PRU kernel module initialized.\n");
 
 	unsigned int ret;
 	pthread_t tid;
@@ -254,7 +249,6 @@ int main (void) {
 
 	// Initialize the PRU
 	prussdrv_init();
-	printf("PRUs initialized.\n");
 
 	// Open PRU Interrupt
 	ret = prussdrv_open(PRU_EVTOUT_0);
@@ -269,27 +263,24 @@ int main (void) {
 		printf("Error: prussdrv_open open failed\n");
 		return (ret);
 	}
-	printf("PRU interrupts opened.\n");
 
-	// Get the interrupt initialized
+	// Initialize interrupts
 	prussdrv_pruintc_init(&pruss_intc_initdata);
-	printf("PRU interrupts initialized.\n");
 
+	// Initialize flags
 	signal(SIGQUIT, intHandler);
 	signal(SIGINT, intHandler);
-	printf("Flags initialized.\n");
 
+	// Create consumer thread
 	//pthread_create(&tid, NULL, &consumer, NULL);
 	//pthread_create(&tid, NULL, &rt_print_consumer, NULL);
-	printf("Consumer thread created.\n");
 
-	// Open device
+	// Open device for memory mapping
 	mem_fd = open("/dev/mem", O_RDWR);
 	if (mem_fd < 0) {
 		printf("Failed to open /dev/mem (%s)\n", strerror(errno));
 		return -1;
 	}
-	printf("Device opened.\n");
 
 	// Map the memory
 	ddrMem = mmap(0, DDR_RES_SIZE, PROT_WRITE |
@@ -304,7 +295,6 @@ int main (void) {
 		close(mem_fd);
 		return -1;
 	}
-	printf("Memory mapping complete.\n");
 
 	// Set ADC SCLK
 	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
@@ -450,44 +440,36 @@ int main (void) {
 	fclose(fp);
 	mux("gpmc_csn2",0x2e);
 
-	printf("GPIO initialized.\n");
-
 	// Locate PRU1 memory
 	prussdrv_map_prumem(PRUSS0_PRU1_DATARAM, &pruMem);
-	printf("Located PRU1 memory.\n");
 
 	// Generate SPI on PRU1
 	prussdrv_exec_program(PRU_NUM1, "./SPIAgent.bin");
-	printf("Executing PRU1.\n");
-
-	//printf("Executing Blink.\n");
-	//prussdrv_exec_program(PRU_NUM1, "./blink.bin");
 
 	// Transfer data on PRU0
-	prussdrv_exec_program(PRU_NUM0, "./DataXferAgent.bin");
-	printf("Executing PRU0.\n");
+	prussdrv_exec_program(PRU_NUM0, "./blink.bin");
+	//prussdrv_exec_program(PRU_NUM0, "./DataXferAgent.bin");
 
 	prussdrv_pru_clear_event(PRU1_ARM_INTERRUPT);
-	printf("PRU1 completed SPI generation.\n");
+	prussdrv_pru_clear_event(PRU0_ARM_INTERRUPT);
 
-	printf("Waiting for consumer to finish\n");
+	/*printf("Waiting for consumer to finish\n");
 	while(consumer_running) {
 		sleepms(250);
-	}
+	}*/
 	
 	// Wait until PRU1 has finished execution
-	printf("Waiting for PRU1 HALT command.\n");
 	prussdrv_pru_wait_event(PRU_EVTOUT_1);
+	printf("SPI Agent complete.\n");
 
 	// Wait until PRU0 has finished execution
-	printf("Waiting for PRU0 HALT command.\n");
 	prussdrv_pru_wait_event(PRU_EVTOUT_0);
+	printf("Data transfer complete.\n");
 
 	//prussdrv_pru_clear_event(PRU0_ARM_INTERRUPT);
 	//printf("PRU0 completed transfer.\n");
 
-	// Deinitialize everything
+	// Deinitialize
 	deinit(&info);
-	printf("Deinitialization complete.\n");
 	return(0);
 }
