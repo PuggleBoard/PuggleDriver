@@ -40,16 +40,40 @@
 
 START:
 
-// Set loop count
-MOV r1, 10
+// Enable OCP
+LBCO r0, CONST_PRUCFG, 4, 4
+CLR r0, r0, 4
+SBCO r0, CONST_PRUCFG, 4, 4
 
+// Initialize SPI busses
+CLR SPI_SCLK
+SET SPI1_CS
+CLR SPI1_MOSI
+CLR SPI1_MISO
+CLR SPI1_CNV
+
+// Set loop count
+MOV r1, 100000000
+
+// Start SPI
 LOOP:
-  // Start SCLK
-  CLR SPI_SCLK
+  // Enable SCLK
   SET SPI_SCLK
-  delay SCLK_FREQ
+
+  // Enable CS
+  CLR SPI1_CS
+
+  // Enable MOSI
+  SET SPI1_MOSI
+
+  // Enable MISO
+  SET SPI1_MISO
+
+  delay 2
   CLR SPI_SCLK
-  delay SCLK_FREQ
+  delay 1
+
+  // Keep running?
   SUB r1, r1, 1
   QBNE LOOP, r1, 0
   JMP EXIT
