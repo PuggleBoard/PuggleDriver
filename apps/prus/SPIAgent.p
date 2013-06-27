@@ -59,7 +59,7 @@ CLR SPI0_MOSI
 CLR SPI0_MISO
 
 // Set loop count
-MOV r1, 32
+MOV r1, 24
 MOV CUR_SAMPLE, 1000
 
 delay 1
