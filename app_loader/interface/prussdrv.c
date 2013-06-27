@@ -606,7 +606,7 @@ int prussdrv_exec_program(int prunum, char *filename)
     if (fPtr == NULL) {
         printf("File %s open failed\n", filename);
     } else {
-        printf("File %s open passed\n", filename);
+        //printf("File %s open passed\n", filename);
     }
     // Read file size
     fseek(fPtr, 0, SEEK_END);
