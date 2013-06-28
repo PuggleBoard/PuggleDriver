@@ -21,6 +21,8 @@
 
 #include "PRU_cape.hp"
 
+#define DAC_COUNT       r1
+#define ADC_COUNT       r2
 #define CHAN_NUM        r7
 #define DAC_CH1	        r8
 #define DAC_CH2        	r9
@@ -41,10 +43,6 @@
 #define ADDR_CUR_PAGE   r27
 #define ADDR_SHARED     r28
 
-// Set as number of cycles to delay, each cycle is 5ns with 50% duty cycle
-// 20 MHz
-#define SCLK_FREQ       5 
-
 START:
 
 // Enable OCP
@@ -52,22 +50,33 @@ LBCO r0, CONST_PRUCFG, 4, 4
 CLR r0, r0, 4
 SBCO r0, CONST_PRUCFG, 4, 4
 
-// Initialize SPI busses
+// Initialize SPI SCLK
 SET SPI_SCLK
+
+// Initialize DAC SPI busses
 SET SPI0_CS
 CLR SPI0_MOSI
 CLR SPI0_MISO
 
+// Initialize ADC SPI Buses
+SET SPI1_CS
+CLR SPI1_MOSI
+CLR SPI1_MISO
+CLR SPI1_CNV
+
 // Set loop count
-MOV r1, 24
+MOV DAC_COUNT, 24
+MOV ADC_COUNT, 16
 MOV CUR_SAMPLE, 1000
 MOV CHAN_NUM, 1
-
-delay 1
 
 // Set channel registers
 SET_CHANNEL:
 
+  // Enable CS
+  CLR SPI0_CS
+
+  // Configure DAC Channel Number
   QBEQ DAC_1, CHAN_NUM, 1
   QBEQ DAC_2, CHAN_NUM, 2 
   QBEQ DAC_3, CHAN_NUM, 3 
@@ -89,32 +98,29 @@ SET_CHANNEL:
 
 // Start SPI
 LOOP: 
-  // Enable CS
-  CLR SPI0_CS
+  // Configure MOSI
+  QBBS MOSI_HIGH, SPI_TX, DAC_COUNT
 
   // Enable SCLK
-  CLR SPI_SCLK
+  SET SPI_SCLK
 
-  // Enable MOSI
-  QBBS MOSI_HIGH, SPI_TX, r1
-  QBBC MOSI_LOW, SPI_TX, r1
+  // Enable MOSI LOW
+  CLR SPI0_MOSI
+  JMP MOSI_DONE
 
-  MOSI_LOW:
-    CLR SPI0_MOSI
-    JMP MOSI_DONE
-
+  // Enable MOSI HIGH
   MOSI_HIGH:
+    SET SPI_SCLK
     SET SPI0_MOSI
 
   MOSI_DONE:
 
-  delay 2
-  SET SPI_SCLK
   delay 1
 
+  // Enable SCLK
+  CLR SPI_SCLK
+
   // Keep running?
-  SUB r1, r1, 1
-  QBNE LOOP, r1, 0
   JMP RESET
 
 EXIT:
@@ -130,9 +136,10 @@ RESET:
   SET SPI0_CS
   CLR SPI0_MOSI
   CLR SPI0_MISO
-  MOV r1, 24
-  MOV DAC_CH1, 21845
-  MOV DAC_CH2, 65122
+  MOV DAC_COUNT, 24
+  MOV ADC_COUNT, 16
+  MOV DAC_CH1, 4294967295
+  MOV DAC_CH2, 23423
   MOV DAC_CH3, 10303
   MOV DAC_CH4, 12931
   SUB CUR_SAMPLE, CUR_SAMPLE, 1
