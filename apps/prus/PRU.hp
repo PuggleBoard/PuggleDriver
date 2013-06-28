@@ -128,7 +128,6 @@ lab:
 .endm
 
 .macro delay_s
-.mparam time_s,tempreg=r29
 	delay_ms time_s*1000, tempreg
 .endm
 
