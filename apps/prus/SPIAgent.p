@@ -65,7 +65,7 @@ SET SPI1_CNV
 // Set loop count
 MOV DAC_COUNT, 23
 MOV ADC_COUNT, 16
-MOV CUR_SAMPLE, 100000
+MOV CUR_SAMPLE, 65535
 MOV CHAN_NUM, 1
 MOV DAC_CH1, 0x31ffff
 
@@ -81,8 +81,7 @@ SET_CHANNEL:
 
   delay 20
 
-  // Enable CS for both DAC and ADC
-  //CLR SPI0_CS
+  // Enable CS for ADC
   CLR SPI1_CS
  
   // Configure DAC Channel Number
@@ -92,8 +91,8 @@ SET_CHANNEL:
   QBEQ DAC_4, CHAN_NUM, 4
 
   DAC_1:
+    SUB DAC_CH1, DAC_CH1, 1
     MOV SPI_TX, DAC_CH1
-    SUB SPI_TX, SPI_TX, 0x1
     JMP ADC_LOOP
   DAC_2:
     MOV SPI_TX, DAC_CH2
