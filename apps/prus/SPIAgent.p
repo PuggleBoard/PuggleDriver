@@ -70,9 +70,18 @@ MOV CHAN_NUM, 1
 
 // Set channel registers
 SET_CHANNEL:
+  // Enable CONVST
+  CLR SPI1_CNV
+
+  delay 10
+
+  // Disable CONVST
+  SET SPI1_CNV
+
+  delay 20
 
   // Enable CS for both DAC and ADC
-  CLR SPI0_CS
+  //CLR SPI0_CS
   CLR SPI1_CS
 
   // Configure DAC Channel Number
@@ -83,17 +92,37 @@ SET_CHANNEL:
 
   DAC_1:
     MOV SPI_TX, DAC_CH1
-    JMP DAC_LOOP
+    JMP ADC_LOOP
   DAC_2:
     MOV SPI_TX, DAC_CH2
-    JMP DAC_LOOP
+    JMP ADC_LOOP
   DAC_3:
     MOV SPI_TX, DAC_CH3
-    JMP DAC_LOOP
+    JMP ADC_LOOP
   DAC_4:
     MOV SPI_TX, DAC_CH4
     MOV CHAN_NUM, 0
-    JMP DAC_LOOP
+    JMP ADC_LOOP
+
+// Start ADC SPI
+ADC_LOOP:
+  // Enable SCLK
+  SET SPI_SCLK
+
+  // Disable SCLK
+  CLR SPI_SCLK
+
+  delay 1
+
+  SET SPI_RX.w0, R31.b0, ADC_COUNT
+
+  // Keep running?
+  SUB ADC_COUNT, ADC_COUNT, 1
+  QBNE ADC_LOOP, ADC_COUNT, 2
+  SET SPI1_CS
+  delay 1
+  CLR SPI0_CS
+  //JMP RESET
 
 // Start DAC SPI
 DAC_LOOP: 
@@ -122,23 +151,6 @@ DAC_LOOP:
   // Keep running?
   SUB DAC_COUNT, DAC_COUNT, 1
   QBNE DAC_LOOP, DAC_COUNT, 0 
-  //JMP RESET
-
-// Start ADC SPI
-ADC_LOOP:
-
-  // Enable CONVST
-  CLR SPI1_CNV
-
-  // Enable SCLK
-  SET SPI_SCLK
-
-  // Disable SCLK
-  CLR SPI_SCLK
-
-  // Keep running?
-  SUB ADC_COUNT, ADC_COUNT, 1
-  QBNE ADC_LOOP, ADC_COUNT, 0
   JMP RESET
 
 // Reset pin states

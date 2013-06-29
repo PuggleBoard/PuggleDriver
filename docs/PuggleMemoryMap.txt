@@ -1,1 +1,0 @@
-Size			Start AddressPRU0 IRAM		PRU1 IRAM		PRU DRAM		User Space DDR		
