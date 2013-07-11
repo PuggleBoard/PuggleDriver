@@ -17,7 +17,7 @@
 //
 
 .origin 0
-.entrypoint START
+.entrypoint INIT
 
 #include "PRU_cape.hp"
 
@@ -32,6 +32,7 @@
 #define DAC_CH2        	r9
 #define DAC_CH3	        r10
 #define DAC_CH4	        r11
+#define ADC_INIT        r12
 
 #define CUR_OFFSET      r16
 #define RUN_FLAG        r17
@@ -47,7 +48,8 @@
 #define ADDR_CUR_PAGE   r27
 #define ADDR_SHARED     r28
 
-START:
+// Initialize!
+INIT:
 
 // Configure DAC channels
 MOV DAC_CH1, 0
@@ -58,6 +60,11 @@ MOV DAC_CH1.b2, 0x31
 MOV DAC_CH2.b2, 0x32
 MOV DAC_CH3.b2, 0x34
 MOV DAC_CH4.b2, 0x38
+
+MOV ADC_CH1, 0
+MOV ADC_CH2, 0
+MOV ADC_CH3, 0
+MOV ADC_CH4, 0
 
 // Enable OCP
 LBCO r0, CONST_PRUCFG, 4, 4
@@ -82,11 +89,60 @@ SET SPI1_CNV
 
 // Set loop count
 MOV DAC_COUNT, 23
-MOV ADC_COUNT, 16
+MOV ADC_COUNT, 15
 MOV CUR_SAMPLE, 65535
 MOV CHAN_NUM, 1
+MOV ADC_INIT, 0xe7ff
 
-// Set channel registers
+CLR SPI1_CS
+
+// Run ADC SPI once
+ADC_INIT_LOOP:
+  // Configure ADC MOSI
+  QBBS ADC_MOSI_HIGH, ADC_INIT, ADC_COUNT
+
+  // Enable SCLK
+  SET SPI_SCLK
+
+  // Enable MOSI LOW
+  CLR SPI1_MOSI
+  JMP ADC_MOSI_DONE
+
+  // Enable MOSI HIGH
+  ADC_MOSI_HIGH:
+    SET SPI_SCLK
+    SET SPI1_MOSI
+    delayOne
+
+  ADC_MOSI_DONE:
+  delayTwo
+  CLR SPI_SCLK
+  delayOne
+
+  // Keep running?
+  SUB ADC_COUNT, ADC_COUNT, 1
+  QBNE ADC_INIT_LOOP, ADC_COUNT, 0
+  
+  delayOne
+  SET SPI_SCLK
+  QBBS ADC_BELOW, ADC_INIT, ADC_COUNT
+
+  CLR SPI1_MOSI
+  CLR SPI_SCLK
+  delayThree
+  JMP RESET
+  
+  ADC_BELOW:
+    SET SPI1_MOSI
+    delayTwo
+    CLR SPI_SCLK
+    delayFour
+
+  SET SPI_SCLK
+  SET SPI1_CS
+  JMP RESET
+
+// Start acquisition!
 SET_CHANNEL:
   // Enable CONVST
   CLR SPI1_CNV
@@ -109,7 +165,6 @@ SET_CHANNEL:
   QBEQ DAC_4, CHAN_NUM, 4
 
   DAC_1:
-    //SUB DAC_CH1, DAC_CH1, 1
     MOV SPI_TX, DAC_CH1
     MOV SPI_RX, ADC_CH1
     JMP ADC_LOOP
@@ -129,9 +184,6 @@ SET_CHANNEL:
 
 // Start ADC SPI
 ADC_LOOP:
-  // Enable SCLK
-  //SET SPI_SCLK
-
   // Disable SCLK
   CLR SPI_SCLK
 
@@ -217,12 +269,16 @@ RESET:
   SET SPI1_CNV
 
   // Counters
-  MOV ADC_COUNT, 16
+  MOV ADC_COUNT, 15
   MOV DAC_COUNT, 23
   MOV DAC_CH1.w0, ADC_CH1.w0
   MOV DAC_CH2.w0, ADC_CH2.w0
   MOV DAC_CH3.w0, ADC_CH3.w0
   MOV DAC_CH4.w0, ADC_CH4.w0
+  MOV ADC_CH1.w2, 0x1000
+  MOV ADC_CH2.w2, 0x2000
+  MOV ADC_CH3.w2, 0x3000
+  MOV ADC_CH4.w2, 0x4000
 
   SUB CUR_SAMPLE, CUR_SAMPLE, 1
   ADD CHAN_NUM, CHAN_NUM, 1
