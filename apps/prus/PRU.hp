@@ -26,6 +26,7 @@
 #define PRU1_ARM_INTERRUPT      			20
 #define ARM_PRU0_INTERRUPT      			21
 #define ARM_PRU1_INTERRUPT      			22
+
 #define CONST_PRUSSINTC 							C0
 #define CONST_PRUCFG	     						C4
 #define CONST_PRU_DATA0        				C24
@@ -101,14 +102,6 @@
 	SBBO src,dst,#0x00,1
 .endm
 
-.macro SLEEPUS
-.mparam us,inst,lab
-	MOV r7, (us*100)-1-inst
-lab:
-	SUB r7, r7, 1
-	QBNE lab, r7, 0
-.endm
-
 .macro delay
 .mparam loops,tempreg=r29
 	MOV tempreg, loops
@@ -131,4 +124,13 @@ lab:
 	delay_ms time_s*1000, tempreg
 .endm
 
-#endif
+// Global Registers
+. struct gReg
+	.u32 regPtr
+	.u32 regVal
+.ends
+
+// Global Register Assignment
+.assign gReg, r3, *, global
+
+#endif // PRU.hp
