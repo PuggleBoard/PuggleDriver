@@ -308,7 +308,7 @@ int main (void) {
 		printf("Cannot open GPIO direction file 76.\n");
 		return(1);
 	}
-	fprintf(fp,"out");
+	fprintf(fp,"in");
 	fclose(fp);
 	mux("lcd_data6",0x0d);
 
