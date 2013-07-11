@@ -23,7 +23,11 @@
 
 #define DAC_COUNT       r1
 #define ADC_COUNT       r2
-#define CHAN_NUM        r7
+#define CHAN_NUM        r3
+#define ADC_CH1         r4
+#define ADC_CH2         r5
+#define ADC_CH3         r6
+#define ADC_CH4         r7
 #define DAC_CH1	        r8
 #define DAC_CH2        	r9
 #define DAC_CH3	        r10
@@ -45,10 +49,24 @@
 
 START:
 
+// Configure DAC channels
+MOV DAC_CH1, 0
+MOV DAC_CH2, 0
+MOV DAC_CH3, 0
+MOV DAC_CH4, 0
+MOV DAC_CH1.b2, 0x31
+MOV DAC_CH2.b2, 0x32
+MOV DAC_CH3.b2, 0x34
+MOV DAC_CH4.b2, 0x38
+
 // Enable OCP
 LBCO r0, CONST_PRUCFG, 4, 4
 CLR r0, r0, 4
 SBCO r0, CONST_PRUCFG, 4, 4
+
+// Configure pointer register for PRU1 by setting c28_pointer[15:0]
+// 0x00012000 (PRU Shared RAM)
+MOV  r0, 0x00012000
 
 // Initialize SPI SCLK
 SET SPI_SCLK
@@ -67,19 +85,19 @@ MOV DAC_COUNT, 23
 MOV ADC_COUNT, 16
 MOV CUR_SAMPLE, 65535
 MOV CHAN_NUM, 1
-MOV DAC_CH1, 0x31ffff
 
 // Set channel registers
 SET_CHANNEL:
   // Enable CONVST
   CLR SPI1_CNV
 
-  delay 10
+  delayTen
 
   // Disable CONVST
   SET SPI1_CNV
 
-  delay 20
+  delayTen
+  delayTen
 
   // Enable CS for ADC
   CLR SPI1_CS
@@ -91,38 +109,45 @@ SET_CHANNEL:
   QBEQ DAC_4, CHAN_NUM, 4
 
   DAC_1:
-    SUB DAC_CH1, DAC_CH1, 1
+    //SUB DAC_CH1, DAC_CH1, 1
     MOV SPI_TX, DAC_CH1
+    MOV SPI_RX, ADC_CH1
     JMP ADC_LOOP
   DAC_2:
     MOV SPI_TX, DAC_CH2
+    MOV SPI_RX, ADC_CH2
     JMP ADC_LOOP
   DAC_3:
     MOV SPI_TX, DAC_CH3
+    MOV SPI_RX, ADC_CH3
     JMP ADC_LOOP
   DAC_4:
     MOV SPI_TX, DAC_CH4
+    MOV SPI_RX, ADC_CH4
     MOV CHAN_NUM, 0
     JMP ADC_LOOP
 
 // Start ADC SPI
 ADC_LOOP:
   // Enable SCLK
-  SET SPI_SCLK
+  //SET SPI_SCLK
 
   // Disable SCLK
   CLR SPI_SCLK
 
-  delay 1
+  delayThree
 
   SET SPI_RX.w0, R31.b0, ADC_COUNT
 
+  SET SPI_SCLK
+
+  delayTwo
+
   // Keep running?
   SUB ADC_COUNT, ADC_COUNT, 1
-  QBNE ADC_LOOP, ADC_COUNT, 2
+  QBNE ADC_LOOP, ADC_COUNT, 0
   SET SPI1_CS
   SET SPI_SCLK
-  delay 10
   CLR SPI0_CS
 
 // Start DAC SPI
@@ -144,10 +169,12 @@ DAC_LOOP:
 
   MOSI_DONE:
 
-  delay 1
+  delayTwo
 
   // Enable SCLK
   CLR SPI_SCLK
+
+  delayOne
 
   // Keep running?
   SUB DAC_COUNT, DAC_COUNT, 1
@@ -170,7 +197,7 @@ DAC_LOOP:
 
   MOSI_DONE_FINAL:
 
-  delay 1
+  delayTwo
 
   // Enable SCLK
   CLR SPI_SCLK
@@ -192,17 +219,17 @@ RESET:
   // Counters
   MOV ADC_COUNT, 16
   MOV DAC_COUNT, 23
-  MOV DAC_CH1, 0x310000
-  MOV DAC_CH2, 0x32ffff
-  MOV DAC_CH3, 0x34f0f0
-  MOV DAC_CH4, 0x3800ff
+  MOV DAC_CH1.w0, ADC_CH1.w0
+  MOV DAC_CH2.w0, ADC_CH2.w0
+  MOV DAC_CH3.w0, ADC_CH3.w0
+  MOV DAC_CH4.w0, ADC_CH4.w0
 
   SUB CUR_SAMPLE, CUR_SAMPLE, 1
   ADD CHAN_NUM, CHAN_NUM, 1
   QBEQ FS_DELAY, CHAN_NUM, 4
 
   FS_DELAY:
-    delay 4000
+    delay 1000
     QBNE SET_CHANNEL, CUR_SAMPLE, 0
     JMP EXIT
 

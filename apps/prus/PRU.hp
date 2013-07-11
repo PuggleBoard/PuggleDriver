@@ -102,11 +102,54 @@
 	SBBO src,dst,#0x00,1
 .endm
 
+.macro delayOne
+	MOV r29, 0
+.endm
+
+.macro delayTwo
+	MOV r29, 0
+	MOV r29, 0
+.endm
+
+.macro delayThree
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+.endm
+
+.macro delayFour
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+.endm
+
+.macro delayFive
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+.endm
+
+.macro delayTen
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+.endm
+
 .macro delay
 .mparam loops,tempreg=r29
 	MOV tempreg, loops
 	LOOP:
-		SUB tempreg, tempreg, 1
+	SUB tempreg, tempreg, 1
 		QBNE LOOP, tempreg, 0
 .endm
 
@@ -131,6 +174,6 @@
 .ends
 
 // Global Register Assignment
-.assign gReg, r3, *, global
+.assign gReg, r12, *, global
 
 #endif // PRU.hp
