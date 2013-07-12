@@ -6,7 +6,9 @@
 //
 //	 -------------------------------------------------------------------------
 //
-//	Written in 2013 by: Yogi Patel <yapatel@gatech.edu>
+//	Created in 2013 by: Yogi Patel <yapatel@gatech.edu>
+//  Written by: Yogi Patel <yapatel@gatech.edu>
+//              Jon Newman <jnewman6@gatech.edu>
 //
 //	To the extent possible under law, the author(s) have dedicated all copyright
 //	and related and neighboring rights to this software to the public domain
@@ -34,6 +36,7 @@
 #define DAC_CH4	        r11
 #define ADC_INIT        r12
 #define ADC_WRITE_COUNT r13
+#define INIT_CYCLES     r14
 
 #define CUR_OFFSET      r16
 #define RUN_FLAG        r17
@@ -65,10 +68,10 @@ MOV ADC_CH1, 0
 MOV ADC_CH2, 0
 MOV ADC_CH3, 0
 MOV ADC_CH4, 0
-MOV ADC_CH1.w2, 0x1000
-MOV ADC_CH2.w2, 0x2000
-MOV ADC_CH3.w2, 0x3000
-MOV ADC_CH4.w2, 0x4000
+MOV ADC_CH1.w2, 0x0000
+MOV ADC_CH2.w2, 0x1000
+MOV ADC_CH3.w2, 0x2000
+MOV ADC_CH4.w2, 0x3000
 
 // Enable OCP
 LBCO r0, CONST_PRUCFG, 4, 4
@@ -96,8 +99,11 @@ MOV ADC_COUNT, 15
 MOV ADC_WRITE_COUNT, 31
 MOV DAC_COUNT, 23
 MOV CUR_SAMPLE, 65535
+
+// Set initialization parameters
 MOV CHAN_NUM, 1
 MOV ADC_INIT, 0xe7ff
+MOV INIT_CYCLES, 2
 
 CLR SPI1_CS
 
@@ -119,10 +125,11 @@ ADC_INIT_LOOP:
     SET SPI1_MOSI
     delayOne
 
+  // Register data on chip 
   ADC_INIT_MOSI_DONE:
-  delayTwo
-  CLR SPI_SCLK
-  delayOne
+    delayTwo
+    CLR SPI_SCLK
+    delayOne
 
   // Keep running?
   SUB ADC_COUNT, ADC_COUNT, 1
@@ -135,7 +142,7 @@ ADC_INIT_LOOP:
   CLR SPI1_MOSI
   CLR SPI_SCLK
   delayThree
-  JMP OUT
+  JMP INIT_OUT
   
   ADC_INIT_FINAL:
     SET SPI1_MOSI
@@ -143,51 +150,71 @@ ADC_INIT_LOOP:
     CLR SPI_SCLK
     delayFour
 
-  OUT:
+  INIT_OUT:
     SET SPI_SCLK
     delayTwo
     SET SPI1_CS
     MOV ADC_COUNT, 15
     MOV DAC_COUNT, 23
+    SUB INIT_CYCLES, INIT_CYCLES, 1
+    QBEQ SET_CHANNEL, INIT_CYCLES, 0
+
+    // If we are one cycle thru init, time to set
+    // the first channel
+    delayTen
+    MOV ADC_INIT, ADC_CH1.w2
+    CLR SPI1_CS
+    JMP ADC_INIT_LOOP
 
 // Start acquisition!
 SET_CHANNEL:
-  // Enable CONVST
+  
+  // Trigger conversion using CONVST
   CLR SPI1_CNV
   delayTen
-
+  
   // Disable CONVST
   SET SPI1_CNV
+
+  // ~1600 ns delay for the conversion
+  delayFourty
+  delayFourty
+  delayFourty
+  delayFourty
+  delayFourty
+  delayFourty
+  delayFourty
+  delayTwenty
   delayTen
-  delayTen
+  delayFive
 
   // Enable CS for ADC
   CLR SPI1_CS
  
   // Configure DAC Channel Number
-  QBEQ DAC_1, CHAN_NUM, 1
-  QBEQ DAC_2, CHAN_NUM, 2 
-  QBEQ DAC_3, CHAN_NUM, 3 
-  QBEQ DAC_4, CHAN_NUM, 4
+  QBEQ CH_1, CHAN_NUM, 1
+  QBEQ CH_2, CHAN_NUM, 2 
+  QBEQ CH_3, CHAN_NUM, 3 
+  QBEQ CH_4, CHAN_NUM, 4
 
-  DAC_1:
+  CH_1:
     MOV SPI_TX, DAC_CH1
-    MOV SPI_RX, ADC_CH1
-    SET SPI_SCLK
-    JMP ADC_LOOP
-  DAC_2:
-    MOV SPI_TX, DAC_CH2
     MOV SPI_RX, ADC_CH2
     SET SPI_SCLK
     JMP ADC_LOOP
-  DAC_3:
-    MOV SPI_TX, DAC_CH3
+  CH_2:
+    MOV SPI_TX, DAC_CH2
     MOV SPI_RX, ADC_CH3
     SET SPI_SCLK
     JMP ADC_LOOP
-  DAC_4:
-    MOV SPI_TX, DAC_CH4
+  CH_3:
+    MOV SPI_TX, DAC_CH3
     MOV SPI_RX, ADC_CH4
+    SET SPI_SCLK
+    JMP ADC_LOOP
+  CH_4:
+    MOV SPI_TX, DAC_CH4
+    MOV SPI_RX, ADC_CH1
     MOV CHAN_NUM, 0
     SET SPI_SCLK
     JMP ADC_LOOP
@@ -324,7 +351,7 @@ RESET:
   QBEQ FS_DELAY, CHAN_NUM, 4
 
   FS_DELAY:
-    delay 1000
+    //delay 500
     QBNE SET_CHANNEL, CUR_SAMPLE, 0
     JMP EXIT
 

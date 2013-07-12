@@ -6,7 +6,9 @@
 //
 //	 -------------------------------------------------------------------------
 //
-//	Written in 2013 by: Yogi Patel <yapatel@gatech.edu>
+//	Created in 2013 by: Yogi Patel <yapatel@gatech.edu>
+//  Written by: Yogi Patel <yapatel@gatech.edu>
+//  						Jon Newman <jnewman6@gatech.edu>
 //
 //	To the extent possible under law, the author(s) have dedicated all copyright
 //	and related and neighboring rights to this software to the public domain
@@ -133,6 +135,72 @@
 .endm
 
 .macro delayTen
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+.endm
+
+.macro delayTwenty
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+.endm
+
+.macro delayFourty
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
 	MOV r29, 0
 	MOV r29, 0
 	MOV r29, 0
