@@ -228,10 +228,11 @@ ADC_LOOP:
 
   ADC_MOSI_HIGH:
     SET SPI1_MOSI
+    delayOne
 
   ADC_MOSI_DONE:
-    CLR SPI_SCLK
-
+    CLR SPI_SCLK 
+   
   ///////////// ADC read bit (YOGI, SHOULDNT THIS POINT TO R31 BIT 0 INSTEAD OF ADC_RX??)////////////
   QBBS ADC_MISO_HIGH, ADC_RX.b0.t0
 
@@ -240,6 +241,7 @@ ADC_LOOP:
 
   ADC_MISO_HIGH:
     SET ADC_RX, ADC_COUNT
+    delayOne
 
   ADC_MISO_DONE:
     // Keep running?
@@ -256,8 +258,8 @@ ADC_LOOP:
   JMP ADC_FINAL_MOSI_DONE
   
   ADC_FINAL_MOSI_HIGH:
-    SET SPI_SCLK
     SET SPI1_MOSI
+    delayOne
   
   ADC_FINAL_MOSI_DONE:
     CLR SPI_SCLK
@@ -270,6 +272,7 @@ ADC_LOOP:
 
   ADC_FINAL_MISO_HIGH:
     SET ADC_RX, ADC_COUNT
+    delayOne
 
   ADC_FINAL_MISO_DONE:
     delayTwo
