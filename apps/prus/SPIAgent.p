@@ -74,9 +74,9 @@ MOV ADC_CH3.w0, 0x2000
 MOV ADC_CH4.w0, 0x3000
 
 // Enable OCP
-LBCO r0, CONST_PRUCFG, 4, 4
-CLR r0, r0, 4
-SBCO r0, CONST_PRUCFG, 4, 4
+LBCO  r0, CONST_PRUCFG, 4, 4
+CLR   r0, r0, 4
+SBCO  r0, CONST_PRUCFG, 4, 4
 
 // Configure pointer register for PRU0 by setting c28_pointer[15:0]
 // 0x00012000 (PRU Shared RAM)
@@ -92,6 +92,9 @@ ST32  r0, r1
 
 // Load values from external DDR memory into registers
 LBCO  r0, CONST_DDR, 0, 12
+
+// Store values from read from DDR memory into PRU shared RAM
+SBCO  ro, CONST_PRUSHAREDRAM, 0, 12
 
 // Initialize SPI SCLK
 SET SPI_SCLK
@@ -244,7 +247,6 @@ ADC_LOOP:
   ADC_MOSI_DONE:
     CLR SPI_SCLK 
    
-  ///////////// ADC read bit (YOGI, SHOULDNT THIS POINT TO R31 BIT 0 INSTEAD OF ADC_RX??)////////////
   QBBS ADC_MISO_HIGH, ADC_RX.b0.t0
 
   CLR ADC_RX, ADC_COUNT
