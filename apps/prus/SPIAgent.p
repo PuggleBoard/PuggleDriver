@@ -46,7 +46,7 @@
 #define CUR_PAGE        r21
 #define DAC_TX          r22
 #define ADC_TX          r23
-#define ADC_RX          r24
+#define ADC_RX          r31
 #define SPI_CUR_BIT     r25
 #define PRU1_CUR_PAGE   r26
 #define ADDR_CUR_PAGE   r27
@@ -78,9 +78,20 @@ LBCO r0, CONST_PRUCFG, 4, 4
 CLR r0, r0, 4
 SBCO r0, CONST_PRUCFG, 4, 4
 
-// Configure pointer register for PRU1 by setting c28_pointer[15:0]
+// Configure pointer register for PRU0 by setting c28_pointer[15:0]
 // 0x00012000 (PRU Shared RAM)
-MOV  r0, 0x00012000
+MOV   r0, 0x00012000
+MOV   r1, CTPPR_0
+ST32  r0, r1
+
+// Configure pointer register for PRU0 by setting c31_pointer[15:0]
+// 0x80001000 (DDR memory)
+MOV   r0, 0x00100000
+MOV   r1, CTPPR_1
+ST32  r0, r1
+
+// Load values from external DDR memory into registers
+LBCO  r0, CONST_DDR, 0, 12
 
 // Initialize SPI SCLK
 SET SPI_SCLK
