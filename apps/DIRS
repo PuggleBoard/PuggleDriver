@@ -1,12 +1,15 @@
 APP_DIRS += prus
 APP_DIRS += blink
+APP_DIRS += ddr_test
 
 ASSEM_FILES :=
 ASSEM_FILES += prus/SPIAgent.p
 ASSEM_FILES += prus/DataXferAgent.p
 ASSEM_FILES += blink/blink.p
+ASSEM_FILES += ddr_test/ddr_access.p
 
 BIN_FILES :=
 BIN_FILES += prus/SPIAgent.p
 BIN_FILES += prus/DataXferAgent.p
 BIN_FILES += blink/blink.p
+BIN_FILES += ddr_test/ddr_access.p

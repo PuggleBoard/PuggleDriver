@@ -74,16 +74,55 @@ typedef struct {
 	pru_params* pru_params;
 	volatile ddr_params* ddr_params;
 	int mem_fd;
-} ads8331_data;
+} data;
 
 void sleepms(int ms) {
-	nanosleep((struct timespec[]) {
-			{0, ms*100000}}, NULL);
+	nanosleep((struct timespec[]){{0, ms*100000}}, NULL);
 }
 
-ads8331_data info;
+static uint32_t read_uint32_hex_from_file(const char *file) {
+	size_t len = 0;
+	ssize_t bytes_read;
+	char *line;
+	uint32_t value = 0;
+	FILE *f = fopen(file, "r");
+	
+	if(f) {
+		bytes_read = getline(&line, &len, f);
+		if (bytes_read > 0) {
+			value = strtoul(line, NULL, 0);
+		}
+	}
 
-void deinit(ads8331_data *info) {
+	if(f) {
+		fclose(f);
+	}
+
+	if(line) {
+		free(line);
+	}
+
+	return value;
+}
+
+static int load_pruss_dram_info(data *info) {
+	info->ddr_size = read_uint32_hex_from_file(UIO_PRUSS_DRAM_SIZE);
+	info->ddr_base_location = read_uint32_hex_from_file(UIO_PRUSS_DRAM_ADDR);
+	return 0;
+}
+
+void check(data *info) {
+	int i = 0;
+	uint32_t *ddr = info->ddr_memory;
+	for (i = 0; i < 10; i++) {
+		printf("%i: 0x%X\n", i, ddr[i]);
+	}
+	printf("\n");
+}
+
+data info;
+
+void deinit(data *info) {
 	prussdrv_pru_disable(PRU_NUM0);
 	prussdrv_pru_disable(PRU_NUM1);
 	prussdrv_exit();
@@ -92,8 +131,7 @@ void deinit(ads8331_data *info) {
 	printf("Goodbye.\n");
 }
 
-void intHandler(int dummy) {
-	// Set the run flag to 0
+void intHandler(int value) {
 	info.pru_params->run_flag = 0;
 }
 
@@ -229,8 +267,8 @@ int mux(char *name, int val) {
 
 int main (void) {
 
-	//PRINTDEC("HEXADDR", UIO_PRUSS_DRAM_ADDR);
-	//PRINTDEC("HEXSIZE", UIO_PRUSS_DRAM_SIZE);
+	PRINTDEC("HEXADDR", UIO_PRUSS_DRAM_ADDR);
+	PRINTDEC("HEXSIZE", UIO_PRUSS_DRAM_SIZE);
 	printf("Starting PuggleDriver.\n");
 
 	// Make sure PRU kernel module is running
