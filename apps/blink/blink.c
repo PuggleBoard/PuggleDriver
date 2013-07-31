@@ -13,7 +13,7 @@
 #include "prussdrv.h"
 #include <pruss_intc_mapping.h>
 
-#define PRU_NUM 	1
+#define PRU_NUM 	0
 #define AM33XX
 
 int mux(char *name, int val) {
@@ -65,12 +65,12 @@ int main (void)
     printf("Executing example.\n");
     prussdrv_exec_program (PRU_NUM, "./blink.bin");
     
-    /* Wait until PRU1 has finished execution */
+    /* Wait until PRU0 has finished execution */
     printf("Waiting for HALT command.\n");
     prussdrv_pru_wait_event(PRU_EVTOUT_1);
 
-    printf("PRU1 completed transfer.\n");
-    prussdrv_pru_clear_event(PRU1_ARM_INTERRUPT);
+    printf("PRU0 completed transfer.\n");
+    prussdrv_pru_clear_event(PRU0_ARM_INTERRUPT);
 
     /* Disable PRU and close memory mapping*/
     prussdrv_pru_disable(PRU_NUM);
