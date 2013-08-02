@@ -67,7 +67,7 @@
 // SPI1 = ADC
 #define SPI1_CS     									R30.t5
 #define SPI1_MOSI   									R30.t9
-#define SPI1_MISO   									R31.t7
+//#define SPI1_MISO   									R31.t7
 #define SPI1_CNV   										R30.t8
 
 // Useful defines
