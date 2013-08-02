@@ -38,13 +38,14 @@
 #define UIO_PRUSS_SYSFS_BASE							"/sys/class/uio/uio0/maps/map1"
 #define UIO_PRUSS_DRAM_SIZE			    			UIO_PRUSS_SYSFS_BASE "/size"
 #define UIO_PRUSS_DRAM_ADDR			    			UIO_PRUSS_SYSFS_BASE "/addr"
-#define PRU_PAGE_SIZE 										2048
+#define PRU_PAGE_SIZE 										4096
 #define ALIGN_TO_PAGE_SIZE(x, pagesize)  	((x)-((x)%pagesize))
 
-#define DDR_BASEADDR 											0x00080000
+#define DDR_BASEADDR 											0x80000000
 #define DDR_RESERVED 											0x00008000
-#define DDR_RES_SIZE 											0x00008000
-#define DDR_SHIFT													0x00080000
+#define DDR_RES_SIZE 											0x0000FFFF
+#define DDR_SHIFT													0x00001000
+#define DDR_OFFSET												4096
 
 #define PRINTDEC(str,addr)								printf("%s: %d\n",str,addr);
 #define PRINTHEX(str,addr)								printf("%s: 0x%08lX\n",str,(long unsigned int)addr);
@@ -86,7 +87,7 @@ static uint32_t read_uint32_hex_from_file(const char *file) {
 	char *line;
 	uint32_t value = 0;
 	FILE *f = fopen(file, "r");
-	
+
 	if(f) {
 		bytes_read = getline(&line, &len, f);
 		if (bytes_read > 0) {
@@ -137,7 +138,7 @@ void intHandler(int value) {
 
 int consumer_running = 0;
 
-void* rt_print_consumer(void *arg) {
+/*void* rt_print_consumer(void *arg) {
 	consumer_running = 1;
 	uint32_t last_page = 0;
 	uint8_t *ddr = info.ddr_memory;
@@ -159,9 +160,9 @@ void* rt_print_consumer(void *arg) {
 		fflush(stdout);
 	}
 	consumer_running = 0;
-}
+}*/
 
-void* consumer(void *arg) {
+/*void* consumer(void *arg) {
 	consumer_running = 1;
 	uint8_t *ddr = info.ddr_memory;
 	uint8_t *buffer;
@@ -253,7 +254,7 @@ void* consumer(void *arg) {
 	printf("Exiting consumer thread\n");
 	consumer_running = 0;
 	return NULL;
-}
+}*/
 
 int mux(char *name, int val) {
 	char cmd[1024];
@@ -267,8 +268,8 @@ int mux(char *name, int val) {
 
 int main (void) {
 
-	PRINTDEC("HEXADDR", UIO_PRUSS_DRAM_ADDR);
-	PRINTDEC("HEXSIZE", UIO_PRUSS_DRAM_SIZE);
+	//PRINTDEC("HEXADDR", UIO_PRUSS_DRAM_ADDR);
+	//PRINTDEC("HEXSIZE", UIO_PRUSS_DRAM_SIZE);
 	printf("Starting PuggleDriver.\n");
 
 	// Make sure PRU kernel module is running
@@ -276,7 +277,6 @@ int main (void) {
 
 	unsigned int ret;
 	pthread_t tid;
-	// struct pru_data	pru;
 	static void *ddrMem = 0;
 	static void *pruMem = 0;
 	static FILE *fp = 0;
@@ -321,9 +321,7 @@ int main (void) {
 	}
 
 	// Map the memory
-	ddrMem = mmap(0, DDR_RES_SIZE, PROT_WRITE |
-			PROT_READ, MAP_SHARED, mem_fd, DDR_RESERVED);
-
+	ddrMem = mmap(0, DDR_RES_SIZE, PROT_WRITE | PROT_READ, MAP_SHARED, mem_fd, DDR_OFFSET);
 	if(ddrMem == MAP_FAILED) {
 		handle_error("mmap");
 	}
@@ -478,16 +476,15 @@ int main (void) {
 	fclose(fp);
 	mux("gpmc_csn2",0x2e);
 
-	// Locate PRU1 memory
-	prussdrv_map_prumem(PRUSS0_PRU1_DATARAM, &pruMem);
+	// Locate PRU Shared Memory
+	prussdrv_map_prumem(PRUSS0_SHARED_DATARAM, &pruMem);
 
-	// Generate SPI on PRU1
+	// Generate SPI on PRU1 and Transfer data
+	// from PRU Shared space to User Space on PRU0
 	prussdrv_exec_program(PRU_NUM1, "./SPIAgent.bin");
-
-	// Transfer data on PRU0
 	prussdrv_exec_program(PRU_NUM0, "./blink.bin");
-	//prussdrv_exec_program(PRU_NUM0, "./DataXferAgent.bin");
 
+	// Clear PRU interrupts
 	prussdrv_pru_clear_event(PRU1_ARM_INTERRUPT);
 	prussdrv_pru_clear_event(PRU0_ARM_INTERRUPT);
 
@@ -495,9 +492,10 @@ int main (void) {
 	while(consumer_running) {
 		sleepms(250);
 	}
-	
+
 	// Wait until PRU1 has finished execution
 	prussdrv_pru_wait_event(PRU_EVTOUT_1);
+	prussdrv_pru_clear_event(PRU1_ARM_INTERRUPT);
 	printf("SPI Agent complete.\n");
 
 	// Wait until PRU0 has finished execution
