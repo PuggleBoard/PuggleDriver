@@ -38,11 +38,23 @@
 #define TOTAL_PAGES_WRITTEN r28
 #define XFER_CHUNK_SIZE     32    // Transfer 32 bytes at a time
 
+#define nums  0xbabe7175
+
 START:
 // Enable OCP
 LBCO  r0, CONST_PRUCFG, 4, 4
 CLR   r0, r0, 4
 SBCO  r0, CONST_PRUCFG, 4, 4
+
+MOV r0, 0
+LBBO r2, r0, 0, 4
+
+MOV r1, nums
+SBBO r1, r2, 0, 4
+
+EXIT:
+  MOV r31.b0, PRU0_ARM_INTERRUPT+16
+HALT
 
 // Configure pointer register for PRU0 by setting c28_pointer[15:0]
 // 0x00012000 (PRU Shared RAM)
@@ -61,10 +73,6 @@ SBCO  r0, CONST_PRUCFG, 4, 4
 
 // Store values from read from DDR memory into PRU shared RAM
 //SBCO  r0, CONST_PRU_SHAREDRAM, 0, 12
-
-EXIT:
-  MOV r31.b0, PRU0_ARM_INTERRUPT+16
-  HALT
 
 // Load the address of PRU0 RAM into ADDR_PRURAM
 // MOV ADDR_PRURAM, MEM_PRU_DATA1_BASE
