@@ -333,7 +333,7 @@ int main (void) {
 	}
 
 	// Set ADC SCLK
-	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
+	/*if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
 		printf("Cannot open GPIO file 76.\n");
 		return(1);
 	}
@@ -394,7 +394,7 @@ int main (void) {
 	}
 	fprintf(fp,"in");
 	fclose(fp);
-	//mux("lcd_data7",0x2e);
+	//mux("lcd_data7",0x2e);*/
 
 	// Set ADC CNV
 	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
@@ -411,7 +411,7 @@ int main (void) {
 	fprintf(fp,"out");
 	fclose(fp);
 	//mux("lcd_vsync",0x0d);
-
+/*
 	// Set DAC SCLK
 	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
 		printf("Cannot open GPIO file 89.\n");
@@ -474,7 +474,7 @@ int main (void) {
 	}
 	fprintf(fp,"in");
 	fclose(fp);
-	//mux("gpmc_csn2",0x2e);
+	//mux("gpmc_csn2",0x2e);*/
 
 	// Locate PRU Shared Memory
 	prussdrv_map_prumem(PRUSS0_PRU1_DATARAM, &pruMem);
