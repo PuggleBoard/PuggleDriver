@@ -46,15 +46,15 @@ SBCO  r0, CONST_PRUCFG, 4, 4
 
 // Configure pointer register for PRU0 by setting c28_pointer[15:0]
 // 0x00012000 (PRU Shared RAM)
-MOV   r0, 0x00012000
-MOV   r1, CTPPR_0
-ST32  r0, r1
+//MOV   r0, 0x00012000
+//MOV   r1, CTPPR_0
+//ST32  r0, r1
 
 // Configure pointer register for PRU0 by setting c31_pointer[15:0]
 // 0x80001000 (DDR memory)
-MOV   r0, 0x00100000
-MOV   r1, CTPPR_1
-ST32  r0, r1
+//MOV   r0, 0x00100000
+//MOV   r1, CTPPR_1
+//ST32  r0, r1
 
 // Load values from external DDR memory into registers
 //LBCO  r0, CONST_DDR, 0, 12
