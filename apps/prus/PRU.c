@@ -477,7 +477,7 @@ int main (void) {
 	mux("gpmc_csn2",0x2e);
 
 	// Locate PRU Shared Memory
-	prussdrv_map_prumem(PRUSS0_SHARED_DATARAM, &pruMem);
+	prussdrv_map_prumem(PRUSS0_PRU1_DATARAM, &pruMem);
 
 	// Generate SPI on PRU1 and Transfer data
 	// from PRU Shared space to User Space on PRU0
