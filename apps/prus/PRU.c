@@ -346,7 +346,7 @@ int main (void) {
 	}
 	fprintf(fp,"in");
 	fclose(fp);
-	mux("lcd_data6",0x0d);
+	//mux("lcd_data6",0x0d);
 
 	// Set ADC CS
 	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
@@ -362,7 +362,7 @@ int main (void) {
 	}
 	fprintf(fp,"out");
 	fclose(fp);
-	mux("lcd_data5",0x0d);
+	//mux("lcd_data5",0x0d);
 
 	// Set ADC SDI
 	if ((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
@@ -378,7 +378,7 @@ int main (void) {
 	}
 	fprintf(fp,"out");
 	fclose(fp);
-	mux("lcd_hsync",0x0d);
+	//mux("lcd_hsync",0x0d);
 
 	// Set ADC SDO
 	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
@@ -394,7 +394,7 @@ int main (void) {
 	}
 	fprintf(fp,"in");
 	fclose(fp);
-	mux("lcd_data7",0x2e);
+	//mux("lcd_data7",0x2e);
 
 	// Set ADC CNV
 	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
@@ -410,7 +410,7 @@ int main (void) {
 	}
 	fprintf(fp,"out");
 	fclose(fp);
-	mux("lcd_vsync",0x0d);
+	//mux("lcd_vsync",0x0d);
 
 	// Set DAC SCLK
 	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
@@ -426,7 +426,7 @@ int main (void) {
 	}
 	fprintf(fp,"out");
 	fclose(fp);
-	mux("lcd_ac_bias_en",0x0d);
+	//mux("lcd_ac_bias_en",0x0d);
 
 	// Set DAC CS
 	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
@@ -442,7 +442,7 @@ int main (void) {
 	}
 	fprintf(fp,"out");
 	fclose(fp);
-	mux("lcd_pclk",0x0d);
+	//mux("lcd_pclk",0x0d);
 
 	// Set DAC SDI
 	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
@@ -458,7 +458,7 @@ int main (void) {
 	}
 	fprintf(fp,"out");
 	fclose(fp);
-	mux("gpmc_csn1",0x0d);
+	//mux("gpmc_csn1",0x0d);
 
 	// Set DAC SDO
 	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
@@ -474,7 +474,7 @@ int main (void) {
 	}
 	fprintf(fp,"in");
 	fclose(fp);
-	mux("gpmc_csn2",0x2e);
+	//mux("gpmc_csn2",0x2e);
 
 	// Locate PRU Shared Memory
 	prussdrv_map_prumem(PRUSS0_PRU1_DATARAM, &pruMem);
