@@ -1,0 +1,29 @@
+/dts-v1/;
+/plugin/;
+/ { compatible = "ti,beaglebone", "ti,beaglebone-black";
+
+/* identification */
+prt-number = "puggle_4ch";
+fragment@0 {
+target = <&am33xx_pinmux>;
+__overlay__ {
+pinctrl_test: pinctrl_test_0_pins {
+pinctrl-single,pins = <
+0x0E0 0x0d /* P8_27 OUTPUT | MODE5 */
+>;
+};
+};
+};
+
+fragment@1 {
+target = <&ocp>;
+__overlay__ {
+test_helper: helper {
+compatible = "bone-pinmux-helper";
+pinctrl-names = "default";
+pinctrl-0 = <&pinctrl_test>;
+status = "okay";
+};
+};
+};
+};
