@@ -268,8 +268,8 @@ ADC_LOOP:
     delayOne
 
   ADC_FINAL_MISO_DONE:
-    SBBO ADC_RX, ADDR_PRU_SHARED, 0, 4                // Copy acquired word (4 bytes) to shared memory
-    ADD ADDR_PRU_SHARED, ADDR_PRU_SHARED, 4           // Increment address by 4 bytes
+    SBBO ADC_RX, ADDR_PRU_SHARED, 0, 2                // Copy acquired word (4 bytes) to shared memory
+    ADD ADDR_PRU_SHARED, ADDR_PRU_SHARED, 2           // Increment address by 4 bytes
     //delayTwo
     SET SPI_SCLK
     delayTwo

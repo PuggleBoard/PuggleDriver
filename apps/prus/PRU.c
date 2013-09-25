@@ -272,13 +272,6 @@ int main (void) {
 	printf("Loading PRU kernel module.\n");
 	system("modprobe uio_pruss extram_pool_sz=0x100000");
 
-	printf("Configuring pinmuxes.\n");
-	ret=system("~/Dev/PuggleDriver/resources/pinmux.sh");
-	if(ret) {
-		printf("Error: pinmux configuration failed. Is HDMI turned off?\n");
-		return -1;
-	}
-
 	// Initialize data
 	tpruss_intc_initdata pruss_intc_initdata = PRUSS_INTC_INITDATA;
 
