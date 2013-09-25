@@ -19,7 +19,7 @@
 LIBDIR_APP_LOADER ?= ../../app_loader/lib
 INCDIR_APP_LOADER ?= ../../app_loader/include
 BINDIR ?= ../bin
-GCC = gcc
+GCC = gcc -w
 
 CFLAGS += -Wall -I$(INCDIR_APP_LOADER) -D__DEBUG -mtune=cortex-a8 -march=armv7-a
 LDFLAGS += -L$(LIBDIR_APP_LOADER) -lprussdrv -lpthread
