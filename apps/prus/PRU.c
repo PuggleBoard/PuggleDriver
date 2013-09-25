@@ -257,16 +257,6 @@ int consumer_running = 0;
 	return NULL;
 }*/
 
-int mux(char *name, int val) {
-	char cmd[1024];
-	sprintf(cmd, "echo %x > /sys/kernel/debug/omap_mux/%s", val, name);
-	if (system(cmd) != 0) {
-		printf("ERROR: Failed to set pin mux %s = %x\n", name, val);
-		return -1;
-	}
-	return 0;
-}
-
 int main (void) {
 
 	printf("Starting PuggleDriver.\n");
@@ -350,7 +340,7 @@ int main (void) {
 	fclose(fp);
 
 	// Locate PRU Shared Memory
-	prussdrv_map_prumem(PRUSS0_PRU1_DATARAM, &pruMem);
+	prussdrv_map_prumem(PRUSS1_SHARED_DATARAM, &pruMem);
 
 	// Generate SPI on PRU1 and Transfer data
 	// from PRU Shared space to User Space on PRU0
@@ -361,7 +351,7 @@ int main (void) {
 	prussdrv_pru_clear_event(PRU1_ARM_INTERRUPT);
 	prussdrv_pru_clear_event(PRU0_ARM_INTERRUPT);
 
-	printf("Waiting for data transfer to finish\n");
+	printf("Waiting for data transfer to finish.\n");
 	while(consumer_running) {
 		sleepms(250);
 	}
