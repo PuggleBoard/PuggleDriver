@@ -488,7 +488,7 @@ int main (void) {
 	prussdrv_pru_clear_event(PRU1_ARM_INTERRUPT);
 	prussdrv_pru_clear_event(PRU0_ARM_INTERRUPT);
 
-	printf("Waiting for PRU0 to finish\n");
+	printf("Waiting for data transfer to finish\n");
 	while(consumer_running) {
 		sleepms(250);
 	}
@@ -496,12 +496,12 @@ int main (void) {
 	// Wait until PRU1 has finished execution
 	prussdrv_pru_wait_event(PRU_EVTOUT_1);
 	prussdrv_pru_clear_event(PRU1_ARM_INTERRUPT);
-	printf("SPI Agent complete.\n");
+	printf("SPIAgent complete.\n");
 
 	// Wait until PRU0 has finished execution
 	prussdrv_pru_wait_event(PRU_EVTOUT_0);
 	prussdrv_pru_clear_event(PRU0_ARM_INTERRUPT);
-	printf("Data transfer complete.\n");
+	printf("DataXferAgent complete.\n");
 
 	// Deinitialize
 	deinit(&info);
