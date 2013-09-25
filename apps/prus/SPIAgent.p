@@ -50,7 +50,7 @@
 #define SPI_CUR_BIT     r25
 #define PRU1_CUR_PAGE   r26
 #define ADDR_CUR_PAGE   r27
-#define ADDR_SHARED r28
+#define ADDR_PRU_SHARED r28
 
 // Initialize!
 INIT:
@@ -95,7 +95,7 @@ MOV ADC_INIT, 0xe7ff
 MOV INIT_CYCLES, 2
 
 // Setup memory addresses
-MOV ADDR_SHARED, PRU_SHARED_ADDR
+MOV ADDR_PRU_SHARED, PRU_SHARED_ADDR
 
 CLR SPI1_CS
 
@@ -266,8 +266,8 @@ ADC_LOOP:
     delayOne
 
   ADC_FINAL_MISO_DONE:
-    SBBO ADC_RX, ADDR_SHARED, 0, 4                // Copy acquired word (4 bytes) to shared memory
-    ADD ADDR_SHARED, ADDR_SHARED, 4           // Increment address by 4 bytes
+    SBBO ADC_RX, ADDR_PRU_SHARED, 0, 4                // Copy acquired word (4 bytes) to shared memory
+    ADD ADDR_PRU_SHARED, ADDR_PRU_SHARED, 4           // Increment address by 4 bytes
     //delayTwo
     SET SPI_SCLK
     delayTwo

@@ -40,10 +40,11 @@
 #define UIO_PRUSS_DRAM_ADDR			    			UIO_PRUSS_SYSFS_BASE "/addr"
 #define PRU_PAGE_SIZE 										4096
 #define ALIGN_TO_PAGE_SIZE(x, pagesize)  	((x)-((x)%pagesize))
+#define PRUSS1_SHARED_DATARAM							4
 
 #define DDR_BASEADDR 											0x80000000
 #define DDR_RESERVED 											0x00008000
-#define DDR_RES_SIZE 											0x0000FFFF
+#define DDR_RES_SIZE 											0x0FFFFFFF
 #define DDR_SHIFT													0x00001000
 #define DDR_OFFSET												4096
 
@@ -321,7 +322,7 @@ int main (void) {
 	}
 
 	// Map the memory
-	ddrMem = mmap(0, DDR_RES_SIZE, PROT_WRITE | PROT_READ, MAP_SHARED, mem_fd, DDR_OFFSET);
+	ddrMem = mmap(0, DDR_RES_SIZE, PROT_WRITE | PROT_READ, MAP_SHARED, mem_fd, DDR_BASEADDR);
 	if(ddrMem == MAP_FAILED) {
 		handle_error("mmap");
 	}
@@ -477,7 +478,7 @@ int main (void) {
 	//mux("gpmc_csn2",0x2e);*/
 
 	// Locate PRU Shared Memory
-	prussdrv_map_prumem(PRUSS0_PRU1_DATARAM, &pruMem);
+	prussdrv_map_prumem(PRUSS1_SHARED_DATARAM, &pruMem);
 
 	// Generate SPI on PRU1 and Transfer data
 	// from PRU Shared space to User Space on PRU0
