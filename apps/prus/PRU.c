@@ -259,18 +259,25 @@ int consumer_running = 0;
 
 int main (void) {
 
-	printf("Starting PuggleDriver.\n");
-
-	// Make sure PRU kernel module is running
-	printf("Loading PRU kernel module.\n");
-	system("modprobe uio_pruss");
-
 	unsigned int ret;
 	pthread_t tid;
 	static void *ddrMem = 0;
 	static void *pruMem = 0;
 	static FILE *fp = 0;
 	static int mem_fd;
+
+	printf("Starting PuggleDriver.\n");
+
+	// Make sure PRU kernel module is running
+	printf("Loading PRU kernel module.\n");
+	system("modprobe uio_pruss extram_pool_sz=0x100000");
+
+	printf("Configuring pinmuxes.\n");
+	ret=system("~/Dev/PuggleDriver/resources/pinmux.sh");
+	if(ret) {
+		printf("Error: pinmux configuration failed. Is HDMI turned off?\n");
+		return -1;
+	}
 
 	// Initialize data
 	tpruss_intc_initdata pruss_intc_initdata = PRUSS_INTC_INITDATA;
@@ -281,14 +288,14 @@ int main (void) {
 	// Open PRU Interrupt
 	ret = prussdrv_open(PRU_EVTOUT_0);
 	if(ret) {
-		printf("Error: prussdrv_open open failed\n");
+		printf("Error: prussdrv_open open failed.\n");
 		return (ret);
 	}
 
 	// Open PRU Interrupt
 	ret = prussdrv_open(PRU_EVTOUT_1);
 	if(ret) {
-		printf("Error: prussdrv_open open failed\n");
+		printf("Error: prussdrv_open open failed.\n");
 		return (ret);
 	}
 
@@ -317,7 +324,7 @@ int main (void) {
 	}
 
 	if (ddrMem == NULL) {
-		printf("Failed to map the device (%s)\n", strerror(errno));
+		printf("Failed to map the device (%s).\n", strerror(errno));
 		close(mem_fd);
 		return -1;
 	}
