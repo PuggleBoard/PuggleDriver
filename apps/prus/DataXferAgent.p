@@ -52,11 +52,7 @@ LBBO r2, r0, 0, 4
 MOV r1, nums
 SBBO r1, r2, 0, 4
 
-EXIT:
-  MOV r31.b0, PRU0_ARM_INTERRUPT+16
-HALT
-
-// Configure pointer register for PRU0 by setting c28_pointer[15:0] 0x00010000 (PRU Shared RAM)
+// Configure pointer register for PRU0 by setting c28_pointer[15:0] 0x00010000 (PRU shared RAM)
 MOV   r0, 0x00000100
 MOV   r1, CTPPR_0
 ST32  r0, r1

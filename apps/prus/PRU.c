@@ -482,7 +482,7 @@ int main (void) {
 	// Generate SPI on PRU1 and Transfer data
 	// from PRU Shared space to User Space on PRU0
 	prussdrv_exec_program(PRU_NUM1, "./SPIAgent.bin");
-	prussdrv_exec_program(PRU_NUM0, "./blink.bin");
+	prussdrv_exec_program(PRU_NUM0, "./DataXferAgent.bin");
 
 	// Clear PRU interrupts
 	prussdrv_pru_clear_event(PRU1_ARM_INTERRUPT);
