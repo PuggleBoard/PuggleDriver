@@ -96,6 +96,9 @@ MOV CHAN_NUM, 1
 MOV ADC_INIT, 0xe7ff
 MOV INIT_CYCLES, 2
 
+// Setup memory addresses
+MOV ADDR_SHARED, PRU_SHARED_ADDR
+
 CLR SPI1_CS
 
 // Run ADC SPI once
@@ -265,7 +268,8 @@ ADC_LOOP:
     delayOne
 
   ADC_FINAL_MISO_DONE:
-    delayTwo
+    SBBO ADC_RX, ADDR_SHARED, 0, 4    // Copy acquired word to shared memory
+    delayOne // Used to be delayTwo
     SET SPI_SCLK
     delayTwo
     SET SPI1_CS
