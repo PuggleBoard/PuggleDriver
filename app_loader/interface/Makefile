@@ -58,8 +58,8 @@ $(DBGOBJFILES):	debug/%.o: %.c $(HEADERS)
 
 $(TARGETHEADERS): $(HEADERS)
 	@echo Installing headers...
-	@install -d $(INCLUDEDIR)
-	@install -c $< $@
+	install -d $(INCLUDEDIR)
+	install -c $< $@
 
 clean:
 	-rm -rf release debug *~ ../lib/*

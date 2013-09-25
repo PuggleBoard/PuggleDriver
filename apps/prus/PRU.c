@@ -269,11 +269,10 @@ int mux(char *name, int val) {
 
 int main (void) {
 
-	//PRINTDEC("HEXADDR", UIO_PRUSS_DRAM_ADDR);
-	//PRINTDEC("HEXSIZE", UIO_PRUSS_DRAM_SIZE);
 	printf("Starting PuggleDriver.\n");
 
 	// Make sure PRU kernel module is running
+	printf("Loading PRU kernel module.\n");
 	system("modprobe uio_pruss");
 
 	unsigned int ret;
@@ -333,69 +332,7 @@ int main (void) {
 		return -1;
 	}
 
-	// Set ADC SCLK
-	/*if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
-		printf("Cannot open GPIO file 76.\n");
-		return(1);
-	}
-	fprintf(fp,"76");
-	fclose(fp);
-
-	if((fp=fopen("/sys/class/gpio/gpio76/direction", "w"))==NULL){
-		printf("Cannot open GPIO direction file 76.\n");
-		return(1);
-	}
-	fprintf(fp,"in");
-	fclose(fp);
-	//mux("lcd_data6",0x0d);
-
-	// Set ADC CS
-	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
-		printf("Cannot open GPIO file 75.\n");
-		return (1);
-	}
-	fprintf(fp,"75");
-	fclose(fp);
-
-	if((fp=fopen("/sys/class/gpio/gpio75/direction", "w"))==NULL){
-		printf("cannot open gpio direction file.\n");
-		return(1);
-	}
-	fprintf(fp,"out");
-	fclose(fp);
-	//mux("lcd_data5",0x0d);
-
-	// Set ADC SDI
-	if ((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
-		printf("Cannot open GPIO file 87.\n");
-		return (1);
-	}
-	fprintf(fp,"87");
-	fclose(fp);
-
-	if((fp=fopen("/sys/class/gpio/gpio87/direction", "w"))==NULL){
-		printf("Cannot open GPIO direction file.\n");
-		return(1);
-	}
-	fprintf(fp,"out");
-	fclose(fp);
-	//mux("lcd_hsync",0x0d);
-
-	// Set ADC SDO
-	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
-		printf("Cannot open GPIO file 77.\n");
-		return (1);
-	}
-	fprintf(fp,"77");
-	fclose(fp);
-
-	if((fp=fopen("/sys/class/gpio/gpio77/direction", "w"))==NULL){
-		printf("Cannot open GPIO direction file.\n");
-		return(1);
-	}
-	fprintf(fp,"in");
-	fclose(fp);
-	//mux("lcd_data7",0x2e);*/
+	printf("Memory mapping complete.\n");
 
 	// Set ADC CNV
 	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
@@ -411,74 +348,9 @@ int main (void) {
 	}
 	fprintf(fp,"out");
 	fclose(fp);
-	//mux("lcd_vsync",0x0d);
-/*
-	// Set DAC SCLK
-	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
-		printf("Cannot open GPIO file 89.\n");
-		return (1);
-	}
-	fprintf(fp,"89");
-	fclose(fp);
-
-	if((fp=fopen("/sys/class/gpio/gpio89/direction", "w"))==NULL){
-		printf("Cannot open GPIO direction file.\n");
-		return(1);
-	}
-	fprintf(fp,"out");
-	fclose(fp);
-	//mux("lcd_ac_bias_en",0x0d);
-
-	// Set DAC CS
-	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
-		printf("Cannot open GPIO file 88.\n");
-		return (1);
-	}
-	fprintf(fp,"88");
-	fclose(fp);
-
-	if((fp=fopen("/sys/class/gpio/gpio88/direction", "w"))==NULL){
-		printf("Cannot open GPIO direction file.\n");
-		return(1);
-	}
-	fprintf(fp,"out");
-	fclose(fp);
-	//mux("lcd_pclk",0x0d);
-
-	// Set DAC SDI
-	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
-		printf("Cannot open GPIO file 62.\n");
-		return (1);
-	}
-	fprintf(fp,"62");
-	fclose(fp);
-
-	if((fp=fopen("/sys/class/gpio/gpio62/direction", "w"))==NULL){
-		printf("Cannot open GPIO direction file.\n");
-		return(1);
-	}
-	fprintf(fp,"out");
-	fclose(fp);
-	//mux("gpmc_csn1",0x0d);
-
-	// Set DAC SDO
-	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
-		printf("Cannot open GPIO file 63.\n");
-		return (1);
-	}
-	fprintf(fp,"63");
-	fclose(fp);
-
-	if((fp=fopen("/sys/class/gpio/gpio63/direction", "w"))==NULL){
-		printf("Cannot open GPIO direction file.\n");
-		return(1);
-	}
-	fprintf(fp,"in");
-	fclose(fp);
-	//mux("gpmc_csn2",0x2e);*/
 
 	// Locate PRU Shared Memory
-	prussdrv_map_prumem(PRUSS1_SHARED_DATARAM, &pruMem);
+	prussdrv_map_prumem(PRUSS0_PRU1_DATARAM, &pruMem);
 
 	// Generate SPI on PRU1 and Transfer data
 	// from PRU Shared space to User Space on PRU0
@@ -496,13 +368,15 @@ int main (void) {
 
 	// Wait until PRU1 has finished execution
 	prussdrv_pru_wait_event(PRU_EVTOUT_1);
-	prussdrv_pru_clear_event(PRU1_ARM_INTERRUPT);
 	printf("SPIAgent complete.\n");
 
 	// Wait until PRU0 has finished execution
 	prussdrv_pru_wait_event(PRU_EVTOUT_0);
-	prussdrv_pru_clear_event(PRU0_ARM_INTERRUPT);
 	printf("DataXferAgent complete.\n");
+	
+	// Clear PRU interrupts
+	prussdrv_pru_clear_event(PRU1_ARM_INTERRUPT);
+	prussdrv_pru_clear_event(PRU0_ARM_INTERRUPT);
 
 	// Deinitialize
 	deinit(&info);

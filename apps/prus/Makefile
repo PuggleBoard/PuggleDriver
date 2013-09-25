@@ -34,12 +34,12 @@ OBJ = $(patsubst %,$(OBJDIR)/%,$(_OBJ))
 
 $(OBJDIR)/%.o: %.c $(DEPS)
 	@mkdir -p obj
-	$(GCC) $(CFLAGS) -c -o $@ $< 
+	@$(GCC) $(CFLAGS) -c -o $@ $< 
 
 $(TARGET): $(OBJ)
-	$(GCC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+	@$(GCC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 .PHONY: clean
 
 clean:
-	rm -rf $(OBJDIR)/ *~  $(INCDIR_APP_LOADER)/*~  $(TARGET)
+	@rm -rf $(OBJDIR)/ *~  $(INCDIR_APP_LOADER)/*~  $(TARGET)
