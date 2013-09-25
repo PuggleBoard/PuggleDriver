@@ -1,34 +1,39 @@
 /dts-v1/;
 /plugin/;
-/ { compatible = "ti,beaglebone", "ti,beaglebone-black";
+/ {
+	
+	/* identification */
+	compatible = "ti,beaglebone", "ti,beaglebone-black";
+	part-number = "puggle_4ch-v1";
+	version = "00A0";
+	manufacturer = "PuggleBoard";
+	board-name = "PuggleBOB";
 
-/* identification */
-prt-number = "puggle_4ch";
-fragment@0 {
-target = <&am33xx_pinmux>;
-__overlay__ {
-pinctrl_test: pinctrl_test_0_pins {
-pinctrl-single,pins = <
-0x0E4 0x05 /* P8_29 OUTPUT | MODE5 */
-0x0E0 0x05 /* P8_27 OUTPUT | MODE5 */
-0x0E8 0x05 /* P8_28 OUTPUT | MODE5 */
-0x0EC 0x05 /* P8_30 OUTPUT | MODE5 */
-0x084 0x05 /* P8_20 OUTPUT | MODE5 */
-0x080 0x06 /* P8_21 INPUT | MODE6 */
->;
-};
-};
-};
+	fragment@0 {
+		target = <&am33xx_pinmux>;
+		__overlay__ {
+puggle_4ch: pinmux_puggle_4ch {
+								pinctrl-single,pins = <
+								 0x084 0x05 /* P8_20 OUTPUT | MODE5 */
+								 0x0E4 0x05 /* P8_29 OUTPUT | MODE5 */
+								 0x0E0 0x05 /* P8_27 OUTPUT | MODE5 */
+								 0x0E8 0x05 /* P8_28 OUTPUT | MODE5 */
+								 0x0EC 0x05 /* P8_30 OUTPUT | MODE5 */
+								 0x080 0x06 /* P8_21 INPUT | MODE6 */
+									>;
+							};
+		};
+	};
 
-fragment@1 {
-target = <&ocp>;
-__overlay__ {
+	fragment@1 {
+		target = <&ocp>;
+		__overlay__ {
 test_helper: helper {
-compatible = "bone-pinmux-helper";
-pinctrl-names = "default";
-pinctrl-0 = <&pinctrl_test>;
-status = "okay";
-};
-};
-};
+							 compatible = "bone-pinmux-helper";
+							 pinctrl-names = "default";
+							 pinctrl-0 = <&puggle_4ch>;
+							 status = "okay";
+						 };
+		};
+	};
 };
