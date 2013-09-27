@@ -16,16 +16,6 @@
 #define PRU_NUM 	0
 #define AM33XX
 
-int mux(char *name, int val) {
-	char cmd[1024];
-	sprintf(cmd, "echo %x > /sys/kernel/debug/omap_mux/%s", val, name);
-	if (system(cmd) != 0) {
-		printf("ERROR: Failed to set pin mux %s = %x\n", name, val);
-		return -1;
-	}
-	return 0;
-}
-
 int main (void)
 {
 	static FILE *fp = 0;
@@ -35,24 +25,8 @@ int main (void)
 	/* Initialize the PRU */
 	prussdrv_init ();		
 
-	// Set ADC SCLK
-	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
-		printf("Cannot open GPIO file 76.\n");
-		return(1);
-	}
-	fprintf(fp,"76");
-	fclose(fp);
-
-	if((fp=fopen("/sys/class/gpio/gpio76/direction", "w"))==NULL){
-		printf("Cannot open GPIO direction file 76.");
-		return(1);
-	}
-	fprintf(fp,"out");
-	fclose(fp);
-	mux("lcd_data6",0x0d);
-
 	/* Open PRU Interrupt */
-	ret = prussdrv_open(PRU_EVTOUT_1);
+	ret = prussdrv_open(PRU_EVTOUT_0);
 	if (ret)
 	{
 		printf("prussdrv_open open failed.\n");
@@ -67,7 +41,7 @@ int main (void)
     
     /* Wait until PRU0 has finished execution */
     printf("Waiting for HALT command.\n");
-    prussdrv_pru_wait_event(PRU_EVTOUT_1);
+    prussdrv_pru_wait_event(PRU_EVTOUT_0);
 
     printf("PRU0 completed transfer.\n");
     prussdrv_pru_clear_event(PRU0_ARM_INTERRUPT);
