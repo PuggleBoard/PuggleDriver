@@ -324,21 +324,6 @@ int main (void) {
 
 	printf("Memory mapping complete.\n");
 
-	// Set ADC CNV
-	if((fp=fopen("/sys/class/gpio/export", "w"))==NULL){
-		printf("Cannot open GPIO file 86.\n");
-		return (1);
-	}
-	fprintf(fp,"86");
-	fclose(fp);
-
-	if((fp=fopen("/sys/class/gpio/gpio86/direction", "w"))==NULL){
-		printf("Cannot open GPIO direction file.\n");
-		return(1);
-	}
-	fprintf(fp,"out");
-	fclose(fp);
-
 	// Locate PRU Shared Memory
 	prussdrv_map_prumem(PRUSS1_SHARED_DATARAM, &pruMem);
 
