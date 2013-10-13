@@ -41,8 +41,9 @@
 #define CUR_PAGE        r21
 #define DAC_TX          r22
 #define ADC_TX          r23
+#define ADC_DATA        r28
 #define ADC_RX          r31
-#define ADDR_PRU_SHARED r28
+#define ADDR_PRU_SHARED r24
 
 // Initialize
 INIT:
@@ -69,8 +70,8 @@ SET SPI1_CNV
 
 // Set loop count
 MOV ADC_COUNT, 15
-MOV ADC_WRITE_COUNT, 31
 MOV DAC_COUNT, 23
+MOV ADC_WRITE_COUNT, 31
 MOV CUR_SAMPLE, 65535
 
 // Set initialization parameters
@@ -135,8 +136,7 @@ ADC_INIT_LOOP:
     SUB INIT_CYCLES, INIT_CYCLES, 1
     QBEQ SET_CHANNEL, INIT_CYCLES, 0
 
-    // If we are one cycle thru init, time to set
-    // the first channel
+    // Set first channel if one cycle thru init
     delayTen
     MOV ADC_INIT, ADC_CH1.w2
     CLR SPI1_CS
@@ -209,13 +209,13 @@ ADC_LOOP:
   ADC_MOSI_DONE:
     CLR SPI_SCLK 
    
-  QBBS ADC_MISO_HIGH, ADC_RX.b0.t0
+  QBBS ADC_MISO_HIGH, ADC_RX.t0
 
-  CLR ADC_RX, ADC_COUNT
+  CLR ADC_DATA, ADC_RX, ADC_COUNT // Needs dst, src, op(31)
   JMP ADC_MISO_DONE
 
   ADC_MISO_HIGH:
-    SET ADC_RX, ADC_COUNT
+    SET ADC_DATA, ADC_RX, ADC_COUNT // Needs dst, src, op(31)
     delayOne
 
   ADC_MISO_DONE:
@@ -240,17 +240,17 @@ ADC_LOOP:
     CLR SPI_SCLK
 
   // ADC read last bit
-  QBBS ADC_FINAL_MISO_HIGH, ADC_RX.b0.t0
+  QBBS ADC_FINAL_MISO_HIGH, ADC_RX.t0
 
-  CLR ADC_RX, ADC_COUNT
+  CLR ADC_DATA, ADC_RX, ADC_COUNT // Needs dst, src, op(31)
   JMP ADC_FINAL_MISO_DONE
 
   ADC_FINAL_MISO_HIGH:
-    SET ADC_RX, ADC_COUNT
+    SET ADC_DATA, ADC_RX, ADC_COUNT // Needs dst, src, op(31)
     delayOne
 
   ADC_FINAL_MISO_DONE:
-    SBBO ADC_RX, ADDR_PRU_SHARED, 0, 2                // Copy acquired word (4 bytes) to shared memory
+    SBBO ADC_DATA, ADDR_PRU_SHARED, 0, 2                // Copy acquired word (4 bytes) to shared memory
     ADD ADDR_PRU_SHARED, ADDR_PRU_SHARED, 2           // Increment address by 4 bytes
     //delayTwo
     SET SPI_SCLK
@@ -318,12 +318,12 @@ RESET:
 
   // Counters
   MOV ADC_COUNT, 15
-  MOV ADC_WRITE_COUNT, 31
   MOV DAC_COUNT, 23
-  MOV DAC_CH1.w0, ADC_RX.w0
-  MOV DAC_CH2.w0, ADC_RX.w0
-  MOV DAC_CH3.w0, ADC_RX.w0
-  MOV DAC_CH4.w0, ADC_RX.w0
+  MOV ADC_WRITE_COUNT, 31
+  MOV DAC_CH1.w0, ADC_DATA.w0
+  MOV DAC_CH2.w0, ADC_DATA.w0
+  MOV DAC_CH3.w0, ADC_DATA.w0
+  MOV DAC_CH4.w0, ADC_DATA.w0
 
   SUB CUR_SAMPLE, CUR_SAMPLE, 1
   ADD CHAN_NUM, CHAN_NUM, 1

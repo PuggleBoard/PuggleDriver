@@ -40,34 +40,4 @@
 	.u32	TotalPagesWritten
 .ends
 
-.macro HSPD_SET_GAIN
-.mparam gain, spi_cur_bit=R10, spi_tx=R11
-	//CLR_GPIO HSPD_GAIN_CS
-	MOV spi_cur_bit, 24 // Send 8 bits total
-	MOV spi_tx, gain
-//	delay 8000
-
-//SPI_XFER_WORD_LOOP:
-	// Set MOSI to the current bit of SPI_TX
-	QBBS MOSI_HIGH, spi_tx, spi_cur_bit
-	//CLR_GPIO HSPD_GAIN_MOSI
-	JMP MOSI_DONE
-	MOSI_HIGH:
-		//SET_GPIO HSPD_GAIN_MOSI
-		MOSI_DONE:
-
-	//SET_GPIO HSPD_GAIN_SCLK
-//	delay 4000
-
-	//CLR_GPIO HSPD_GAIN_SCLK
-//	delay 4000
-
-	SUB spi_cur_bit, spi_cur_bit, 1
-	//QBNE SPI_XFER_WORD_LOOP, spi_cur_bit, 0
-//	delay 400
-
-	//SET_GPIO HSPD_GAIN_CS
-//	delay 8000
-.endm
-
 #endif
