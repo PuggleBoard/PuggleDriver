@@ -37,35 +37,19 @@
 #define ADC_INIT        r12
 #define ADC_WRITE_COUNT r13
 #define INIT_CYCLES     r14
-#define CUR_OFFSET      r15
-#define RUN_FLAG        r16
-#define ADDR_PRURAM     r17
-#define NUM_SAMPLES     r18
-#define NUM_PAGES       r19
 #define CUR_SAMPLE      r20
 #define CUR_PAGE        r21
 #define DAC_TX          r22
 #define ADC_TX          r23
 #define ADC_RX          r31
-#define SPI_CUR_BIT     r25
-#define PRU1_CUR_PAGE   r26
-#define ADDR_CUR_PAGE   r27
 #define ADDR_PRU_SHARED r28
 
 // Initialize!
 INIT:
-MOV DAC_CH1, 0
-MOV DAC_CH2, 0
-MOV DAC_CH3, 0
-MOV DAC_CH4, 0
 MOV DAC_CH1.b2, 0x31
 MOV DAC_CH2.b2, 0x32
 MOV DAC_CH3.b2, 0x34
 MOV DAC_CH4.b2, 0x38
-MOV ADC_CH1, 0
-MOV ADC_CH2, 0
-MOV ADC_CH3, 0
-MOV ADC_CH4, 0
 MOV ADC_CH1.w0, 0x0000
 MOV ADC_CH2.w0, 0x1000
 MOV ADC_CH3.w0, 0x2000
