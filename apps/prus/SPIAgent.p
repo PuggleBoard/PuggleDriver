@@ -21,7 +21,7 @@
 .origin 0
 .entrypoint INIT
 
-#include "PRU_cape.hp"
+#include "PRU.hp"
 
 #define DAC_COUNT       r1
 #define ADC_COUNT       r2
@@ -30,10 +30,10 @@
 #define ADC_CH2         r5
 #define ADC_CH3         r6
 #define ADC_CH4         r7
-#define DAC_CH1	        r8
-#define DAC_CH2        	r9
-#define DAC_CH3	        r10
-#define DAC_CH4	        r11
+#define DAC_CH1         r8
+#define DAC_CH2         r9
+#define DAC_CH3         r10
+#define DAC_CH4         r11
 #define ADC_INIT        r12
 #define ADC_WRITE_COUNT r13
 #define INIT_CYCLES     r14

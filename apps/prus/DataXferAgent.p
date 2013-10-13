@@ -19,7 +19,7 @@
 .origin 0
 .entrypoint START
 
-#include "PRU_cape.hp"
+#include "PRU.hp"
 
 #define ADDR_PRURAM         r16
 #define ADDR_DDR            r17
@@ -36,6 +36,7 @@
 #define NUM_DDR_PAGES       r26
 #define CUR_DDR_PAGE        r27
 //#define TOTAL_PAGES_WRITTEN r28
+
 #define XFER_CHUNK_SIZE     32    // Transfer 32 bytes at a time
 #define nums  0xbabe7175
 
