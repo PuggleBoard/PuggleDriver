@@ -77,7 +77,7 @@ MOV CUR_SAMPLE, 10000
 // Set initialization parameters
 MOV CHAN_NUM, 1
 MOV ADC_INIT, 0xe7ff
-MOV INIT_CYCLES, 2
+MOV INIT_CYCLES, 3
 
 // Setup memory addresses
 MOV ADDR_PRU_SHARED, PRU_SHARED_ADDR
@@ -138,7 +138,7 @@ ADC_INIT_LOOP:
 
     // Set first channel if one cycle thru init
     delayTen
-    MOV ADC_INIT, ADC_CH1.w2
+    MOV ADC_INIT, 0xc000//ADC_CH1.w0
     CLR SPI1_CS
     JMP ADC_INIT_LOOP
 
@@ -252,7 +252,6 @@ ADC_LOOP:
   ADC_FINAL_MISO_DONE:
     SBBO ADC_DATA, ADDR_PRU_SHARED, 0, 2                // Copy acquired word (4 bytes) to shared memory
     ADD ADDR_PRU_SHARED, ADDR_PRU_SHARED, 2           // Increment address by 4 bytes
-    //delayTwo
     SET SPI_SCLK
     delayTwo
     SET SPI1_CS
@@ -320,9 +319,9 @@ RESET:
   MOV ADC_COUNT, 15
   MOV DAC_COUNT, 23
   MOV ADC_WRITE_COUNT, 31
-  MOV DAC_CH1.w0, ADC_DATA.w0
-  MOV DAC_CH2.w0, ADC_DATA.w0
-  MOV DAC_CH3.w0, ADC_DATA.w0
+  MOV DAC_CH1.w0, 0x0001//ADC_DATA.w0
+  MOV DAC_CH2.w0, 0xffff//ADC_DATA.w0
+  MOV DAC_CH3.w0, 0xf0f0//ADC_DATA.w0
   MOV DAC_CH4.w0, ADC_DATA.w0
 
   SUB CUR_SAMPLE, CUR_SAMPLE, 1
