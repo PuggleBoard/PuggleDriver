@@ -31,7 +31,7 @@ io.sockets.on('connection', function (socket) {
     console.log(data);
     // perform the capture
     
-    prog=child.exac('../apps/bin/prus'), function (error, stdout, stderr) {
+    prog=child.exec('../apps/bin/prus'), function (error, stdout, stderr) {
     	if (error) {
      		console.log(error.stack);
     		console.log('Error code: '+error.code);
