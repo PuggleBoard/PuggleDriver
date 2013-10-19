@@ -1,9 +1,9 @@
-APP_DIRS += prus
+APP_DIRS += puggle
 
 ASSEM_FILES :=
-ASSEM_FILES += prus/SPIAgent.p
-ASSEM_FILES += prus/DataXferAgent.p
+ASSEM_FILES += puggle/spiagent.p
+ASSEM_FILES += puggle/dataxferagent.p
 
 BIN_FILES :=
-BIN_FILES += prus/SPIAgent.p
-BIN_FILES += prus/DataXferAgent.p
+BIN_FILES += puggle/spiagent.p
+BIN_FILES += puggle/dataxferagent.p

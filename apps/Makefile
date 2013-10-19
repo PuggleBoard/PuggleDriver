@@ -22,6 +22,7 @@ LIBDIR_APP_LOADER?=../../app_loader/lib
 INCDIR_APP_LOADER?=../../app_loader/include
 BINDIR_APPLICATIONS?=../bin
 BINDIR_FW?=bin
+INT_DIR=../interface
 PASM?=../utils/pasm
 
 all:
@@ -30,6 +31,8 @@ all:
 	@for dir in $(APP_DIRS); do make -C $$dir LIBDIR_APP_LOADER="${LIBDIR_APP_LOADER}" INCDIR_APP_LOADER="${INCDIR_APP_LOADER}" BINDIR="${BINDIR_APPLICATIONS}"; done
 	@for a_file in ${ASSEM_FILES} ; do ${PASM} -b $$a_file ; done ;
 	@mv *.bin ${BINDIR_FW}
+	@cp bin/*.bin ${INT_DIR}
+	@cp bin/puggle ${INT_DIR}
 
 clean:
 	@for dir in $(APP_DIRS); do make -C $$dir clean LIBDIR_APP_LOADER="${LIBDIR_APP_LOADER}" LIBDIR_EDMA_DRIVER="${LIBDIR_EDMA_DRIVER}" INCDIR_APP_LOADER="${INCDIR_APP_LOADER}" INCDIR_EDMA_DRIVER="${INCDIR_EDMA_DRIVER}" BINDIR="${BINDIR_APPLICATIONS}"; done
