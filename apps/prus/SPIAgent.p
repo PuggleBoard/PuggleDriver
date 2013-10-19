@@ -56,17 +56,10 @@ MOV ADC_CH2.w0, 0x1000
 MOV ADC_CH3.w0, 0x2000
 MOV ADC_CH4.w0, 0x3000
 
-// Initialize SPI SCLK
-SET SPI_SCLK
-
-// Initialize DAC SPI busses
-SET SPI0_CS
-CLR SPI0_MOSI
-//CLR SPI0_MISO
-
-// Initialize ADC SPI Buses
-SET SPI1_CS
-SET SPI1_CNV
+// Initialize onboard AIO SPI bus
+SET DAC_CS
+SET ADC_CS
+CLR MOSI
 
 // Set loop count
 MOV ADC_COUNT, 15
@@ -82,7 +75,7 @@ MOV INIT_CYCLES, 3
 // Setup memory addresses
 MOV ADDR_PRU_SHARED, PRU_SHARED_ADDR
 
-CLR SPI1_CS
+CLR ADC_CS
 
 // Run ADC SPI once
 ADC_INIT_LOOP:
@@ -90,22 +83,22 @@ ADC_INIT_LOOP:
   QBBS ADC_INIT_MOSI_HIGH, ADC_INIT, ADC_COUNT
 
   // Enable SCLK
-  SET SPI_SCLK
+  SET SCLK
 
   // Enable MOSI LOW
-  CLR SPI1_MOSI
+  CLR MOSI
   JMP ADC_INIT_MOSI_DONE
 
   // Enable MOSI HIGH
   ADC_INIT_MOSI_HIGH:
-    SET SPI_SCLK
-    SET SPI1_MOSI
+    SET SCLK
+    SET MOSI
     delayOne
 
   // Register data on chip 
   ADC_INIT_MOSI_DONE:
     delayTwo
-    CLR SPI_SCLK
+    CLR SCLK
     delayOne
 
   // Keep running?
@@ -113,24 +106,24 @@ ADC_INIT_LOOP:
   QBNE ADC_INIT_LOOP, ADC_COUNT, 0
   
   delayOne
-  SET SPI_SCLK
+  SET SCLK
   QBBS ADC_INIT_FINAL, ADC_INIT, ADC_COUNT
 
-  CLR SPI1_MOSI
-  CLR SPI_SCLK
+  CLR MOSI
+  CLR SCLK
   delayThree
   JMP INIT_OUT
   
   ADC_INIT_FINAL:
-    SET SPI1_MOSI
+    SET MOSI
     delayTwo
-    CLR SPI_SCLK
+    CLR SCLK
     delayFour
 
   INIT_OUT:
-    SET SPI_SCLK
+    SET SCLK
     delayTwo
-    SET SPI1_CS
+    SET ADC_CS
     MOV ADC_COUNT, 15
     MOV DAC_COUNT, 23
     SUB INIT_CYCLES, INIT_CYCLES, 1
@@ -139,18 +132,18 @@ ADC_INIT_LOOP:
     // Set first channel if one cycle thru init
     delayTen
     MOV ADC_INIT, 0xc000//ADC_CH1.w0
-    CLR SPI1_CS
+    CLR ADC_CS
     JMP ADC_INIT_LOOP
 
 // Start acquisition
 SET_CHANNEL:
   
   // Trigger conversion using CONVST
-  CLR SPI1_CNV
+  CLR CNV
   delayTen
   
   // Disable CONVST
-  SET SPI1_CNV
+  SET CNV
 
   // ~1600 ns delay for the conversion
   delayFourty
@@ -165,7 +158,7 @@ SET_CHANNEL:
   delayFive
 
   // Enable CS for ADC
-  CLR SPI1_CS
+  CLR ADC_CS
  
   // Configure DAC Channel Number
   QBEQ CH_1, CHAN_NUM, 1
@@ -176,38 +169,38 @@ SET_CHANNEL:
   CH_1:
     MOV DAC_TX, DAC_CH1
     MOV ADC_TX, ADC_CH2
-    SET SPI_SCLK
+    SET SCLK
     JMP ADC_LOOP
   CH_2:
     MOV DAC_TX, DAC_CH2
     MOV ADC_TX, ADC_CH3
-    SET SPI_SCLK
+    SET SCLK
     JMP ADC_LOOP
   CH_3:
     MOV DAC_TX, DAC_CH3
     MOV ADC_TX, ADC_CH4
-    SET SPI_SCLK
+    SET SCLK
     JMP ADC_LOOP
   CH_4:
     MOV DAC_TX, DAC_CH4
     MOV ADC_TX, ADC_CH1
     MOV CHAN_NUM, 0
-    SET SPI_SCLK
+    SET SCLK
     JMP ADC_LOOP
 
 ADC_LOOP:
+
   // ADC write bit
   QBBS ADC_MOSI_HIGH, ADC_TX, ADC_COUNT
 
-  CLR SPI1_MOSI
+  CLR MOSI
   JMP ADC_MOSI_DONE
 
   ADC_MOSI_HIGH:
-    SET SPI1_MOSI
-    delayOne
+    SET MOSI
 
   ADC_MOSI_DONE:
-    CLR SPI_SCLK 
+    SET SCLK
    
   QBBS ADC_MISO_HIGH, ADC_RX.t0
 
@@ -220,24 +213,24 @@ ADC_LOOP:
 
   ADC_MISO_DONE:
     // Keep running?
+    CLR SCLK    
     SUB ADC_COUNT, ADC_COUNT, 1
-    SET SPI_SCLK
     QBNE ADC_LOOP, ADC_COUNT, 0
 
   // ADC write last bit
   delayOne
+  SET SCLK
   QBBS ADC_FINAL_MOSI_HIGH, ADC_TX, ADC_COUNT
 
-  SET SPI_SCLK
-  CLR SPI1_MOSI
+  CLR MOSI
   JMP ADC_FINAL_MOSI_DONE
   
   ADC_FINAL_MOSI_HIGH:
-    SET SPI1_MOSI
+    SET MOSI
     delayOne
   
   ADC_FINAL_MOSI_DONE:
-    CLR SPI_SCLK
+    delayOne
 
   // ADC read last bit
   QBBS ADC_FINAL_MISO_HIGH, ADC_RX.t0
@@ -252,31 +245,31 @@ ADC_LOOP:
   ADC_FINAL_MISO_DONE:
     SBBO ADC_DATA, ADDR_PRU_SHARED, 0, 2                // Copy acquired word (4 bytes) to shared memory
     ADD ADDR_PRU_SHARED, ADDR_PRU_SHARED, 2           // Increment address by 4 bytes
-    SET SPI_SCLK
+    SET SCLK
     delayTwo
-    SET SPI1_CS
+    SET ADC_CS
     delayTwo
-    CLR SPI0_CS
+    CLR DAC_CS
 
 DAC_LOOP: 
   // Configure MOSI
   QBBS DAC_MOSI_HIGH, DAC_TX, DAC_COUNT
 
   // Enable SCLK
-  SET SPI_SCLK
+  SET SCLK
 
   // Enable MOSI LOW
-  CLR SPI0_MOSI
+  CLR MOSI
   JMP DAC_MOSI_DONE
 
   // Enable MOSI HIGH
   DAC_MOSI_HIGH:
-    SET SPI_SCLK
-    SET SPI0_MOSI
+    SET SCLK
+    SET MOSI
 
   DAC_MOSI_DONE:
     delayTwo
-    CLR SPI_SCLK
+    CLR SCLK
     delayOne
 
   // Keep running?
@@ -287,33 +280,33 @@ DAC_LOOP:
   QBBS DAC_MOSI_HIGH_FINAL, DAC_TX, DAC_COUNT
 
   // Enable SCLK
-  SET SPI_SCLK
+  SET SCLK
 
   // Enable MOSI LOW
-  CLR SPI0_MOSI
+  CLR MOSI
   JMP DAC_MOSI_DONE_FINAL
 
   // Enable MOSI HIGH
   DAC_MOSI_HIGH_FINAL:
-    SET SPI_SCLK
-    SET SPI0_MOSI
+    SET SCLK
+    SET MOSI
 
   DAC_MOSI_DONE_FINAL:
     delayTwo
-    CLR SPI_SCLK
+    CLR SCLK
     JMP RESET
 
 // Reset pin states
 RESET:
   // DAC Lines
-  SET SPI_SCLK
-  SET SPI0_CS
-  CLR SPI0_MOSI
-  //CLR SPI0_MISO
+  SET SCLK
+  SET DAC_CS
+  CLR MOSI
+  //CLR MISO
 
   // ADC Lines
-  SET SPI1_CS
-  SET SPI1_CNV
+  SET ADC_CS
+  SET CNV
 
   // Counters
   MOV ADC_COUNT, 15

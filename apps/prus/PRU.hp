@@ -81,19 +81,21 @@
 	.u32	TotalPagesWritten
 .ends
 
-// Pin mappings for SPI
-// SPI SCLK
-#define SPI_SCLK											R30.t9
+// SPI Line for onboard AIO
+#define SCLK	R30.t7
+#define ADC_CS	R30.t11
+#define DAC_CS	R30.t6
+#define MOSI   	R30.t9
+#define MISO   	R31.t8
+#define CNV   	R30.t10
 
-// SPI0 = DAC
-#define SPI0_CS												R30.t11
-#define SPI0_MOSI   									R30.t8
-#define SPI0_MISO   									R31.t12
-
-// SPI1 = ADC
-#define SPI1_CS     									R30.t10
-#define SPI1_MOSI   									R30.t8
-#define SPI1_CNV   										R30.t13
+// AUX DIO
+#define DIO_0	R30.1	
+#define DIO_1	R31.0	
+#define DIO_2	R31.3	
+#define DIO_3	R31.2	
+#define DIO_4	R30.5	
+#define DIO_5	R30.4	
 
 // Useful defines
 #define NOP														MOV R0, R0
