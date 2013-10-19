@@ -40,7 +40,6 @@
 #define UIO_PRUSS_DRAM_ADDR 			        UIO_PRUSS_SYSFS_BASE "/addr"
 #define PRU_PAGE_SIZE	 										2048
 #define ALIGN_TO_PAGE_SIZE(x, pagesize)  ((x)-((x)%pagesize))
-#define PRUSS1_SHARED_DATARAM							4
 
 #define DDR_BASEADDR 											0x80000000
 #define DDR_RESERVED 											0x00008000
@@ -66,7 +65,6 @@ typedef struct {
 } app_data;
 
 app_data info;
-int workthread_running = 1;
 
 void sleepms(int ms) {
 	nanosleep((struct timespec[]){{0, ms*100000}}, NULL);
@@ -97,10 +95,6 @@ static int load_pruss_dram_info(app_data *info) {
 
 static int init(app_data *info) {
 
-	// Make sure PRU kernel module is running
-	printf("Loading PRU kernel module.\n");
-	system("modprobe uio_pruss");
-
 	load_pruss_dram_info(info);
 
 	info->mem_fd = open("/dev/mem", O_RDWR);
@@ -116,25 +110,29 @@ static int init(app_data *info) {
 		return -1;
 	}
 
-	prussdrv_map_prumem(PRUSS0_PRU0_DATARAM, (void *) &info->pru_memory);
+	prussdrv_map_prumem(PRUSS0_SHARED_DATARAM, (void *) &info->pru_memory);
 
-	if (info->pru_memory == NULL) {
-		fprintf(stderr, "Cannot map PRU0 memory buffer.\n");
+	if(info->pru_memory == NULL) {
+		printf("Cannot map PRU1 memory buffer.\n");
 		return -ENOMEM;
 	}
 
+	printf("Initializing memory.\n");
 	info->pru_params = info->pru_memory;
-	fprintf(stderr, "Zeroing DDR memory.\n");
 	memset((void *)info->ddr_memory, 0, info->ddr_size);
 
-	fprintf(stderr, "Writing PRU params.\n");
+	printf("Initializing PRU parameters.\n");
+	
 	// Set the run flag to 1
 	info->pru_params->run_flag = 1;
+
 	// Write DRAM base addr into PRU memory
 	info->pru_params->ddr_base_address = info->ddr_base_address;
+	
 	// Write # bytes available
 	info->pru_params->ddr_bytes_available = info->ddr_size;
-	fprintf(stderr, "Init complete.\n");
+	
+	printf("Initialization complete.\n");
 	return(0);
 }
 
@@ -144,26 +142,25 @@ void check(app_data *info) {
 	for (i = 0; i < 10; i++) {
 		printf("%i: 0x%X\n", i, ddr[i]);
 	}
-	printf("\n");
 }
 
 void deinit(app_data *info) {
 	prussdrv_pru_disable(PRU_NUM0);
+	prussdrv_pru_disable(PRU_NUM1);
 	prussdrv_exit();
 	munmap(info->ddr_memory, info->ddr_size);
 	close(info->mem_fd);
 }
 
 void intHandler(int val) {
-	printf("Turning off run flag\n");
 	info.pru_params->run_flag = 0;
+	printf("Data acquisition status: stopped.\n");
 }
 
 void* work_thread(void *arg) {
+	printf("Data acquisition status: running. Press ctrl-c to stop.\n");
 	while(info.pru_params->run_flag) {
-		sleepms(100);
 	}
-	workthread_running = 0;
 	return NULL;
 }
 
@@ -180,14 +177,13 @@ int main (void) {
 	// Initialize the PRU
 	prussdrv_init();
 
-	// Open PRU Interrupt
+	// Open PRU Interrupts
 	ret = prussdrv_open(PRU_EVTOUT_0);
 	if(ret) {
 		printf("Error: prussdrv_open open failed.\n");
 		return (ret);
 	}
 
-	// Open PRU Interrupt
 	ret = prussdrv_open(PRU_EVTOUT_1);
 	if(ret) {
 		printf("Error: prussdrv_open open failed.\n");
@@ -201,19 +197,16 @@ int main (void) {
 	init(&info);
 
 	// Initialize flags
-	signal(SIGQUIT, intHandler);
 	signal(SIGINT, intHandler);
-
-	// Create consumer thread
-	printf("Starting work thread.");
-	pthread_create(&tid, NULL, &work_thread, NULL);
 
 	// Generate SPI on PRU1 and Transfer data
 	// from PRU Shared space to User Space on PRU0
 	prussdrv_exec_program(PRU_NUM1, "./spiagent.bin");
 	prussdrv_exec_program(PRU_NUM0, "./dataxferagent.bin");
 
-	printf("Sniffing your data...press ctrl-c to stop.\n");
+	// Create worker thread
+	pthread_create(&tid, NULL, &work_thread, NULL);
+
 	while(work_thread) {
 		sleepms(250);
 	}

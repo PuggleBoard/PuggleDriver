@@ -37,7 +37,7 @@
 #define ADC_INIT        r12
 #define ADC_WRITE_COUNT r13
 #define INIT_CYCLES     r14
-#define CUR_SAMPLE      r20
+#define CONTROLS        r20
 #define CUR_PAGE        r21
 #define DAC_TX          r22
 #define ADC_TX          r23
@@ -45,7 +45,6 @@
 #define ADC_RX          r31
 #define ADDR_PRU_SHARED r24
 
-// Initialize
 INIT:
 // Enable OCP
 LBCO  r0, CONST_PRUCFG, 4, 4
@@ -71,6 +70,11 @@ MOV   r0, 0x00100000
 MOV   r1, CTPPR_1
 ST32  r0, r1
 
+SET CONTROLS.t0
+
+// Read DDR for controls
+LBCO  r0, CONST_DDR, 0, 12
+
 // Configure ADC/DAC channels
 MOV DAC_CH1.b2, 0x31
 MOV DAC_CH2.b2, 0x32
@@ -90,7 +94,6 @@ CLR MOSI
 MOV ADC_COUNT, 15
 MOV DAC_COUNT, 23
 MOV ADC_WRITE_COUNT, 31
-MOV CUR_SAMPLE, 10000
 
 // Set initialization parameters
 MOV CHAN_NUM, 1
@@ -324,7 +327,6 @@ RESET:
   SET SCLK
   SET DAC_CS
   CLR MOSI
-  //CLR MISO
 
   // ADC Lines
   SET ADC_CS
@@ -339,14 +341,12 @@ RESET:
   MOV DAC_CH3.w0, ADC_DATA.w0
   MOV DAC_CH4.w0, ADC_DATA.w0
 
-  SUB CUR_SAMPLE, CUR_SAMPLE, 1
   ADD CHAN_NUM, CHAN_NUM, 1
-  QBEQ FS_DELAY, CHAN_NUM, 4
+  QBBS SET_CHANNEL, CONTROLS.t0
+  JMP EXIT
 
-  FS_DELAY:
-    //delay 500
-    QBNE SET_CHANNEL, CUR_SAMPLE, 0
-    JMP EXIT
+  //QBEQ FS_DELAY, CHAN_NUM, 4
+  //FS_DELAY:
 
 EXIT:
   MOV r31.b0, PRU1_ARM_INTERRUPT+16
