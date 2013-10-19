@@ -33,7 +33,10 @@ all:
 	@mv *.bin ${BINDIR_FW}
 	@cp bin/*.bin ${INT_DIR}
 	@cp bin/puggle ${INT_DIR}
+	@rm -rf bin
 
 clean:
 	@for dir in $(APP_DIRS); do make -C $$dir clean LIBDIR_APP_LOADER="${LIBDIR_APP_LOADER}" LIBDIR_EDMA_DRIVER="${LIBDIR_EDMA_DRIVER}" INCDIR_APP_LOADER="${INCDIR_APP_LOADER}" INCDIR_EDMA_DRIVER="${INCDIR_EDMA_DRIVER}" BINDIR="${BINDIR_APPLICATIONS}"; done
 	@for bins in ${BINDIR_FW};	do rm -rf ${BINDIR_FW}/${bins}; done
+	@rm ${INT_DIR}/*.bin
+	@rm ${INT_DIR}/puggle
