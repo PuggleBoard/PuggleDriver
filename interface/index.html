@@ -14,7 +14,7 @@
 var stat_content = document.createTextNode("Status: Ready");
 var stat_content2 = document.createTextNode("Status: Captured");
 var ctx;
-var socket = io.connect();//'http://localhost'
+var socket = io.connect();	//'http://localhost'
 
 socket.on('status', function (data) {
 		if (data.stat=='idle'){
@@ -23,8 +23,7 @@ socket.on('status', function (data) {
 		ctx = canvas.getContext('2d');
 		} // canvas.getContext
 
-		ctx.strokeStyle='rgb(130,100,10)';
-
+		ctx.strokeStyle='rgb(0,0,255)';
 		}
 		if (data.stat=='captured'){
 		stat_div.appendChild(stat_content2);
@@ -53,15 +52,15 @@ socket.on('results', function(data) {
 		}
 		});
 
-	</script>
+</script>
 
-	<title>Puggle Data Acquisition System</title>
+<title>Puggle Data Acquisition System</title>
 </head>
 <body>
-	<h1>Real-Time Data Visualizer</h1>
-	<div id="id_status"></div>
-	<script type="text/javascript">
-		var stat_div = document.getElementById("id_status");
+<h1>Real-Time Data Visualizer</h1>
+<div id="id_status"></div>
+<script type="text/javascript">
+	var stat_div = document.getElementById("id_status");
 	</script>
 	<p>
 	<label for="id_button_capture">Capture</label>
@@ -72,6 +71,6 @@ socket.on('results', function(data) {
 	<script type="text/javascript">
 		var canvas = document.getElementById('id_canvas');
 		var idx=0;
-	</script>
-</body>
+		</script>
+	</body>
 </html>

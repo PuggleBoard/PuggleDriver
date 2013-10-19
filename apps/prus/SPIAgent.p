@@ -47,6 +47,31 @@
 
 // Initialize
 INIT:
+// Enable OCP
+LBCO  r0, CONST_PRUCFG, 4, 4
+CLR   r0, r0, 4
+SBCO  r0, CONST_PRUCFG, 4, 4
+
+// Setup memory addresses
+MOV ADDR_PRU_SHARED, PRU_SHARED_ADDR
+
+MOV r0, 0
+LBBO r2, r0, 0, 4
+
+MOV r1, MAGIC_NUM
+SBBO r1, r2, 0, 4
+
+// Configure pointer register for PRU0 by setting c28_pointer[15:0] 0x00010000 (PRU shared RAM)
+MOV   r0, 0x00000100
+MOV   r1, CTPPR_0
+ST32  r0, r1
+
+// Configure pointer register for PRU0 by setting c31_pointer[15:0] to 0x80001000 (DDR memory)
+MOV   r0, 0x00100000
+MOV   r1, CTPPR_1
+ST32  r0, r1
+
+// Configure ADC/DAC channels
 MOV DAC_CH1.b2, 0x31
 MOV DAC_CH2.b2, 0x32
 MOV DAC_CH3.b2, 0x34
@@ -70,10 +95,7 @@ MOV CUR_SAMPLE, 10000
 // Set initialization parameters
 MOV CHAN_NUM, 1
 MOV ADC_INIT, 0xe7ff
-MOV INIT_CYCLES, 3
-
-// Setup memory addresses
-MOV ADDR_PRU_SHARED, PRU_SHARED_ADDR
+MOV INIT_CYCLES, 2
 
 CLR ADC_CS
 
@@ -243,8 +265,8 @@ ADC_LOOP:
     delayOne
 
   ADC_FINAL_MISO_DONE:
-    SBBO ADC_DATA, ADDR_PRU_SHARED, 0, 2                // Copy acquired word (4 bytes) to shared memory
-    ADD ADDR_PRU_SHARED, ADDR_PRU_SHARED, 2           // Increment address by 4 bytes
+    SBBO ADC_DATA, ADDR_PRU_SHARED, 0, 4                // Copy acquired 4 bytes to shared memory
+    ADD ADDR_PRU_SHARED, ADDR_PRU_SHARED, 4           // Increment address by 4 bytes
     SET SCLK
     delayTwo
     SET ADC_CS

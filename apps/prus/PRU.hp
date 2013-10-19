@@ -55,8 +55,8 @@
 // Memory addresses
 #define PRU_DATA0_ADDR				    		0x00000000
 #define PRU_DATA1_ADDR		    				0x00002000
-#define PRU_SHARED_ADDR   						0x00010004 // address to begin storing acquired data in PRU shared RAM
 #define COMMANDS_ADDR                 0x00010000 // address to store acquisition control commands in PRU shared RAM
+#define PRU_SHARED_ADDR   						0x00010004 // address to begin storing acquired data in PRU shared RAM
 
 // Define GPIO addresses
 #define GPIO0  0x44E07000
@@ -71,7 +71,7 @@
 .struct HostParamsPRUMemory
 	.u32	RunFlag
 	.u32  DDRBaseAddress
-	.u32  DDRSampleBytesAvailable
+	.u32  DDRBytesAvailable
 	.u32  DDRParmsLocation
 	.u32  DDRPagesAvailable
 .ends
@@ -99,6 +99,8 @@
 
 // Useful defines
 #define NOP														MOV R0, R0
+
+#define MAGIC_NUM											0xbabe7175
 
 // TI Macros
 .macro LD32
