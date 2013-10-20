@@ -59,6 +59,8 @@ typedef struct {
 } app_data;
 
 app_data info;
+static void *ddrMem, *sharedMem;
+static unsigned int *sharedMem_int;
 
 void sleepms(int ms) {
 	nanosleep((struct timespec[]){{0, ms*100000}}, NULL);
@@ -105,6 +107,7 @@ static int init(app_data *info) {
 	}
 
 	prussdrv_map_prumem(PRUSS0_SHARED_DATARAM, (void *) &info->pru_memory);
+	sharedMem_int = (unsigned int*) sharedMem;
 
 	if(info->pru_memory == NULL) {
 		printf("Cannot map PRU1 memory buffer.\n");
@@ -195,10 +198,13 @@ int main (void) {
 	// Initialize flags
 	signal(SIGINT, intHandler);
 
+	sharedMem_int[0] = 0;
 	// Generate SPI on PRU1 and Transfer data
 	// from PRU Shared space to User Space on PRU0
 	prussdrv_exec_program(PRU_NUM1, "./spiagent.bin");
 	prussdrv_exec_program(PRU_NUM0, "./dataxferagent.bin");
+
+	printf("after pru %d\n", sharedMem_int[0]);
 
 	// Create worker thread
 	pthread_create(&tid, NULL, &work_thread, NULL);

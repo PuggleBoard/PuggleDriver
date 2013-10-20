@@ -34,7 +34,7 @@
 #define CONST_PRUCFG	     						C4
 #define CONST_PRU_DATA0        				C24
 #define CONST_PRU_DATA1        				C25
-#define CONST_PRU_SHAREDRAM   				C28
+#define CONST_PRU_SHAREDRAM	   				C28
 #define CONST_DDR            					C31
 
 #define LOCAL_BUFFER_PAGE_SIZE        2048
@@ -48,10 +48,14 @@
 #define CTPPR_1         							0x2402C // address for constant table programmable pointer register 1(CTPPR_1)
 
 // Memory addresses
+#define DDR_BASE_ADDR									0x80000000
+#define OFFSET_DDR										0x00001008
+
 #define PRU_DATA0_ADDR				    		0x00000000
 #define PRU_DATA1_ADDR		    				0x00002000
 #define COMMANDS_ADDR                 0x00010000 // address to store acquisition control commands in PRU shared RAM
 #define PRU_SHARED_ADDR   						0x00010004 // address to begin storing acquired data in PRU shared RAM
+#define	OFFSET_SHAREDRAM							0
 
 // SPI Line for onboard AIO
 #define SCLK	  											R30.t7
