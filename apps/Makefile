@@ -18,8 +18,8 @@
 
 -include DIRS
 
-LIBDIR_APP_LOADER?=../../app_loader/lib
-INCDIR_APP_LOADER?=../../app_loader/include
+LIBDIR_APP_LOADER?=../../utils/lib
+INCDIR_APP_LOADER?=../../utils/include
 BINDIR_APPLICATIONS?=../bin
 BINDIR_FW?=bin
 INT_DIR=../interface
@@ -27,7 +27,7 @@ PASM?=../utils/pasm
 
 all:
 	@mkdir -p bin
-	@make -C ../app_loader/interface
+	@make -C ../utils/interface
 	@for dir in $(APP_DIRS); do make -C $$dir LIBDIR_APP_LOADER="${LIBDIR_APP_LOADER}" INCDIR_APP_LOADER="${INCDIR_APP_LOADER}" BINDIR="${BINDIR_APPLICATIONS}"; done
 	@for a_file in ${ASSEM_FILES} ; do ${PASM} -b $$a_file ; done ;
 	@mv *.bin ${BINDIR_FW}

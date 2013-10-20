@@ -16,8 +16,8 @@
 ##	this software. If not, see <http://creativecommons.org/licenses/by-sa/3.0/legalcode>.
 ##
 
-LIBDIR_APP_LOADER ?= ../../app_loader/lib
-INCDIR_APP_LOADER ?= ../../app_loader/include
+LIBDIR_APP_LOADER ?= ../../utils/lib
+INCDIR_APP_LOADER ?= ../../utils/include
 BINDIR ?= ../bin
 GCC = gcc -w
 
