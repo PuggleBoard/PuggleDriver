@@ -40,13 +40,7 @@
 #define UIO_PRUSS_DRAM_ADDR 			        UIO_PRUSS_SYSFS_BASE "/addr"
 #define PRU_PAGE_SIZE	 										2048
 #define ALIGN_TO_PAGE_SIZE(x, pagesize)  ((x)-((x)%pagesize))
-
-#define DDR_BASEADDR 											0x80000000
-#define DDR_RESERVED 											0x00008000
-#define DDR_RES_SIZE 											0x0FFFFFFF
-#define DDR_SHIFT													0x00001000
-#define OFFSET														2048
-
+#define DDR_OFFSET														2048
 #define handle_error(msg) do { perror(msg); exit(EXIT_FAILURE); } while (0)
 
 typedef struct {

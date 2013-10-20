@@ -31,11 +31,11 @@
 #define NUM_PAGES           r22.w0
 #define PAGE_SIZE           r22.w2
 #define ADDR_CUR_PAGE       r23
-//#define ADDR_SHARED         r24
+#define ADDR_SHARED         r24
 #define CUR_DDR_OFFSET      r25
 #define NUM_DDR_PAGES       r26
 #define CUR_DDR_PAGE        r27
-//#define TOTAL_PAGES_WRITTEN r28
+#define TOTAL_PAGES_WRITTEN r28
 
 #define XFER_CHUNK_SIZE     32    // Transfer 32 bytes at a time
 #define nums  0xbabe7175
