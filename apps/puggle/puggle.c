@@ -162,7 +162,6 @@ void intHandler(int val) {
 void* work_thread(void *arg) {
 	printf("Data acquisition status: running. Press ctrl-c to stop.\n");
 	while(info.pru_params->run_flag) {
-		//check(&info);
 	}
 	return NULL;
 }
