@@ -69,7 +69,6 @@ MOV ADDR_PRU_SHARED, PRU_SHARED_ADDR
 
 // Read DDR for controls
 MOV CONTROLS, COMMANDS_ADDR
-SET CONTROLS.t0
 LBCO  r0, CONST_DDR, 0, 12
 
 // Store controls into PRU shared RAM

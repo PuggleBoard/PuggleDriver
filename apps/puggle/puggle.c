@@ -45,7 +45,7 @@
 #define DDR_RESERVED 											0x00008000
 #define DDR_RES_SIZE 											0x0FFFFFFF
 #define DDR_SHIFT													0x00001000
-#define DDR_OFFSET												4096
+#define OFFSET														2048
 
 #define handle_error(msg) do { perror(msg); exit(EXIT_FAILURE); } while (0)
 
@@ -131,7 +131,9 @@ static int init(app_data *info) {
 	
 	// Write # bytes available
 	info->pru_params->ddr_bytes_available = info->ddr_size;
-	
+
+	check(&info);
+
 	printf("Initialization complete.\n");
 	return(0);
 }
@@ -139,7 +141,7 @@ static int init(app_data *info) {
 void check(app_data *info) {
 	int i = 0;
 	uint32_t *ddr = info->ddr_memory;
-	for (i = 0; i < 10; i++) {
+	for (i = 0; i < 128; i++) {
 		printf("%i: 0x%X\n", i, ddr[i]);
 	}
 }
@@ -160,6 +162,7 @@ void intHandler(int val) {
 void* work_thread(void *arg) {
 	printf("Data acquisition status: running. Press ctrl-c to stop.\n");
 	while(info.pru_params->run_flag) {
+		//check(&info);
 	}
 	return NULL;
 }
@@ -202,7 +205,7 @@ int main (void) {
 	// Generate SPI on PRU1 and Transfer data
 	// from PRU Shared space to User Space on PRU0
 	prussdrv_exec_program(PRU_NUM1, "./spiagent.bin");
-	//prussdrv_exec_program(PRU_NUM0, "./dataxferagent.bin");
+	prussdrv_exec_program(PRU_NUM0, "./dataxferagent.bin");
 
 	// Create worker thread
 	pthread_create(&tid, NULL, &work_thread, NULL);
@@ -216,12 +219,12 @@ int main (void) {
 	printf("SPIAgent complete.\n");
 
 	// Wait until PRU0 has finished execution
-	//prussdrv_pru_wait_event(PRU_EVTOUT_0);
-	//printf("DataXferAgent complete.\n");
+	prussdrv_pru_wait_event(PRU_EVTOUT_0);
+	printf("DataXferAgent complete.\n");
 	
 	// clear pru interrupts
 	prussdrv_pru_clear_event(PRU1_ARM_INTERRUPT);
-	//prussdrv_pru_clear_event(PRU0_ARM_INTERRUPT);
+	prussdrv_pru_clear_event(PRU0_ARM_INTERRUPT);
 
 	// Deinitialize
 	check(&info);
