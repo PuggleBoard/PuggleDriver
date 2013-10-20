@@ -38,10 +38,9 @@
 #define UIO_PRUSS_SYSFS_BASE	  					"/sys/class/uio/uio0/maps/map1"
 #define UIO_PRUSS_DRAM_SIZE	  		        UIO_PRUSS_SYSFS_BASE "/size"
 #define UIO_PRUSS_DRAM_ADDR 			        UIO_PRUSS_SYSFS_BASE "/addr"
-#define PRU_PAGE_SIZE	 										2048
-#define ALIGN_TO_PAGE_SIZE(x, pagesize)  ((x)-((x)%pagesize))
-#define DDR_OFFSET														2048
-#define handle_error(msg) do { perror(msg); exit(EXIT_FAILURE); } while (0)
+#define ALIGN_TO_PAGE_SIZE(x, pagesize)   ((x)-((x)%pagesize))
+#define DDR_OFFSET												2048
+#define handle_error(msg) 								do { perror(msg); exit(EXIT_FAILURE); } while (0)
 
 typedef struct {
 	uint32_t    run_flag;
@@ -119,13 +118,13 @@ static int init(app_data *info) {
 	memset((void *)info->ddr_memory, 0, info->ddr_size);
 
 	printf("Initializing PRU parameters.\n");
-	
+
 	// Set the run flag to 1
 	info->pru_params->run_flag = 1;
 
 	// Write DRAM base addr into PRU memory
 	info->pru_params->ddr_base_address = info->ddr_base_address;
-	
+
 	// Write # bytes available
 	info->pru_params->ddr_bytes_available = info->ddr_size;
 
@@ -199,6 +198,8 @@ int main (void) {
 	signal(SIGINT, intHandler);
 
 	sharedMem_int[0] = 0;
+	printf("after pru %d\n", sharedMem_int[0]);
+	
 	// Generate SPI on PRU1 and Transfer data
 	// from PRU Shared space to User Space on PRU0
 	prussdrv_exec_program(PRU_NUM1, "./spiagent.bin");
@@ -211,7 +212,7 @@ int main (void) {
 
 	/*while(work_thread) {
 		sleepms(250);
-	}*/
+		}*/
 
 	// Wait until PRU1 has finished execution
 	prussdrv_pru_wait_event(PRU_EVTOUT_1);
@@ -220,7 +221,7 @@ int main (void) {
 	// Wait until PRU0 has finished execution
 	prussdrv_pru_wait_event(PRU_EVTOUT_0);
 	printf("DataXferAgent complete.\n");
-	
+
 	// clear pru interrupts
 	prussdrv_pru_clear_event(PRU1_ARM_INTERRUPT);
 	prussdrv_pru_clear_event(PRU0_ARM_INTERRUPT);
