@@ -35,7 +35,6 @@
 #define DAC_CH3         r10
 #define DAC_CH4         r11
 #define ADC_INIT        r12
-#define ADC_WRITE_COUNT r13
 #define INIT_CYCLES     r14
 #define CONTROLS        r20
 #define CUR_PAGE        r21
@@ -93,7 +92,6 @@ CLR MOSI
 // Set loop count
 MOV ADC_COUNT, 15
 MOV DAC_COUNT, 23
-MOV ADC_WRITE_COUNT, 31
 
 // Set initialization parameters
 MOV CHAN_NUM, 1
@@ -268,8 +266,8 @@ ADC_LOOP:
     delayOne
 
   ADC_FINAL_MISO_DONE:
-    SBBO ADC_DATA, ADDR_PRU_SHARED, 0, 4                // Copy acquired 4 bytes to shared memory
-    ADD ADDR_PRU_SHARED, ADDR_PRU_SHARED, 4           // Increment address by 4 bytes
+    //SBBO ADC_DATA, ADDR_PRU_SHARED, 0, 4                // Copy acquired 4 bytes to shared memory
+    //ADD ADDR_PRU_SHARED, ADDR_PRU_SHARED, 4           // Increment address by 4 bytes
     SET SCLK
     delayTwo
     SET ADC_CS
@@ -320,7 +318,7 @@ DAC_LOOP:
     delayTwo
     CLR SCLK
     JMP RESET
-
+  
 // Reset pin states
 RESET:
   // DAC Lines
@@ -335,15 +333,13 @@ RESET:
   // Counters
   MOV ADC_COUNT, 15
   MOV DAC_COUNT, 23
-  MOV ADC_WRITE_COUNT, 31
   MOV DAC_CH1.w0, ADC_DATA.w0
   MOV DAC_CH2.w0, ADC_DATA.w0
   MOV DAC_CH3.w0, ADC_DATA.w0
   MOV DAC_CH4.w0, ADC_DATA.w0
 
   ADD CHAN_NUM, CHAN_NUM, 1
-  QBNE SET_CHANNEL, CONTROLS, 0
-  //QBBS SET_CHANNEL, CONTROLS.t0
+  QBBS SET_CHANNEL, CONTROLS.t0
   JMP EXIT
 
 EXIT:
