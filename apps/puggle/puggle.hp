@@ -59,46 +59,33 @@
 #define PRU_SHARED_ADDR   						0x00010004 // address to begin storing acquired data in PRU shared RAM
 
 // Define GPIO addresses
-#define GPIO0  0x44E07000
-#define GPIO1  0x4804C000
-#define GPIO2  0x481AC000
-#define GPIO3  0x481AE000
+#define GPIO0  												0x44E07000
+#define GPIO1  												0x4804C000
+#define GPIO2  												0x481AC000
+#define GPIO3  												0x481AE000
 
 // Define Default Addresses
-#define GPIO_CLEARDATAOUT   0x190
-#define GPIO_SETDATAOUT     0x194
-
-.struct HostParamsPRUMemory
-	.u32	RunFlag
-	.u32  DDRBaseAddress
-	.u32  DDRBytesAvailable
-	.u32  DDRParmsLocation
-	.u32  DDRPagesAvailable
-.ends
-
-.struct PRUParamsDDRMemory
-	.u32	LastWrittenDDRPage
-	.u32	TotalPagesWritten
-.ends
+#define GPIO_CLEARDATAOUT   					0x190
+#define GPIO_SETDATAOUT     					0x194
 
 // SPI Line for onboard AIO
-#define SCLK	  R30.t7
-#define ADC_CS	R30.t11
-#define DAC_CS	R30.t6
-#define MOSI   	R30.t9
-#define MISO   	R31.t8
-#define CNV   	R30.t10
+#define SCLK	  											R30.t7
+#define ADC_CS												R30.t11
+#define DAC_CS												R30.t6
+#define MOSI   												R30.t9
+#define MISO   												R31.t8
+#define CNV   												R30.t10
 
 // AUX DIO
-#define DIO_0	R30.1	
-#define DIO_1	R31.0	
-#define DIO_2	R31.3	
-#define DIO_3	R31.2	
-#define DIO_4	R30.5	
-#define DIO_5	R30.4	
+#define DIO_0													R30.1	
+#define DIO_1													R31.0	
+#define DIO_2													R31.3	
+#define DIO_3													R31.2	
+#define DIO_4													R30.5		
+#define DIO_5													R30.4	
 
 // Useful defines
-#define NOP														MOV R0, R0
+#define NOP 													MOV R0, R0
 
 #define MAGIC_NUM											0xbabe7175
 
