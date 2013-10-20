@@ -58,16 +58,6 @@
 #define COMMANDS_ADDR                 0x00010000 // address to store acquisition control commands in PRU shared RAM
 #define PRU_SHARED_ADDR   						0x00010004 // address to begin storing acquired data in PRU shared RAM
 
-// Define GPIO addresses
-#define GPIO0  												0x44E07000
-#define GPIO1  												0x4804C000
-#define GPIO2  												0x481AC000
-#define GPIO3  												0x481AE000
-
-// Define Default Addresses
-#define GPIO_CLEARDATAOUT   					0x190
-#define GPIO_SETDATAOUT     					0x194
-
 // SPI Line for onboard AIO
 #define SCLK	  											R30.t7
 #define ADC_CS												R30.t11

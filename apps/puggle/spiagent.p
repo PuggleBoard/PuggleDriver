@@ -51,12 +51,6 @@ LBCO  r0, CONST_PRUCFG, 4, 4
 CLR   r0, r0, 4
 SBCO  r0, CONST_PRUCFG, 4, 4
 
-MOV r0, 0
-LBBO r2, r0, 0, 4
-
-MOV r1, MAGIC_NUM
-SBBO r1, r2, 0, 4
-
 // Configure pointer register for PRU0 by setting c28_pointer[15:0] 0x00010000 (PRU shared RAM)
 MOV   r0, 0x00000100
 MOV   r1, CTPPR_0
@@ -74,8 +68,12 @@ MOV BLOCK_COUNT, 0
 MOV ADDR_PRU_SHARED, PRU_SHARED_ADDR
 
 // Read DDR for controls
+MOV CONTROLS, COMMANDS_ADDR
 SET CONTROLS.t0
 LBCO  r0, CONST_DDR, 0, 12
+
+// Store controls into PRU shared RAM
+SBCO  CONTROLS, CONST_PRUSHAREDRAM, 0, 12
 
 // Configure ADC/DAC channels
 MOV DAC_CH1.b2, 0x31
