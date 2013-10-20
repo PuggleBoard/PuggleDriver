@@ -44,8 +44,8 @@
 
 // Constant table
 #define CTBIR          								0x24020 // address for constant table block index reggister (CTBIR)
-#define CTPPR_0         							0x24028 // address for constant table programmable pointer register 0(CTPPR_0)
-#define CTPPR_1         							0x2402C // address for constant table programmable pointer register 1(CTPPR_1)
+#define CTPPR_0         							0x24028 // address for constant table programmable pointer register 0(CTPPR_0) for PRU1
+#define CTPPR_1         							0x2402C // address for constant table programmable pointer register 1(CTPPR_1) for PRU1
 
 // Memory addresses
 #define DDR_BASE_ADDR									0x80000000
@@ -58,12 +58,19 @@
 #define	OFFSET_SHAREDRAM							0
 
 // SPI Line for onboard AIO
-#define SCLK	  											R30.t7
-#define ADC_CS												R30.t11
-#define DAC_CS												R30.t6
-#define MOSI   												R30.t9
-#define MISO   												R31.t8
-#define CNV   												R30.t10
+#define SCLK	  											R30.t9
+#define ADC_CS												R30.t10
+#define DAC_CS												R30.t11
+#define MOSI   												R30.t8
+#define MISO   												R31.t6
+#define CNV   												R30.t7
+
+//#define SCLK	  											R30.t7
+//#define ADC_CS												R30.t11
+//#define DAC_CS												R30.t6
+//#define MOSI   												R30.t9
+//#define MISO   												R31.t8
+//#define CNV   												R30.t10
 
 // AUX DIO
 #define DIO_0													R30.1	

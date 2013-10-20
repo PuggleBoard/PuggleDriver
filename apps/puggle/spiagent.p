@@ -43,7 +43,6 @@
 #define ADC_TX          r23
 #define DAC_DATA        r27
 #define ADC_DATA        r28
-#define ADC_RX          r31
 #define ADDR_PRU_SHARED r24
 
 INIT:
@@ -52,12 +51,12 @@ LBCO  r0, CONST_PRUCFG, 4, 4
 CLR   r0, r0, 4
 SBCO  r0, CONST_PRUCFG, 4, 4
 
-// Configure pointer register for PRU0 by setting c28_pointer[15:0] 0x00010000 (PRU shared RAM)
+// Configure pointer register for PRU1 by setting c28_pointer[15:0] 0x00010000 (PRU shared RAM)
 MOV   r0, 0x00000100
 MOV   r1, CTPPR_0
 ST32  r0, r1
 
-// Configure pointer register for PRU0 by setting c31_pointer[15:0] to 0x80001000 (DDR memory)
+// Configure pointer register for PRU1 by setting c31_pointer[15:0] to 0x80001000 (DDR memory)
 MOV   r0, 0x00100000
 MOV   r1, CTPPR_1
 ST32  r0, r1
@@ -193,28 +192,28 @@ SET_CHANNEL:
 
   CH_1:
     MOV DAC_TX, DAC_CH1
-    MOV ADC_TX, ADC_CH2
+    MOV ADC_TX, ADC_CH1
+    //MOV ADC_TX, ADC_CH2
     SET SCLK
     JMP ADC_LOOP
   CH_2:
-    MOV DAC_TX, DAC_CH2
-    MOV ADC_TX, ADC_CH3
+    //MOV DAC_TX, DAC_CH2
+    //MOV ADC_TX, ADC_CH3
     SET SCLK
     JMP ADC_LOOP
   CH_3:
-    MOV DAC_TX, DAC_CH3
-    MOV ADC_TX, ADC_CH4
+    //MOV DAC_TX, DAC_CH3
+    //MOV ADC_TX, ADC_CH4
     SET SCLK
     JMP ADC_LOOP
   CH_4:
-    MOV DAC_TX, DAC_CH4
-    MOV ADC_TX, ADC_CH1
+    //MOV DAC_TX, DAC_CH4
+    //MOV ADC_TX, ADC_CH1
     MOV CHAN_NUM, 0
     SET SCLK
     JMP ADC_LOOP
 
 ADC_LOOP:
-
   // ADC write bit
   QBBS ADC_MOSI_HIGH, ADC_TX, ADC_COUNT
 
@@ -227,14 +226,14 @@ ADC_LOOP:
   ADC_MOSI_DONE:
     SET SCLK
    
-  QBBS ADC_MISO_HIGH, ADC_RX.t0
+  QBBS ADC_MISO_HIGH, MISO
 
-  CLR ADC_DATA, ADC_RX, ADC_COUNT // Needs dst, src, op(31)
+  CLR ADC_DATA, ADC_DATA, ADC_COUNT
   JMP ADC_MISO_DONE
 
   ADC_MISO_HIGH:
-    SET ADC_DATA, ADC_RX, ADC_COUNT // Needs dst, src, op(31)
-    delayOne
+    SET ADC_DATA, ADC_COUNT
+    delayTwo
 
   ADC_MISO_DONE:
     // Keep running?
@@ -258,13 +257,13 @@ ADC_LOOP:
     delayOne
 
   // ADC read last bit
-  QBBS ADC_FINAL_MISO_HIGH, ADC_RX.t0
+  QBBS ADC_FINAL_MISO_HIGH, MISO
 
-  CLR ADC_DATA, ADC_RX, ADC_COUNT // Needs dst, src, op(31)
+  CLR ADC_DATA, ADC_DATA, ADC_COUNT
   JMP ADC_FINAL_MISO_DONE
 
   ADC_FINAL_MISO_HIGH:
-    SET ADC_DATA, ADC_RX, ADC_COUNT // Needs dst, src, op(31)
+    SET ADC_DATA, ADC_COUNT
     delayOne
 
   ADC_FINAL_MISO_DONE:
@@ -340,10 +339,10 @@ RESET:
   MOV DAC_CH4.w0, ADC_DATA.w0
   
   // Copy acquired 4 bytes to shared memory
-  SBBO ADC_DATA, ADDR_PRU_SHARED, 0, 4
+  //SBBO ADC_DATA, ADDR_PRU_SHARED, 0, 4
 
   // Clear ADC_DATA for next round
-  MOV ADC_DATA, 0
+  //MOV ADC_DATA, 0
 
   // Increment ADC channel
   ADD CHAN_NUM, CHAN_NUM, 1

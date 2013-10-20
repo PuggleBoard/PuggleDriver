@@ -30,18 +30,12 @@
 		__overlay__ {
 			pinctrl_test: pinctrl_test_7_pins {
 				pinctrl-single,pins = <
-					0x0A0 0x05 	/* P8_45 (GPIO_06) | OUTPUT (MODE 5) */
-					0x0A4 0x06	/* P8_46 (GPIO_07) | INPUT  (MODE 6) */
-					0x0A8 0x06	/* P8_43 (GPIO_08) | INPUT  (MODE 6) */
-					0x0AC 0x06	/* P8_44 (GPIO_09) | INPUT  (MODE 6) */
-					0x0B0 0x05	/* P8_41 (GPIO_10) | OUTPUT (MODE 5) */
-					0x0B4 0x05	/* P8_42 (GPIO_11) | OUTPUT (MODE 5) */	
-					0x0B8 0x05	/* P8_39 (GPIO_12) | OUTPUT (MODE 5) */
-					0x0BC 0x05	/* P8_40 (GPIO_13) | OUTPUT (MODE 5) */
-					0x0E0 0x06	/* P8_27 (GPIO_22) | INPUT  (MODE 6) */
-					0x0E4 0x05	/* P8_29 (GPIO_23) | OUTPUT (MODE 5) */
-					0x0E8 0x05	/* P8_28 (GPIO_24) | OUTPUT (MODE 5) */
-					0x0EC 0x05	/* P8_30 (GPIO_25) | OUTPUT (MODE 5) */
+					0x0BC	0x05
+					0x0B8	0x06
+					0x0EC	0x05
+					0x0E8	0x05
+					0x0E4	0x05
+					0x0E0	0x05
 				>;
 			};
 		};
