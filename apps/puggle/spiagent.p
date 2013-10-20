@@ -266,8 +266,8 @@ ADC_LOOP:
     delayOne
 
   ADC_FINAL_MISO_DONE:
-    //SBBO ADC_DATA, ADDR_PRU_SHARED, 0, 4                // Copy acquired 4 bytes to shared memory
-    //ADD ADDR_PRU_SHARED, ADDR_PRU_SHARED, 4           // Increment address by 4 bytes
+    SBBO ADC_DATA, ADDR_PRU_SHARED, 0, 4                // Copy acquired 4 bytes to shared memory
+    ADD ADDR_PRU_SHARED, ADDR_PRU_SHARED, 4           // Increment address by 4 bytes
     SET SCLK
     delayTwo
     SET ADC_CS
