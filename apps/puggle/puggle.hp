@@ -87,6 +87,7 @@
 // Useful defines
 #define NOP 													MOV R0, R0
 
+// Magic number
 #define MAGIC_NUM											0xbabe7175
 
 // TI Macros
