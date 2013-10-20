@@ -35,6 +35,7 @@
 #define DAC_CH3         r10
 #define DAC_CH4         r11
 #define ADC_INIT        r12
+#define BLOCK_COUNT     r13
 #define INIT_CYCLES     r14
 #define CONTROLS        r20
 #define CUR_PAGE        r21
@@ -49,9 +50,6 @@ INIT:
 LBCO  r0, CONST_PRUCFG, 4, 4
 CLR   r0, r0, 4
 SBCO  r0, CONST_PRUCFG, 4, 4
-
-// Setup memory addresses
-MOV ADDR_PRU_SHARED, PRU_SHARED_ADDR
 
 MOV r0, 0
 LBBO r2, r0, 0, 4
@@ -69,9 +67,14 @@ MOV   r0, 0x00100000
 MOV   r1, CTPPR_1
 ST32  r0, r1
 
-SET CONTROLS.t0
+// Set counter for number of blocks copied
+MOV BLOCK_COUNT, 0
+
+// Setup memory addresses
+MOV ADDR_PRU_SHARED, PRU_SHARED_ADDR
 
 // Read DDR for controls
+SET CONTROLS.t0
 LBCO  r0, CONST_DDR, 0, 12
 
 // Configure ADC/DAC channels
@@ -266,8 +269,7 @@ ADC_LOOP:
     delayOne
 
   ADC_FINAL_MISO_DONE:
-    SBBO ADC_DATA, ADDR_PRU_SHARED, 0, 4                // Copy acquired 4 bytes to shared memory
-    ADD ADDR_PRU_SHARED, ADDR_PRU_SHARED, 4           // Increment address by 4 bytes
+    delayTwo
     SET SCLK
     delayTwo
     SET ADC_CS
@@ -337,8 +339,31 @@ RESET:
   MOV DAC_CH2.w0, ADC_DATA.w0
   MOV DAC_CH3.w0, ADC_DATA.w0
   MOV DAC_CH4.w0, ADC_DATA.w0
+  
+  // Copy acquired 4 bytes to shared memory
+  SBBO ADC_DATA, ADDR_PRU_SHARED, 0, 4
 
+  // Clear ADC_DATA for next round
+  MOV ADC_DATA, 0
+
+  // Increment ADC channel
   ADD CHAN_NUM, CHAN_NUM, 1
+
+  // Check PRU shared address
+  QBEQ  RESET_ADDR, BLOCK_COUNT, 150
+
+  // Increment address by 4 bytes
+  ADD ADDR_PRU_SHARED, ADDR_PRU_SHARED, 4
+
+  // Check run/stop
+  QBBS SET_CHANNEL, CONTROLS.t0
+  JMP EXIT
+
+  RESET_ADDR:
+    // Reset PRU Shared memory address
+    MOV ADDR_PRU_SHARED, PRU_SHARED_ADDR
+  
+  // Check run/stop
   QBBS SET_CHANNEL, CONTROLS.t0
   JMP EXIT
 
