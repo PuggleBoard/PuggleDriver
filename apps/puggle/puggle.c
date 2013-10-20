@@ -84,7 +84,9 @@ static uint32_t read_uint32_hex_from_file(const char *file) {
 
 static int load_pruss_dram_info(app_data *info) {
 	info->ddr_size = read_uint32_hex_from_file(UIO_PRUSS_DRAM_SIZE);
+	printf("DDR size: 0x%08lX\n", info->ddr_size);
 	info->ddr_base_address = read_uint32_hex_from_file(UIO_PRUSS_DRAM_ADDR);
+	printf("DDR address: 0x%08lX\n", info->ddr_base_address);
 	return 0;
 }
 
@@ -106,7 +108,7 @@ static int init(app_data *info) {
 	}
 
 	prussdrv_map_prumem(PRUSS0_SHARED_DATARAM, (void *) &info->pru_memory);
-	sharedMem_int = (unsigned int*) sharedMem;
+	sharedMem_int = (unsigned int*) info->pru_memory;
 
 	if(info->pru_memory == NULL) {
 		printf("Cannot map PRU1 memory buffer.\n");
@@ -127,8 +129,6 @@ static int init(app_data *info) {
 
 	// Write # bytes available
 	info->pru_params->ddr_bytes_available = info->ddr_size;
-
-	check(&info);
 
 	printf("Initialization complete.\n");
 	return(0);
@@ -204,7 +204,6 @@ int main (void) {
 	// from PRU Shared space to User Space on PRU0
 	prussdrv_exec_program(PRU_NUM1, "./spiagent.bin");
 	prussdrv_exec_program(PRU_NUM0, "./dataxferagent.bin");
-
 	printf("after pru %d\n", sharedMem_int[0]);
 
 	// Create worker thread

@@ -41,6 +41,7 @@
 #define CUR_PAGE        r21
 #define DAC_TX          r22
 #define ADC_TX          r23
+#define DAC_DATA        r27
 #define ADC_DATA        r28
 #define ADC_RX          r31
 #define ADDR_PRU_SHARED r24
@@ -154,7 +155,7 @@ ADC_INIT_LOOP:
 
     // Set first channel if one cycle thru init
     delayTen
-    MOV ADC_INIT, 0xc000//ADC_CH1.w0
+    MOV ADC_INIT, 0xc000
     CLR ADC_CS
     JMP ADC_INIT_LOOP
 
