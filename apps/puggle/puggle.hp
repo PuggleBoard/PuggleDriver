@@ -82,7 +82,7 @@
 .ends
 
 // SPI Line for onboard AIO
-#define SCLK	R30.t7
+#define SCLK	  R30.t7
 #define ADC_CS	R30.t11
 #define DAC_CS	R30.t6
 #define MOSI   	R30.t9

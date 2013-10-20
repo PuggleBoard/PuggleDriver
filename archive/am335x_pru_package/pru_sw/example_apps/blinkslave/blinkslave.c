@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <prussdrv.h>
 #include <pruss_intc_mapping.h>
-#define PRU_NUM 	0
+#define PRU_NUM 	1
 #define AM33XX
 
 static int LOCAL_exampleInit ();

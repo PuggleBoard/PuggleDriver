@@ -117,5 +117,17 @@
 // *     Global Register Assignments     *
 // ***************************************
 
+.macro delayTen
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+	MOV r29, 0
+.endm
 
 #endif //_blinkslave_HP_

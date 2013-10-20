@@ -201,27 +201,28 @@ int main (void) {
 
 	// Generate SPI on PRU1 and Transfer data
 	// from PRU Shared space to User Space on PRU0
-	prussdrv_exec_program(PRU_NUM1, "./spiagent.bin");
-	prussdrv_exec_program(PRU_NUM0, "./dataxferagent.bin");
+	//prussdrv_exec_program(PRU_NUM1, "./spiagent.bin");
+	//prussdrv_exec_program(PRU_NUM0, "./dataxferagent.bin");
+	prussdrv_exec_program(PRU_NUM1, "./blinkslave.bin");
 
 	// Create worker thread
 	pthread_create(&tid, NULL, &work_thread, NULL);
 
-	while(work_thread) {
+	/*while(work_thread) {
 		sleepms(250);
-	}
+	}*/
 
 	// Wait until PRU1 has finished execution
 	prussdrv_pru_wait_event(PRU_EVTOUT_1);
 	printf("SPIAgent complete.\n");
 
 	// Wait until PRU0 has finished execution
-	prussdrv_pru_wait_event(PRU_EVTOUT_0);
-	printf("DataXferAgent complete.\n");
+	//prussdrv_pru_wait_event(PRU_EVTOUT_0);
+	//printf("DataXferAgent complete.\n");
 	
-	// Clear PRU interrupts
+	// clear pru interrupts
 	prussdrv_pru_clear_event(PRU1_ARM_INTERRUPT);
-	prussdrv_pru_clear_event(PRU0_ARM_INTERRUPT);
+	//prussdrv_pru_clear_event(PRU0_ARM_INTERRUPT);
 
 	// Deinitialize
 	check(&info);
