@@ -159,7 +159,7 @@ void intHandler(int val) {
 	if(!status) {
 		// Disable run_flag and reset PRUs
 		info.pru_params->run_flag=0;
-		prussdrv_pru_write_memory(4, 0, (unsigned int *)info.pru_params, 4);
+		//prussdrv_pru_write_memory(4, 0, (unsigned int *)info.pru_params, 4);
 		printf("Data acquisition status: stopped.\n");
 	}
 	else {
@@ -167,7 +167,7 @@ void intHandler(int val) {
 		// Generate SPI on PRU1 and Transfer data
 		// from PRU Shared space to User Space on PRU0
 		info.pru_params->run_flag=1;
-		prussdrv_pru_write_memory(4, 0, (unsigned int *)info.pru_params, 4);
+		//prussdrv_pru_write_memory(4, 0, (unsigned int *)info.pru_params, 4);
 		prussdrv_exec_program(PRU_NUM1, "./spiagent.bin");
 		prussdrv_exec_program(PRU_NUM0, "./dataxferagent.bin");
 		printf("Data acquisition status: started.\n");
@@ -213,13 +213,8 @@ int main (void) {
 	// Initialize memory settings
 	init(&info);
 
-	sharedMem_int[0] = 0;
-	printf("after pru %d\n", sharedMem_int[0]);
-
 	// Initialize flags and controller for start/stop of PRUs
 	signal(SIGINT, intHandler);
-
-	printf("after pru %d\n", sharedMem_int[0]);
 
 	// Create worker thread
 	pthread_create(&tid, NULL, &work_thread, NULL);

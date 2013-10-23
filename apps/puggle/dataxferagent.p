@@ -47,12 +47,6 @@ LBCO  r0, CONST_PRUCFG, 4, 4
 CLR   r0, r0, 4
 SBCO  r0, CONST_PRUCFG, 4, 4
 
-MOV r0, 0
-LBBO r2, r0, 0, 4
-
-MOV r1, nums
-SBBO r1, r2, 0, 4
-
 // Configure pointer register for PRU0 by setting c28_pointer[15:0] 0x00010000 (PRU shared RAM)
 MOV   r0, 0x00000100
 MOV   r1, CTPPR_0
@@ -63,12 +57,15 @@ MOV   r0, 0x00100000
 MOV   r1, CTPPR_1
 ST32  r0, r1
 
-// Read DDR for controls
-MOV CONTROLS, COMMANDS_ADDR
-LBCO CONTROLS, CONST_DDR, 0, 12
+INIT:
+  // Read DDR for controls
+  //MOV CONTROLS, COMMANDS_ADDR
+  //LBCO CONTROLS, CONST_DDR, 0, 4
 
-// Store controls into PRU shared RAM
-SBCO CONTROLS, CONST_PRU_SHAREDRAM, 0, 12
+  // Store controls into PRU shared RAM
+  //SBCO CONTROLS, CONST_PRU_SHAREDRAM, 0, 4
+
+  JMP INIT
 
 ////////////////////////////////////////////////////////////
 // Load the address of PRU0 RAM into ADDR_PRURAM

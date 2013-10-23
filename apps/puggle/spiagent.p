@@ -67,13 +67,6 @@ MOV BLOCK_COUNT, 0
 // Setup memory addresses
 MOV ADDR_PRU_SHARED, PRU_SHARED_ADDR
 
-// Read DDR for controls
-//MOV CONTROLS, COMMANDS_ADDR
-//LBCO  CONTROLS, CONST_DDR, 0, 12
-
-// Store controls into PRU shared RAM
-//SBCO  CONTROLS, CONST_PRU_SHAREDRAM, 0, 12
-
 // Configure ADC/DAC channels
 MOV DAC_CH1.b2, 0x31
 MOV DAC_CH2.b2, 0x32
@@ -157,6 +150,9 @@ ADC_INIT_LOOP:
     MOV ADC_INIT, 0xc000
     CLR ADC_CS
     JMP ADC_INIT_LOOP
+
+    // Wait until told to start
+    //WBS CONTROLS.t0
 
 // Start acquisition
 SET_CHANNEL:
@@ -339,29 +335,31 @@ RESET:
   // Copy acquired 4 bytes to shared memory
   //SBBO ADC_DATA, ADDR_PRU_SHARED, 0, 4
 
+  // Increment address by 4 bytes
+  //ADD ADDR_PRU_SHARED, ADDR_PRU_SHARED, 4
+
   // Clear ADC_DATA for next round
-  //MOV ADC_DATA, 0
+  MOV ADC_DATA, 0
+
+  // Incrememnt Counter
+  //ADD BLOCK_COUNT, BLOCK_COUNT, 1
 
   // Increment ADC channel
   ADD CHAN_NUM, CHAN_NUM, 1
 
   // Check PRU shared address
-  //QBEQ  RESET_ADDR, BLOCK_COUNT, 150
-
-  // Increment address by 4 bytes
-  //ADD ADDR_PRU_SHARED, ADDR_PRU_SHARED, 4
+  //QBEQ RESET_ADDR, BLOCK_COUNT, 150
 
   // Check run/stop
-  //QBBS SET_CHANNEL, CONTROLS.t0
-  //JMP EXIT
+  QBBS SET_CHANNEL, CONTROLS.t0
+  JMP EXIT
 
   //RESET_ADDR:
     // Reset PRU Shared memory address
     //MOV ADDR_PRU_SHARED, PRU_SHARED_ADDR
-  
-  // Check run/stop
-  QBBS SET_CHANNEL, CONTROLS.t0
-  JMP EXIT
+    //QBBS SET_CHANNEL, CONTROLS.t0
+
+  //JMP EXIT
 
 EXIT:
   MOV r31.b0, PRU1_ARM_INTERRUPT+16
