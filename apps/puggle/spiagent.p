@@ -163,7 +163,7 @@ SET_CHANNEL:
   // Trigger conversion using CONVST
   CLR CNV
 
-  // Move in config from PRU shared
+  // Update config flags
   LBCO CONTROLS, CONST_PRU_SHAREDRAM, 0, 4
 
   delayFour
@@ -341,33 +341,33 @@ RESET:
   MOV DAC_CH4.w0, ADC_DATA.w0
 
   // Copy acquired 4 bytes to shared memory
-  //SBBO ADC_DATA, ADDR_PRU_SHARED, 0, 4
+  SBBO ADC_DATA, ADDR_PRU_SHARED, 0, 4
 
   // Increment address by 4 bytes
-  //ADD ADDR_PRU_SHARED, ADDR_PRU_SHARED, 4
+  ADD ADDR_PRU_SHARED, ADDR_PRU_SHARED, 4
 
   // Clear ADC_DATA for next round
   MOV ADC_DATA, 0
 
   // Incrememnt Counter
-  //ADD BLOCK_COUNT, BLOCK_COUNT, 1
+  ADD BLOCK_COUNT, BLOCK_COUNT, 1
 
   // Increment ADC channel
   ADD CHAN_NUM, CHAN_NUM, 1
 
   // Check PRU shared address
-  //QBEQ RESET_ADDR, BLOCK_COUNT, 150
+  QBEQ RESET_ADDR, BLOCK_COUNT, 150
 
   // Check run/stop
   QBBS SET_CHANNEL, CONTROLS.t0
   JMP EXIT
 
-  //RESET_ADDR:
+  RESET_ADDR:
     // Reset PRU Shared memory address
-    //MOV ADDR_PRU_SHARED, PRU_SHARED_ADDR
-    //QBBS SET_CHANNEL, CONTROLS.t0
+    MOV ADDR_PRU_SHARED, PRU_SHARED_ADDR
+    QBBS SET_CHANNEL, CONTROLS.t0
 
-  //JMP EXIT
+  JMP EXIT
 
 EXIT:
   MOV r31.b0, PRU1_ARM_INTERRUPT+16
