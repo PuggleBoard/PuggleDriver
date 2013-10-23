@@ -25,6 +25,7 @@
 #define ADDR_DDR            r17
 #define ADDR_DDR_PARAMS     r18
 #define CUR_SAMPLE          r19
+#define CONTROLS            r20
 #define CUR_PRU0_PAGE       r20.w0
 #define CUR_PRU1_PAGE       r20.w2
 #define CUR_PAGE_OFFSET     r21
@@ -62,12 +63,14 @@ MOV   r0, 0x00100000
 MOV   r1, CTPPR_1
 ST32  r0, r1
 
-// Load values from external DDR memory into registers
-LBCO  r0, CONST_DDR, 0, 12
+// Read DDR for controls
+MOV CONTROLS, COMMANDS_ADDR
+LBCO CONTROLS, CONST_DDR, 0, 12
 
-// Store values read from DDR memory into PRU shared RAM
-SBCO  r0, CONST_PRU_SHAREDRAM, 0, 12
+// Store controls into PRU shared RAM
+SBCO CONTROLS, CONST_PRU_SHAREDRAM, 0, 12
 
+////////////////////////////////////////////////////////////
 // Load the address of PRU0 RAM into ADDR_PRURAM
 //MOV ADDR_PRURAM, PRU_DATA1_ADDR
 //MOV CUR_PRU0_PAGE, 0

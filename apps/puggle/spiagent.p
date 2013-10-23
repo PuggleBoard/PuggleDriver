@@ -69,7 +69,6 @@ MOV ADDR_PRU_SHARED, PRU_SHARED_ADDR
 
 // Read DDR for controls
 //MOV CONTROLS, COMMANDS_ADDR
-SET CONTROLS.t0
 //LBCO  CONTROLS, CONST_DDR, 0, 12
 
 // Store controls into PRU shared RAM
@@ -336,7 +335,7 @@ RESET:
   MOV DAC_CH2.w0, ADC_DATA.w0
   MOV DAC_CH3.w0, ADC_DATA.w0
   MOV DAC_CH4.w0, ADC_DATA.w0
-  
+
   // Copy acquired 4 bytes to shared memory
   //SBBO ADC_DATA, ADDR_PRU_SHARED, 0, 4
 
