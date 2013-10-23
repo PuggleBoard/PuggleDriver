@@ -42,10 +42,15 @@
 #define LOCAL_BUFFER_SIZE             (LOCAL_BUFFER_PAGE_SIZE * LOCAL_BUFFER_NUM_PAGES)
 #define LOCAL_BUFFER_INFO_OFFSET      LOCAL_BUFFER_SIZE
 
-// Constant table
-#define CTBIR          								0x24020 // address for constant table block index reggister (CTBIR)
-#define CTPPR_0         							0x24028 // address for constant table programmable pointer register 0(CTPPR_0) for PRU1
-#define CTPPR_1         							0x2402C // address for constant table programmable pointer register 1(CTPPR_1) for PRU1
+// Constant table for PRU0
+#define CTBIR_0        								0x22020 // address for constant table block index reggister (CTBIR)
+#define CTPPR_0_0        							0x22028 // address for constant table programmable pointer register 0(CTPPR_0) for PRU0
+#define CTPPR_0_1        							0x2202C // address for constant table programmable pointer register 1(CTPPR_1) for PRU0
+
+// Constant table for PRU1
+#define CTBIR_1        								0x24024 // address for constant table block index reggister (CTBIR)
+#define CTPPR_1_0        							0x24028 // address for constant table programmable pointer register 0(CTPPR_0) for PRU1
+#define CTPPR_1_1        							0x2402C // address for constant table programmable pointer register 1(CTPPR_1) for PRU1
 
 // Memory addresses
 #define DDR_BASE_ADDR									0x80000000

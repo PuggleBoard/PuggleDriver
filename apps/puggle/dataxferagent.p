@@ -38,9 +38,6 @@
 #define CUR_DDR_PAGE        r27
 #define TOTAL_PAGES_WRITTEN r28
 
-#define XFER_CHUNK_SIZE     32    // Transfer 32 bytes at a time
-#define nums  0xbabe7175
-
 START:
 // Enable OCP
 LBCO  r0, CONST_PRUCFG, 4, 4
@@ -49,12 +46,12 @@ SBCO  r0, CONST_PRUCFG, 4, 4
 
 // Configure pointer register for PRU0 by setting c28_pointer[15:0] 0x00010000 (PRU shared RAM)
 MOV   r0, 0x00000100
-MOV   r1, CTPPR_0
+MOV   r1, CTPPR_0_0
 ST32  r0, r1
 
 // Configure pointer register for PRU0 by setting c31_pointer[15:0] to 0x80001000 (DDR memory)
 MOV   r0, 0x00100000
-MOV   r1, CTPPR_1
+MOV   r1, CTPPR_0_1
 ST32  r0, r1
 
 INIT:
