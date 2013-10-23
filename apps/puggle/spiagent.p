@@ -151,6 +151,9 @@ ADC_INIT_LOOP:
     CLR ADC_CS
     JMP ADC_INIT_LOOP
 
+    // Move in config from PRU shared
+    LBCO CONTROLS, CONST_PRU_SHAREDRAM, 0, 4
+
     // Wait until told to start
     WBS CONTROLS.t0
 
@@ -159,7 +162,12 @@ SET_CHANNEL:
   
   // Trigger conversion using CONVST
   CLR CNV
-  delayTen
+
+  // Move in config from PRU shared
+  LBCO CONTROLS, CONST_PRU_SHAREDRAM, 0, 4
+
+  delayFour
+  delayFour
   
   // Disable CONVST
   SET CNV
