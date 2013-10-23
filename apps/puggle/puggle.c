@@ -177,6 +177,7 @@ void intHandler(int val) {
 void* work_thread(void *arg) {
 	printf("Data acquisition status: running. Press ctrl-c to stop.\n");
 	while(info.pru_params->run_flag) {
+	  printf("Load HH-Neuron dyanamic library...\n");
 	}
 	return NULL;
 }
@@ -219,9 +220,8 @@ int main (void) {
 	// Create worker thread
 	pthread_create(&tid, NULL, &work_thread, NULL);
 
-	/*while(work_thread) {
-		sleepms(250);
-		}*/
+  while(work_thread) {
+  }
 
 	// Wait until PRU1 has finished execution
 	prussdrv_pru_wait_event(PRU_EVTOUT_1);
@@ -236,7 +236,7 @@ int main (void) {
 	prussdrv_pru_clear_event(PRU0_ARM_INTERRUPT);
 
 	// Deinitialize
-	//check(&info);
+	check(&info);
 	deinit(&info);
 	return(0);
 }
