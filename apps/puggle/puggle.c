@@ -60,6 +60,8 @@ typedef struct {
 app_data info;
 static void *ddrMem, *sharedMem;
 static unsigned int *sharedMem_int;
+int status = 0;
+int start_bins = 0;
 
 void sleepms(int ms) {
 	nanosleep((struct timespec[]){{0, ms*100000}}, NULL);
@@ -122,7 +124,7 @@ static int init(app_data *info) {
 	printf("Initializing PRU parameters.\n");
 
 	// Set the run flag to 1
-	info->pru_params->run_flag = 1;
+	info->pru_params->run_flag = 0;
 
 	// Write DRAM base addr into PRU memory
 	info->pru_params->ddr_base_address = info->ddr_base_address;
@@ -142,17 +144,30 @@ void check(app_data *info) {
 	}
 }
 
-void deinit(app_data *info) {
+void deinit(int val) {
 	prussdrv_pru_disable(PRU_NUM0);
 	prussdrv_pru_disable(PRU_NUM1);
 	prussdrv_exit();
-	munmap(info->ddr_memory, info->ddr_size);
-	close(info->mem_fd);
+	munmap(info.ddr_memory, info.ddr_size);
+	close(info.mem_fd);
 }
 
 void intHandler(int val) {
-	info.pru_params->run_flag = 0;
-	printf("Data acquisition status: stopped.\n");
+	status = (info.pru_params->run_flag==1 ? 0 : 1);
+	if(!status) {
+		info.pru_params->run_flag=0;
+		prussdrv_pru_reset(PRU_NUM1);
+		prussdrv_pru_reset(PRU_NUM0);
+		printf("Data acquisition status: stopped.\n");
+	}
+	else {
+		// Generate SPI on PRU1 and Transfer data
+		// from PRU Shared space to User Space on PRU0
+		info.pru_params->run_flag=1;
+		prussdrv_exec_program(PRU_NUM1, "./spiagent.bin");
+		prussdrv_exec_program(PRU_NUM0, "./dataxferagent.bin");
+		printf("Data acquisition status: started.\n");
+	}
 }
 
 void* work_thread(void *arg) {
@@ -194,16 +209,12 @@ int main (void) {
 	// Initialize memory settings
 	init(&info);
 
-	// Initialize flags
-	signal(SIGINT, intHandler);
-
 	sharedMem_int[0] = 0;
 	printf("after pru %d\n", sharedMem_int[0]);
 	
-	// Generate SPI on PRU1 and Transfer data
-	// from PRU Shared space to User Space on PRU0
-	prussdrv_exec_program(PRU_NUM1, "./spiagent.bin");
-	prussdrv_exec_program(PRU_NUM0, "./dataxferagent.bin");
+	// Initialize flags and controller for start/stop of PRUs
+	signal(SIGINT, intHandler);
+
 	printf("after pru %d\n", sharedMem_int[0]);
 
 	// Create worker thread
