@@ -165,10 +165,13 @@ SET_CHANNEL:
 
   // Update config flags
   LBCO CONTROLS, CONST_PRU_SHAREDRAM, 0, 4
-
-  delayFour
-  delayFour
   
+  // Setup DAC data
+  MOV DAC_CH1.w0, ADC_DATA.w0
+  MOV DAC_CH2.w0, ADC_DATA.w0
+  MOV DAC_CH3.w0, ADC_DATA.w0
+  MOV DAC_CH4.w0, ADC_DATA.w0
+
   // Disable CONVST
   SET CNV
 
@@ -182,10 +185,30 @@ SET_CHANNEL:
   delayFourty
   delayTwenty
   delayTen
-  delayFive
 
-  // Enable CS for ADC
-  CLR ADC_CS
+  // Copy acquired 4 bytes to shared memory
+  SBBO ADC_DATA, ADDR_PRU_SHARED, 0, 4
+  
+  // Increment address by 4 bytes
+  ADD ADDR_PRU_SHARED, ADDR_PRU_SHARED, 4
+
+  // Clear ADC_DATA for next round
+  MOV ADC_DATA, 0
+
+  // Incrememnt Counter
+  ADD BLOCK_COUNT, BLOCK_COUNT, 1
+
+  // Check PRU shared address
+  QBLE CONTINUE, BLOCK_COUNT, 150
+
+  RESET_ADDR:
+    // Reset PRU Shared memory address
+    MOV ADDR_PRU_SHARED, PRU_SHARED_ADDR
+    MOV BLOCK_COUNT, 0
+
+  CONTINUE:
+    // Enable CS for ADC
+    CLR ADC_CS
  
   // Configure DAC Channel Number
   QBEQ CH_1, CHAN_NUM, 1
@@ -335,38 +358,13 @@ RESET:
   // Counters
   MOV ADC_COUNT, 15
   MOV DAC_COUNT, 23
-  MOV DAC_CH1.w0, ADC_DATA.w0
-  MOV DAC_CH2.w0, ADC_DATA.w0
-  MOV DAC_CH3.w0, ADC_DATA.w0
-  MOV DAC_CH4.w0, ADC_DATA.w0
-
-  // Copy acquired 4 bytes to shared memory
-  SBBO ADC_DATA, ADDR_PRU_SHARED, 0, 4
-
-  // Increment address by 4 bytes
-  ADD ADDR_PRU_SHARED, ADDR_PRU_SHARED, 4
-
-  // Clear ADC_DATA for next round
-  MOV ADC_DATA, 0
-
-  // Incrememnt Counter
-  ADD BLOCK_COUNT, BLOCK_COUNT, 1
 
   // Increment ADC channel
   ADD CHAN_NUM, CHAN_NUM, 1
 
-  // Check PRU shared address
-  QBEQ RESET_ADDR, BLOCK_COUNT, 150
-
   // Check run/stop
   QBBS SET_CHANNEL, CONTROLS.t0
   JMP EXIT
-
-  RESET_ADDR:
-    // Reset PRU Shared memory address
-    MOV ADDR_PRU_SHARED, PRU_SHARED_ADDR
-    MOV BLOCK_COUNT, 0
-    QBBS SET_CHANNEL, CONTROLS.t0
 
   JMP EXIT
 
