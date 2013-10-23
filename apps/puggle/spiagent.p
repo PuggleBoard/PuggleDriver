@@ -152,7 +152,7 @@ ADC_INIT_LOOP:
     JMP ADC_INIT_LOOP
 
     // Wait until told to start
-    //WBS CONTROLS.t0
+    WBS CONTROLS.t0
 
 // Start acquisition
 SET_CHANNEL:
