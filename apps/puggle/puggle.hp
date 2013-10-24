@@ -63,6 +63,8 @@
 #define	OFFSET_SHAREDRAM							0
 
 // SPI Line for onboard AIO
+
+// hacked lines for now
 #define SCLK	  											R30.t9
 #define ADC_CS												R30.t10
 #define DAC_CS												R30.t11
@@ -70,6 +72,7 @@
 #define MISO   												R31.t6
 #define CNV   												R30.t7
 
+// Actual lines to use
 //#define SCLK	  											R30.t7
 //#define ADC_CS												R30.t11
 //#define DAC_CS												R30.t6
