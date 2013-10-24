@@ -177,9 +177,13 @@ void intHandler(int val) {
 void* work_thread(void *arg) {
 	printf("Data acquisition status: running. Press ctrl-c to stop.\n");
 	void *ddr_loc;
-	if(info.pru_params->run_flag) {
-		ddr_loc = DDR_BASE_ADDR + OFFSET_DDR + 0;
-		printf("%p\n",ddr_loc);
+	int i;
+	if(!info.pru_params->run_flag) {
+		for(i=0; i<150; i+=4) {
+			ddr_loc = DDR_BASE_ADDR + OFFSET_DDR + i;
+			ddr_loc = PRUSS0_SHARED_DATARAM + i;
+			printf("%p %lu \n", ddr_loc, ddr_loc);
+		}
 	}
 	return NULL;
 }
