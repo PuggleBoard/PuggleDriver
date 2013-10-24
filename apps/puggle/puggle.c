@@ -160,9 +160,10 @@ void intHandler(int val) {
 		printf("Data acquisition status: stopped.\n");
 	}
 	else {
-		// Enable run_flag and start PRUs
-		// Generate SPI on PRU1 and Transfer data
-		// from PRU Shared space to User Space on PRU0
+		/* Enable run_flag and start PRUs
+		 * Generate SPI on PRU1 and Transfer data
+		 * from PRU Shared space to User Space on PRU0
+		 */
 		info.pru_params->run_flag=1;
 		prussdrv_exec_program(PRU_NUM1, "./spiagent.bin");
 		prussdrv_exec_program(PRU_NUM0, "./dataxferagent.bin");
@@ -173,7 +174,7 @@ void intHandler(int val) {
 void* work_thread(void *arg) {
 	printf("Data acquisition status: running. Press ctrl-c to stop.\n");
 	while(info.pru_params->run_flag) {
-	  printf("Load HH-Neuron dyanamic library...\n");
+		printf("Load HH-Neuron dyanamic library...\n");
 	}
 	return NULL;
 }
@@ -217,8 +218,9 @@ int main (void) {
 	signal(SIGINT, intHandler);
 
 	// Run Puggle until worker thread is killed
-  while(work_thread) {
-  }
+	while(work_thread) {
+		sleepms(250);
+	}
 
 	// Wait until PRU1 has finished execution
 	prussdrv_pru_wait_event(PRU_EVTOUT_1);
