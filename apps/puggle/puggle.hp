@@ -54,19 +54,19 @@
 
 // Memory addresses
 #define DDR_BASE_ADDR									0x80000000
-#define OFFSET_DDR										0x0010
+#define OFFSET_DDR										0x00001000
 
 #define PRU_DATA0_ADDR				    		0x00000000
 #define PRU_DATA1_ADDR		    				0x00002000
-#define COMMANDS_ADDR                 0x00010000 // address to store acquisition control commands in PRU shared RAM
-#define PRU_SHARED_ADDR   						0x00010004 // address to begin storing acquired data in PRU shared RAM
+#define COMMANDS_ADDR                 0x00010000 		// address to store acquisition control commands in PRU shared RAM
+#define PRU_SHARED_ADDR   						0x00010004 		// address to begin storing acquired data in PRU shared RAM
 #define	OFFSET_SHAREDRAM							0
 
 // DAC outputs
-#define DAC_OUTPUT_1									DDR_BASE_ADDR+(OFFSET_DDR*1)
-#define DAC_OUTPUT_2									DDR_BASE_ADDR+(OFFSET_DDR*2)
-#define DAC_OUTPUT_3									DDR_BASE_ADDR+(OFFSET_DDR*3)
-#define DAC_OUTPUT_4									DDR_BASE_ADDR+(OFFSET_DDR*4)
+#define DAC_OUTPUT_1									0	// address to store dac ch 1 output
+#define DAC_OUTPUT_2							    4	// address to store dac ch 2 output
+#define DAC_OUTPUT_3									8	// address to store dac ch 3 output
+#define DAC_OUTPUT_4									12// address to store dac ch 4 output
 
 // SPI Line for onboard AIO
 
