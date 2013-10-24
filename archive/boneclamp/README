@@ -1,7 +1,0 @@
-Build with
-        make
-
-Run with
-        ./src/app/bin
-
-gdb is good!
