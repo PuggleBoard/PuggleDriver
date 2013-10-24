@@ -42,6 +42,9 @@
 #define DDR_OFFSET												2048
 #define handle_error(msg) 								do { perror(msg); exit(EXIT_FAILURE); } while (0)
 
+#define DDR_BASE_ADDR											0x80000000
+#define OFFSET_DDR												0x00001000
+
 typedef struct {
 	uint32_t    run_flag;
 	uint32_t    ddr_base_address;
@@ -165,10 +168,6 @@ void intHandler(int val) {
 		 * from PRU Shared space to User Space on PRU0
 		 */
 		info.pru_params->run_flag=1;
-		
-		// Create worker thread
-		pthread_create(&tid, NULL, &work_thread, NULL);
-
 		prussdrv_exec_program(PRU_NUM1, "./spiagent.bin");
 		prussdrv_exec_program(PRU_NUM0, "./dataxferagent.bin");
 		printf("Data acquisition status: started.\n");
@@ -219,6 +218,9 @@ int main (void) {
 
 	// Initialize flags and controller for start/stop of PRUs
 	signal(SIGINT, intHandler);
+
+	// Create worker thread
+	pthread_create(&tid, NULL, &work_thread, NULL);
 
 	// Run Puggle until worker thread is killed
 	while(work_thread) {
