@@ -165,6 +165,10 @@ void intHandler(int val) {
 		 * from PRU Shared space to User Space on PRU0
 		 */
 		info.pru_params->run_flag=1;
+		
+		// Create worker thread
+		pthread_create(&tid, NULL, &work_thread, NULL);
+
 		prussdrv_exec_program(PRU_NUM1, "./spiagent.bin");
 		prussdrv_exec_program(PRU_NUM0, "./dataxferagent.bin");
 		printf("Data acquisition status: started.\n");
@@ -173,8 +177,10 @@ void intHandler(int val) {
 
 void* work_thread(void *arg) {
 	printf("Data acquisition status: running. Press ctrl-c to stop.\n");
-	while(info.pru_params->run_flag) {
-		printf("Load HH-Neuron dyanamic library...\n");
+	void *ddr_loc;
+	if(info.pru_params->run_flag) {
+		ddr_loc = DDR_BASE_ADDR + OFFSET_DDR + 0;
+		printf("%p\n",ddr_loc);
 	}
 	return NULL;
 }
@@ -210,9 +216,6 @@ int main (void) {
 
 	// Initialize memory settings
 	init(&info);
-
-	// Create worker thread
-	pthread_create(&tid, NULL, &work_thread, NULL);
 
 	// Initialize flags and controller for start/stop of PRUs
 	signal(SIGINT, intHandler);
