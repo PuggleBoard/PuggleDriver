@@ -137,13 +137,11 @@
 // Global Register Assignment
 .assign gReg, r12, *, global
 
-/*----------------------*/
-/*    SPI Operations    */
-/*----------------------*/
+// SPI Operations
 
 // Single SPI duplex bit transfer
 .macro SPI_XFER_BIT
-.mparam SPI_RX, BIT
+.mparam SPI_RX, SPI_TX, BIT
  
     // Output MOSI
     QBBS MOSI_HIGH, SPI_TX, BIT
@@ -155,83 +153,146 @@
         NOP
 
     MOSI_DONE:
+        SET SCLK
  
-    SET SPI_SCLK
- 
-    // Read MISO (Inverted because input amps are inverting)
-    QBBC MISO_LOW, LSPD_SPI_MISO
-        NOP
-        NOP
-
-    MISO_LOW:
+    // Read MISO
+    QBBC MISO_LOW, MISO
         SET SPI_RX, SPI_RX, BIT
         JMP MISO_DONE
 
+    MISO_LOW:
+        CLR SPI_RX, SPI_RX, BIT
+        NOP
+
     MISO_DONE:
+        CLR SCLK        
  
-    CLR SPI_SCLK
+.endm
+
+// Single SPI duplex bit transfer with RX bit inversion
+.macro SPI_XFER_INV_BIT
+.mparam SPI_RX, SPI_TX, BIT
  
-    NOP
-    NOP
+    // Output MOSI
+    QBBS MOSI_HIGH, SPI_TX, BIT
+        CLR MOSI
+        JMP MOSI_DONE
+
+    MOSI_HIGH:
+        SET MOSI
+        NOP
+
+    MOSI_DONE:
+        SET SCLK
  
+    // Read inverted MISO
+    QBBC MISO_LOW, MISO
+        CLR SPI_RX, SPI_RX, BIT
+        JMP MISO_DONE
+
+    MISO_LOW:
+        SET SPI_RX, SPI_RX, BIT
+        NOP
+
+    MISO_DONE:
+        CLR SCLK
+
+.endm
+
+
+// ADC word transfer with RX bit inversion (16 bits)
+.macro ADC_XFER_INV_WORD
+.mparam RX, TX
+
+    CLR ADC_CS
+ 
+    SPI_XFER_INV_BIT RX, TX, 15
+    SPI_XFER_INV_BIT RX, TX, 14
+    SPI_XFER_INV_BIT RX, TX, 13
+    SPI_XFER_INV_BIT RX, TX, 12
+    SPI_XFER_INV_BIT RX, TX, 11
+    SPI_XFER_INV_BIT RX, TX, 10
+    SPI_XFER_INV_BIT RX, TX, 9
+    SPI_XFER_INV_BIT RX, TX, 8
+    SPI_XFER_INV_BIT RX, TX, 7
+    SPI_XFER_INV_BIT RX, TX, 6
+    SPI_XFER_INV_BIT RX, TX, 5
+    SPI_XFER_INV_BIT RX, TX, 4
+    SPI_XFER_INV_BIT RX, TX, 3
+    SPI_XFER_INV_BIT RX, TX, 2
+    SPI_XFER_INV_BIT RX, TX, 1
+    SPI_XFER_INV_BIT RX, TX, 0
+
+    SET ADC_CS
+    SET SCLK
+
 .endm
 
 // ADC word transfer (16 bits)
 .macro ADC_XFER_WORD
-.mparam ADC_RX
+.mparam RX, TX
+
+    CLR ADC_CS
  
-    SPI_XFER_BIT ADC_RX, 15
-    SPI_XFER_BIT ADC_RX, 14
-    SPI_XFER_BIT ADC_RX, 13
-    SPI_XFER_BIT ADC_RX, 12
-    SPI_XFER_BIT ADC_RX, 11
-    SPI_XFER_BIT ADC_RX, 10
-    SPI_XFER_BIT ADC_RX, 9
-    SPI_XFER_BIT ADC_RX, 8
-    SPI_XFER_BIT ADC_RX, 7
-    SPI_XFER_BIT ADC_RX, 6
-    SPI_XFER_BIT ADC_RX, 5
-    SPI_XFER_BIT ADC_RX, 4
-    SPI_XFER_BIT ADC_RX, 3
-    SPI_XFER_BIT ADC_RX, 2
-    SPI_XFER_BIT ADC_RX, 1
-    SPI_XFER_BIT ADC_RX, 0
+    SPI_XFER_BIT RX, TX, 15
+    SPI_XFER_BIT RX, TX, 14
+    SPI_XFER_BIT RX, TX, 13
+    SPI_XFER_BIT RX, TX, 12
+    SPI_XFER_BIT RX, TX, 11
+    SPI_XFER_BIT RX, TX, 10
+    SPI_XFER_BIT RX, TX, 9
+    SPI_XFER_BIT RX, TX, 8
+    SPI_XFER_BIT RX, TX, 7
+    SPI_XFER_BIT RX, TX, 6
+    SPI_XFER_BIT RX, TX, 5
+    SPI_XFER_BIT RX, TX, 4
+    SPI_XFER_BIT RX, TX, 3
+    SPI_XFER_BIT RX, TX, 2
+    SPI_XFER_BIT RX, TX, 1
+    SPI_XFER_BIT RX, TX, 0
+
+    SET ADC_CS
+    SET SCLK
 
 .endm
 
 // DAC word transfer (24 bits: 8 bits config, 16 bits data)
 .macro DAC_XFER_WORD
-.mparam DAC_RX
-    SPI_XFER_BIT DAC_RX, 23
-    SPI_XFER_BIT DAC_RX, 22
-    SPI_XFER_BIT DAC_RX, 21
-    SPI_XFER_BIT DAC_RX, 20
-    SPI_XFER_BIT DAC_RX, 19
-    SPI_XFER_BIT DAC_RX, 18
-    SPI_XFER_BIT DAC_RX, 17
-    SPI_XFER_BIT DAC_RX, 16
-    SPI_XFER_BIT DAC_RX, 15
-    SPI_XFER_BIT DAC_RX, 14
-    SPI_XFER_BIT DAC_RX, 13
-    SPI_XFER_BIT DAC_RX, 12
-    SPI_XFER_BIT DAC_RX, 11
-    SPI_XFER_BIT DAC_RX, 10
-    SPI_XFER_BIT DAC_RX, 9
-    SPI_XFER_BIT DAC_RX, 8
-    SPI_XFER_BIT DAC_RX, 7
-    SPI_XFER_BIT DAC_RX, 6
-    SPI_XFER_BIT DAC_RX, 5
-    SPI_XFER_BIT DAC_RX, 4
-    SPI_XFER_BIT DAC_RX, 3
-    SPI_XFER_BIT DAC_RX, 2
-    SPI_XFER_BIT DAC_RX, 1
-    SPI_XFER_BIT DAC_RX, 0
+.mparam RX, TX
+
+    CLR DAC_CS  
+
+    SPI_XFER_BIT RX, TX, 23
+    SPI_XFER_BIT RX, TX, 22
+    SPI_XFER_BIT RX, TX, 21
+    SPI_XFER_BIT RX, TX, 20
+    SPI_XFER_BIT RX, TX, 19
+    SPI_XFER_BIT RX, TX, 18
+    SPI_XFER_BIT RX, TX, 17
+    SPI_XFER_BIT RX, TX, 16
+    SPI_XFER_BIT RX, TX, 15
+    SPI_XFER_BIT RX, TX, 14
+    SPI_XFER_BIT RX, TX, 13
+    SPI_XFER_BIT RX, TX, 12
+    SPI_XFER_BIT RX, TX, 11
+    SPI_XFER_BIT RX, TX, 10
+    SPI_XFER_BIT RX, TX, 9
+    SPI_XFER_BIT RX, TX, 8
+    SPI_XFER_BIT RX, TX, 7
+    SPI_XFER_BIT RX, TX, 6
+    SPI_XFER_BIT RX, TX, 5
+    SPI_XFER_BIT RX, TX, 4
+    SPI_XFER_BIT RX, TX, 3
+    SPI_XFER_BIT RX, TX, 2
+    SPI_XFER_BIT RX, TX, 1
+    SPI_XFER_BIT RX, TX, 0
+
+    SET DAC_CS
+    SET SCLK
 
 .endm
 
-/*----------------------*/
-/*      Delays          */
-/*----------------------*/
+// Delay macros
 
 .macro delayOne
 	NOP
