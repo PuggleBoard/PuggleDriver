@@ -1,0 +1,6 @@
+# Some rules to ignore certain files
+
+// Ignore binary files
+*.bin
+*.so
+
