@@ -205,7 +205,8 @@
 .mparam RX, TX
 
     CLR ADC_CS
- 
+    delayTwo
+
     SPI_XFER_INV_BIT RX, TX, 15
     SPI_XFER_INV_BIT RX, TX, 14
     SPI_XFER_INV_BIT RX, TX, 13
@@ -233,7 +234,8 @@
 .mparam RX, TX
 
     CLR ADC_CS
- 
+    delayTwo
+
     SPI_XFER_BIT RX, TX, 15
     SPI_XFER_BIT RX, TX, 14
     SPI_XFER_BIT RX, TX, 13
@@ -260,7 +262,8 @@
 .macro DAC_XFER_WORD
 .mparam RX, TX
 
-    CLR DAC_CS  
+    CLR DAC_CS
+    delayTwo
 
     SPI_XFER_BIT RX, TX, 23
     SPI_XFER_BIT RX, TX, 22

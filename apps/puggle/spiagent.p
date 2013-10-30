@@ -145,7 +145,7 @@ SET_CHANNEL:
   //ADD ADDR_PRU_SHARED, ADDR_PRU_SHARED, 4
 
   // Clear ADC_DATA for next round
-  MOV ADC_DATA, 0
+  //MOV ADC_DATA, 0
 
   // Incrememnt Counter
   // BLOCK_COUNT, BLOCK_COUNT, 1
