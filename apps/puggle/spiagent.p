@@ -166,7 +166,6 @@ SET_CHANNEL:
   // Update config flags
   LBCO CONTROLS, CONST_PRU_SHAREDRAM, 0, 4
   
-  // Setup DAC data
   // Copy data from DDR into each channel
   LBCO DAC_CH1.w0, CONST_DDR, DAC_OUTPUT_1, 4
   LBCO DAC_CH2.w0, CONST_DDR, DAC_OUTPUT_2, 4
