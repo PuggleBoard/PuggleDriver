@@ -154,6 +154,7 @@
 
     MOSI_DONE:
         SET SCLK
+        NOP
  
     // Read MISO
     QBBC MISO_LOW, MISO
@@ -166,13 +167,15 @@
 
     MISO_DONE:
         CLR SCLK        
+        NOP
  
 .endm
 
 // Single SPI duplex bit transfer with RX bit inversion
 .macro SPI_XFER_INV_BIT
 .mparam SPI_RX, SPI_TX, BIT
- 
+
+
     // Output MOSI
     QBBS MOSI_HIGH, SPI_TX, BIT
         CLR MOSI
@@ -184,6 +187,7 @@
 
     MOSI_DONE:
         SET SCLK
+        NOP
  
     // Read inverted MISO
     QBBC MISO_LOW, MISO
@@ -196,6 +200,7 @@
 
     MISO_DONE:
         CLR SCLK
+        NOP
 
 .endm
 
