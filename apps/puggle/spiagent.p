@@ -23,8 +23,6 @@
 
 #include "puggle.hp"
 
-#define DAC_COUNT       r1
-#define ADC_COUNT       r2
 #define CHAN_NUM        r3
 #define ADC_CH1         r4
 #define ADC_CH2         r5
@@ -41,9 +39,10 @@
 #define CUR_PAGE        r21
 #define DAC_TX          r22
 #define ADC_TX          r23
+#define ADDR_PRU_SHARED r24
+#define ADDR_PRU1_DRAM  r25
 #define DAC_DATA        r27
 #define ADC_DATA        r28
-#define ADDR_PRU_SHARED r24
 
 INIT:
 // Enable OCP
@@ -66,6 +65,7 @@ MOV BLOCK_COUNT, 0
 
 // Setup memory addresses
 MOV ADDR_PRU_SHARED, PRU_SHARED_ADDR
+MOV ADDR_PRU1_DRAM, PRU_DATA1_ADDR
 
 // Configure ADC/DAC channels
 MOV DAC_CH1.b2, 0x31
@@ -83,10 +83,6 @@ SET ADC_CS
 SET SCLK
 CLR MOSI
 
-// Set loop count
-MOV ADC_COUNT, 15
-MOV DAC_COUNT, 23
-
 // Set initialization parameters
 MOV CHAN_NUM, 1
 
@@ -99,7 +95,7 @@ ADC_XFER_WORD ADC_DATA, ADC_INIT
 ADC_XFER_WORD ADC_DATA, ADC_INIT
  
 // Move in config from PRU shared
-LBCO CONTROLS, CONST_PRU_SHAREDRAM, 0, 4
+LBCO CONTROLS, CONST_PRU_SHAREDRAM, 0, 2
 
 // Wait until told to start
 WBS CONTROLS.t0
@@ -111,18 +107,14 @@ SET_CHANNEL:
   CLR CNV
 
   // Update config flags
-  LBCO CONTROLS, CONST_PRU_SHAREDRAM, 0, 4
+  LBCO CONTROLS, CONST_PRU_SHAREDRAM, 0, 2
   
   // Setup DAC data
   // Copy data from DDR into each channel
-  //LBCO DAC_CH1.w0, CONST_DDR, DAC_OUTPUT_1, 4
-  //LBCO DAC_CH2.w0, CONST_DDR, DAC_OUTPUT_2, 4
-  //LBCO DAC_CH3.w0, CONST_DDR, DAC_OUTPUT_3, 4
-  //LBCO DAC_CH4.w0, CONST_DDR, DAC_OUTPUT_4, 4
-  MOV DAC_CH1.w0, ADC_DATA.w0 
-  MOV DAC_CH2.w0, ADC_DATA.w0 
-  MOV DAC_CH3.w0, ADC_DATA.w0 
-  MOV DAC_CH4.w0, ADC_DATA.w0
+  LBBO DAC_CH1.w0, ADDR_PRU_SHARED, 0, 2
+  LBBO DAC_CH2.w0, ADDR_PRU_SHARED, 0, 2
+  LBBO DAC_CH3.w0, ADDR_PRU_SHARED, 0, 2
+  LBBO DAC_CH4.w0, ADDR_PRU_SHARED, 0, 2
 
   // Disable CONVST
   SET CNV
@@ -136,26 +128,25 @@ SET_CHANNEL:
   delayFourty
   delayFourty
   delayTwenty
-  delayTen
 
-  // Copy acquired 4 bytes to shared memory
-  //SBBO ADC_DATA, ADDR_PRU_SHARED, 0, 4
-  
-  // Increment address by 4 bytes
-  //ADD ADDR_PRU_SHARED, ADDR_PRU_SHARED, 4
+  // Copy acquired 2 bytes to shared memory
+  SBBO ADC_DATA.w0, ADDR_PRU_SHARED, 0, 2
+
+  // Increment address by 2 bytes
+  ADD ADDR_PRU_SHARED, ADDR_PRU_SHARED, 2
 
   // Clear ADC_DATA for next round
-  //MOV ADC_DATA, 0
+  MOV ADC_DATA, 0
 
   // Incrememnt Counter
-  // BLOCK_COUNT, BLOCK_COUNT, 1
+  ADD BLOCK_COUNT, BLOCK_COUNT, 1
 
   // Check PRU shared address
-  //QBLE CONTINUE, BLOCK_COUNT, 150
+  QBLE CONTINUE, BLOCK_COUNT, 200
 
     // Reset PRU Shared memory address
-   // MOV ADDR_PRU_SHARED, PRU_SHARED_ADDR
-    //MOV BLOCK_COUNT, 0
+    MOV ADDR_PRU_SHARED, PRU_SHARED_ADDR
+    MOV BLOCK_COUNT, 0
     JMP MEM_DONE
 
   CONTINUE:
@@ -223,5 +214,11 @@ START_ACQ:
         JMP SET_CHANNEL
 
 EXIT:
+  // Copy acquired 2 bytes to shared memory
+  SBBO ADC_DATA.w0, ADDR_PRU_SHARED, 0, 2
+  
+  // Increment address by 2 bytes
+  ADD ADDR_PRU_SHARED, ADDR_PRU_SHARED, 2
+
   MOV r31.b0, PRU1_ARM_INTERRUPT+16
   HALT

@@ -35,13 +35,13 @@
 #define PRU_NUM0 													0
 #define PRU_NUM1 													1
 #define DEBUG
-#define UIO_PRUSS_SYSFS_BASE	  					"/sys/class/uio/uio0/maps/map1"
-#define UIO_PRUSS_DRAM_SIZE	  		        UIO_PRUSS_SYSFS_BASE "/size"
-#define UIO_PRUSS_DRAM_ADDR 			        UIO_PRUSS_SYSFS_BASE "/addr"
+//#define UIO_PRUSS_SYSFS_BASE	  					"/sys/class/uio/uio0/maps/map1"
+//#define UIO_PRUSS_DRAM_SIZE	  		        UIO_PRUSS_SYSFS_BASE "/size"
+//#define UIO_PRUSS_DRAM_ADDR 			        UIO_PRUSS_SYSFS_BASE "/addr"
 #define ALIGN_TO_PAGE_SIZE(x, pagesize)   ((x)-((x)%pagesize))
-#define DDR_OFFSET												2048
 #define handle_error(msg) 								do { perror(msg); exit(EXIT_FAILURE); } while (0)
 
+#define PRU_SHARED_OFFSET									0
 #define DDR_BASE_ADDR											0x80000000
 #define OFFSET_DDR												0x00001000
 
@@ -61,10 +61,8 @@ typedef struct {
 } app_data;
 
 app_data info;
-static void *ddrMem, *sharedMem;
-static unsigned int *sharedMem_int;
 int status = 0;
-int start_bins = 0;
+static unsigned int *sharedMem_int;
 
 void sleepms(int ms) {
 	nanosleep((struct timespec[]){{0, ms*100000}}, NULL);
@@ -88,10 +86,9 @@ static uint32_t read_uint32_hex_from_file(const char *file) {
 }
 
 static int load_pruss_dram_info(app_data *info) {
-	info->ddr_size = read_uint32_hex_from_file(UIO_PRUSS_DRAM_SIZE);
-	printf("DDR size: 0x%08lX\n", info->ddr_size);
-	info->ddr_base_address = read_uint32_hex_from_file(UIO_PRUSS_DRAM_ADDR);
-	printf("DDR address: 0x%08lX\n", info->ddr_base_address);
+	info->ddr_size = 0x0FFFFFFF;
+	info->ddr_base_address = DDR_BASE_ADDR;
+	//printf("DDR size is %dMB starting at address 0x%08lX\n", (int)info->ddr_size/1024/1024, info->ddr_base_address);
 	return 0;
 }
 
@@ -112,8 +109,8 @@ static int init(app_data *info) {
 		return -1;
 	}
 
-	prussdrv_map_prumem(PRUSS0_SHARED_DATARAM, (void *) &info->pru_memory);
-	sharedMem_int = (unsigned int*) info->pru_memory;
+	prussdrv_map_prumem(PRUSS0_SHARED_DATARAM, &info->pru_memory);
+	sharedMem_int = (unsigned short int*) info->pru_memory;
 
 	if(info->pru_memory == NULL) {
 		printf("Cannot map PRU1 memory buffer.\n");
@@ -122,7 +119,6 @@ static int init(app_data *info) {
 
 	printf("Initializing memory.\n");
 	info->pru_params = info->pru_memory;
-	memset((void *)info->ddr_memory, 0, info->ddr_size);
 
 	printf("Initializing PRU parameters.\n");
 
@@ -175,14 +171,16 @@ void intHandler(int val) {
 }
 
 void* work_thread(void *arg) {
-	printf("Data acquisition status: running. Press ctrl-c to stop.\n");
-	void *ddr_loc;
 	int i;
+	unsigned short int* valp;
+	unsigned short int val;
+	valp=(unsigned short int*)sharedMem_int[PRU_SHARED_OFFSET+2];
 	if(!info.pru_params->run_flag) {
-		for(i=0; i<150; i+=4) {
-			ddr_loc = DDR_BASE_ADDR + OFFSET_DDR + i;
-			ddr_loc = PRUSS0_SHARED_DATARAM + i;
-			printf("%p %lu \n", ddr_loc, ddr_loc);
+		printf("Data transfer started.\n");
+		for(i=0; i<65000; i++) {
+			val=valp;
+			printf("%d\n", val);
+			valp+=2;
 		}
 	}
 	return NULL;

@@ -22,7 +22,6 @@
 #include "puggle.hp"
 
 #define ADDR_PRURAM         r16
-#define ADDR_DDR            r17
 #define ADDR_DDR_PARAMS     r18
 #define CUR_SAMPLE          r19
 #define CONTROLS            r20
@@ -37,6 +36,10 @@
 #define NUM_DDR_PAGES       r26
 #define CUR_DDR_PAGE        r27
 #define TOTAL_PAGES_WRITTEN r28
+
+#define DAC_DATA            r1
+#define ADDR_PRU1_DRAM      r2
+#define ADDR_DDR            r3
 
 START:
 // Enable OCP
@@ -54,14 +57,15 @@ MOV   r0, 0x00100000
 MOV   r1, CTPPR_0_1
 ST32  r0, r1
 
+MOV ADDR_PRU1_DRAM, PRU_DATA1_ADDR
+MOV ADDR_DDR, 0x80001000
+
 INIT:
-  // Read DDR for controls
-  //MOV CONTROLS, COMMANDS_ADDR
-  //LBCO CONTROLS, CONST_DDR, 0, 4
+  // Read DDR memory and store into register
+  LBBO  DAC_DATA, ADDR_DDR, 0, 2
 
-  // Store controls into PRU shared RAM
-  //SBCO CONTROLS, CONST_PRU_SHAREDRAM, 0, 4
-
+  // Move value from register to PRU1 DRAM
+  SBBO  DAC_DATA, ADDR_PRU1_DRAM, 0, 2
   JMP INIT
 
 EXIT:
