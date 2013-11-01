@@ -33,7 +33,7 @@
 #define DAC_CH3         r10
 #define DAC_CH4         r11
 #define ADC_INIT        r12
-#define CYCLES     r13
+#define CYCLES          r13
 #define INIT_CYCLES     r14
 #define CONTROLS        r20
 #define CUR_PAGE        r21
@@ -84,7 +84,7 @@ SET SCLK
 CLR MOSI
 
 // Set initialization parameters
-MOV CHAN_NUM, 1
+//MOV CHAN_NUM, 1
 
 // Run four initialization cycles (to get channels in phase)
 MOV ADC_INIT, 0xe7ff
@@ -158,11 +158,11 @@ SET_CHANNEL:
 
 MEM_DONE:
  
-// Configure DAC Channel Number
-QBEQ CH_1, CHAN_NUM, 1
-QBEQ CH_2, CHAN_NUM, 2 
-QBEQ CH_3, CHAN_NUM, 3 
-QBEQ CH_4, CHAN_NUM, 4
+// Configure Channel Number
+QBEQ CH_1, CONTROLS.b1, 1
+QBEQ CH_2, CONTROLS.b1, 3
+QBEQ CH_3, CONTROLS.b1, 7
+QBEQ CH_4, CONTROLS.b1, 15
 
 CH_1:
     MOV DAC_TX, DAC_CH1
@@ -191,7 +191,6 @@ CH_4:
     MOV CHAN_NUM, 0
     JMP START_ACQ
 
-
 START_ACQ:
 
     // Collect ADC sample
@@ -200,8 +199,8 @@ START_ACQ:
     // Collect DAC sample
     DAC_XFER_WORD DAC_DATA, DAC_TX
   
-    // Increment channel number
-    //ADD CHAN_NUM, CHAN_NUM, 1
+    // Increment channel number if necessary
+    ADD CHAN_NUM, CHAN_NUM, 1
 
     // Check run/stop
     QBBS INIT_RESET, CONTROLS.t0

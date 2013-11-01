@@ -110,39 +110,39 @@ static int init(app_data *info) {
 
 	// Which I/O channels did the user select?
 	
-	// ADC channel control bits [4:1]
-	if(num_ai_channels == 1){
+	// ADC channel controls
+	if(num_ai_channels == 1) {
 		sharedMem_int[PRU_SHARED_OFFSET+1] = 1;
 	}
-	else if(num_ai_channels == 2){
-		sharedMem_int[PRU_SHARED_OFFSET+1] = 2;
-	}
-	else if(num_ai_channels == 3){
+	else if(num_ai_channels == 2) {
 		sharedMem_int[PRU_SHARED_OFFSET+1] = 3;
 	}
-	else if(num_ai_channels == 4){
-		sharedMem_int[PRU_SHARED_OFFSET+1] = 4;
+	else if(num_ai_channels == 3) {
+		sharedMem_int[PRU_SHARED_OFFSET+1] = 7;
+	}
+	else if(num_ai_channels == 4) {
+		sharedMem_int[PRU_SHARED_OFFSET+1] = 15;
 	}
 
-	// DAC channel control bits [8:5]
+	// DAC channel controls
 	if(num_ai_channels == 1){
 		sharedMem_int[PRU_SHARED_OFFSET+2] = 1;
 	}
 	else if(num_ai_channels == 2){
-		sharedMem_int[PRU_SHARED_OFFSET+2] = 2;
-	}
-	else if(num_ai_channels == 3){
 		sharedMem_int[PRU_SHARED_OFFSET+2] = 3;
 	}
+	else if(num_ai_channels == 3){
+		sharedMem_int[PRU_SHARED_OFFSET+2] = 7;
+	}
 	else if(num_ai_channels == 4){
-		sharedMem_int[PRU_SHARED_OFFSET+2] = 4;
+		sharedMem_int[PRU_SHARED_OFFSET+2] = 15;
 	}
 
 	// Set frequency
 	sharedMem_int[PRU_SHARED_OFFSET+3] = sampling_freq;
 
 	// Printout configuration
-	printf("System configuration is:\n #AI: %d\n #AO: %d\n Sampling Frequency: %d\n", sharedMem_int[PRU_SHARED_OFFSET+1], sharedMem_int[PRU_SHARED_OFFSET+2], sharedMem_int[PRU_SHARED_OFFSET+3]);
+	printf("System configuration is:\n #AI: %d\n #AO: %d\n Sampling Frequency Option: %d\n", sharedMem_int[PRU_SHARED_OFFSET+1], sharedMem_int[PRU_SHARED_OFFSET+2], sharedMem_int[PRU_SHARED_OFFSET+3]);
 
 	// Write DRAM base addr into PRU memory
 	info->pru_params->ddr_base_address = info->ddr_base_address;
@@ -186,11 +186,11 @@ void* work_thread(void *arg) {
 	unsigned short int* valp;
 	unsigned short int val;
 	while(system_status) {
-		valp=(unsigned short int*)&sharedMem_int[PRU_SHARED_OFFSET];
+		valp=(unsigned short int*)&sharedMem_int[PRU_SHARED_OFFSET+4];
 		while(sharedMem_int[PRU_SHARED_OFFSET]==1) {
-			printf("%d\n", *valp);
-			//valp++;
-			//valp++;
+			//printf("%d\n", *valp&0xffff);
+			valp++;
+			valp++;
 		}
 	}
 	return NULL;
