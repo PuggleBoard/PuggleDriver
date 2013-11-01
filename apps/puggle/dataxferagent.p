@@ -64,6 +64,9 @@ INIT:
   // Move value from register to PRU1 DRAM
   SBBO  DAC_DATA, ADDR_PRU1_DRAM, 0, 2
 
+  MOV DAC_DATA, 0
+  MOV PRU_DDR_XFER_SAMPLE, 0
+
   // Incrememnt memory addresses
   ADD ADDR_PRU_SHARED, ADDR_PRU_SHARED, 2
   ADD ADDR_PRU1_DRAM, ADDR_PRU1_DRAM, 2

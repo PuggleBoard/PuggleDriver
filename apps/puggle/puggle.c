@@ -109,7 +109,7 @@ static int init(app_data *info) {
 	sharedMem_int[PRU_SHARED_OFFSET] = 0;
 
 	// Which I/O channels did the user select?
-	
+
 	// ADC channel controls
 	if(num_ai_channels == 1) {
 		sharedMem_int[PRU_SHARED_OFFSET+1] = 1;
@@ -153,7 +153,8 @@ static int init(app_data *info) {
 	}
 
 	// Printout configuration
-	printf("System configuration is:\n #AI: %d #AO: %d\n Sampling Frequency Option: %d\n", sharedMem_int[PRU_SHARED_OFFSET+1], sharedMem_int[PRU_SHARED_OFFSET+2], sharedMem_int[PRU_SHARED_OFFSET+3]);
+	printf("System configuration is:\n #AI: %d #AO: %d\n Sampling Frequency Option: %d\n",
+			sharedMem_int[PRU_SHARED_OFFSET+1], sharedMem_int[PRU_SHARED_OFFSET+2], sharedMem_int[PRU_SHARED_OFFSET+3]);
 
 	// Write DRAM base addr into PRU memory
 	info->pru_params->ddr_base_address = info->ddr_base_address;
@@ -193,16 +194,11 @@ void intHandler(int val) {
 }
 
 void* work_thread(void *arg) {
-	int i;
-	unsigned short int* valp;
-	unsigned short int val;
+	int i = 0;
 	while(system_status) {
-		valp=(unsigned short int*)&sharedMem_int[PRU_SHARED_OFFSET+4];
-		while(sharedMem_int[PRU_SHARED_OFFSET]==1) {
-			//printf("%d\n", *valp&0xffff);
-			valp++;
-			valp++;
-		}
+		uint32_t *ddr = info.ddr_memory;
+		//printf("%d\n", (unsigned short int)ddr[i]);
+		i++;
 	}
 	return NULL;
 }
@@ -258,18 +254,6 @@ int main(int argc, char *argv[]) {
 
 	// Run Puggle until worker thread is killed
 	while(work_thread) {
-		int i;
-		unsigned short int* valp;
-		unsigned short int val;
-		while(system_status) {
-			valp=(unsigned short int*)&sharedMem_int[PRU_SHARED_OFFSET+2];
-			while(sharedMem_int[PRU_SHARED_OFFSET]==0) {
-				//val=*valp;
-				//printf("%d\n", val);
-				//valp++;
-				//valp++;
-			}
-		}
 	}
 
 	// Wait until PRU1 has finished execution
