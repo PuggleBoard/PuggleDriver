@@ -21,27 +21,12 @@
 
 #include "puggle.hp"
 
-#define ADDR_PRURAM         r16
-#define ADDR_DDR_PARAMS     r18
-#define CUR_SAMPLE          r19
-#define CONTROLS            r20
-#define CUR_PRU0_PAGE       r20.w0
-#define CUR_PRU1_PAGE       r20.w2
-#define CUR_PAGE_OFFSET     r21
-#define NUM_PAGES           r22.w0
-#define PAGE_SIZE           r22.w2
-#define ADDR_CUR_PAGE       r23
-#define ADDR_SHARED         r24
-#define CUR_DDR_OFFSET      r25
-#define NUM_DDR_PAGES       r26
-#define CUR_DDR_PAGE        r27
-#define TOTAL_PAGES_WRITTEN r28
-
 #define DAC_DATA            r1
 #define ADDR_DDR            r3
 #define ADDR_PRU1_DRAM      r2
 #define ADDR_PRU_SHARED     r4
 #define PRU_DDR_XFER_SAMPLE r5
+#define CYCLES              r6
 
 START:
 // Enable OCP
@@ -59,9 +44,10 @@ MOV   r0, 0x00100000
 MOV   r1, CTPPR_0_1
 ST32  r0, r1
 
-MOV ADDR_DDR, 0x80001000
-MOV ADDR_PRU1_DRAM, PRU_DATA1_ADDR
+MOV ADDR_DDR, (DDR_BASE_ADDR+DDR_OFFSET)
+MOV ADDR_PRU1_DRAM, OTHER_DRAM_ADDR
 MOV ADDR_PRU_SHARED, PRU_SHARED_ADDR
+MOV CYCLES, 0
 
 INIT:
 
@@ -81,7 +67,16 @@ INIT:
   ADD ADDR_PRU_SHARED, ADDR_PRU_SHARED, 2
   ADD ADDR_PRU1_DRAM, ADDR_PRU1_DRAM, 2
   ADD ADDR_DDR, ADDR_DDR, 2
+  ADD CYCLES, CYCLES, 1
 
+  // Cycle back
+  QBLE INIT, CYCLES, 150
+
+  // Reset memory addresses
+  MOV ADDR_DDR, 0x80001000
+  MOV ADDR_PRU1_DRAM, OTHER_DRAM_ADDR
+  MOV ADDR_PRU_SHARED, PRU_SHARED_ADDR
+  MOV CYCLES, 0
   JMP INIT
 
 EXIT:

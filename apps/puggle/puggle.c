@@ -140,7 +140,7 @@ void intHandler(int val) {
 		 */
 		info.pru_params->run_flag=1;
 		prussdrv_exec_program(PRU_NUM1, "./spiagent.bin");
-		//prussdrv_exec_program(PRU_NUM0, "./dataxferagent.bin");
+		prussdrv_exec_program(PRU_NUM0, "./dataxferagent.bin");
 		printf("Data acquisition status: started.\n");
 	}
 }

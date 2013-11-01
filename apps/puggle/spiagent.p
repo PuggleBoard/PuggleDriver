@@ -65,7 +65,7 @@ MOV BLOCK_COUNT, 0
 
 // Setup memory addresses
 MOV ADDR_PRU_SHARED, PRU_SHARED_ADDR
-MOV ADDR_PRU1_DRAM, PRU_DATA1_ADDR
+MOV ADDR_PRU1_DRAM, OWN_DRAM_ADDR
 
 // Configure ADC/DAC channels
 MOV DAC_CH1.b2, 0x31
@@ -109,16 +109,15 @@ SET_CHANNEL:
   // Update config flags
   LBCO CONTROLS, CONST_PRU_SHAREDRAM, 0, 2
   
-  // Setup DAC data
-  // Copy data from DDR into each channel
-  //LBBO DAC_CH1.w0, ADDR_PRU1_DRAM, 0, 2
-  //LBBO DAC_CH2.w0, ADDR_PRU1_DRAM, 0, 2
-  //LBBO DAC_CH3.w0, ADDR_PRU1_DRAM, 0, 2
-  //LBBO DAC_CH4.w0, ADDR_PRU1_DRAM, 0, 2
-  LBBO DAC_CH1.w0, ADDR_PRU_SHARED, 0, 2
-  LBBO DAC_CH2.w0, ADDR_PRU_SHARED, 0, 2
-  LBBO DAC_CH3.w0, ADDR_PRU_SHARED, 0, 2
-  LBBO DAC_CH4.w0, ADDR_PRU_SHARED, 0, 2
+  // Copy data from PRU1 DRAM into each channel
+  LBBO DAC_CH1.w0, ADDR_PRU1_DRAM, 0, 2
+  LBBO DAC_CH2.w0, ADDR_PRU1_DRAM, 0, 2
+  LBBO DAC_CH3.w0, ADDR_PRU1_DRAM, 0, 2
+  LBBO DAC_CH4.w0, ADDR_PRU1_DRAM, 0, 2
+  //LBBO DAC_CH1.w0, ADDR_PRU_SHARED, 0, 2
+  //LBBO DAC_CH2.w0, ADDR_PRU_SHARED, 0, 2
+  //LBBO DAC_CH3.w0, ADDR_PRU_SHARED, 0, 2
+  //LBBO DAC_CH4.w0, ADDR_PRU_SHARED, 0, 2
 
   // Disable CONVST
   SET CNV
@@ -136,8 +135,9 @@ SET_CHANNEL:
   // Copy acquired 2 bytes to shared memory
   SBBO ADC_DATA.w0, ADDR_PRU_SHARED, 0, 2
 
-  // Increment address by 2 bytes
+  // Increment addresses by 2 bytes
   ADD ADDR_PRU_SHARED, ADDR_PRU_SHARED, 2
+  ADD ADDR_PRU1_DRAM, ADDR_PRU1_DRAM, 2
 
   // Clear ADC_DATA for next round
   MOV ADC_DATA, 0
@@ -150,6 +150,7 @@ SET_CHANNEL:
 
     // Reset PRU Shared memory address
     MOV ADDR_PRU_SHARED, PRU_SHARED_ADDR
+    MOV ADDR_PRU1_DRAM, OWN_DRAM_ADDR
     MOV BLOCK_COUNT, 0
     JMP MEM_DONE
 
