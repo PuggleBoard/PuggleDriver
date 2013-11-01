@@ -189,8 +189,8 @@ void* work_thread(void *arg) {
 		valp=(unsigned short int*)&sharedMem_int[PRU_SHARED_OFFSET];
 		while(sharedMem_int[PRU_SHARED_OFFSET]==1) {
 			printf("%d\n", *valp);
-			valp++;
-			valp++;
+			//valp++;
+			//valp++;
 		}
 	}
 	return NULL;
