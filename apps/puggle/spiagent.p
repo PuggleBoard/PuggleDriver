@@ -60,6 +60,13 @@ MOV   r0, 0x00100000
 MOV   r1, CTPPR_1_1
 ST32  r0, r1
 
+// Configure the block index register for PRU0 by setting c24_blk_index[7:0] and
+// c25_blk_index[7:0] field to 0x00 and 0x00, respectively.  This will make C24 point
+// to 0x00000000 (PRU0 DRAM) and C25 point to 0x00002000 (PRU1 DRAM).
+MOV       r0, 0x00000000
+MOV       r1, CTBIR_1
+ST32      r0, r1
+
 // Set counter for number of blocks copied
 MOV CYCLES, 0
 

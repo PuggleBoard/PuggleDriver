@@ -53,10 +53,10 @@ MOV CYCLES, 0
 INIT:
 
   // Read PRU memory and store into register
-  LBBO PRU_DDR_XFER_SAMPLE, ADDR_PRU_SHARED, 0, 2
+  //LBBO PRU_DDR_XFER_SAMPLE, ADDR_PRU_SHARED, 0, 2
 
   // Move value from register to DDR
-  SBBO PRU_DDR_XFER_SAMPLE, ADDR_DDR, 0, 2
+  //SBBO PRU_DDR_XFER_SAMPLE, ADDR_DDR, 0, 2
 
   delayFourty
   delayFourty
@@ -70,10 +70,10 @@ INIT:
   delayFourty
 
   // Read DDR memory and store into register
-  LBBO  DAC_DATA, ADDR_DDR, 0, 2
+  LBBO DAC_DATA, ADDR_DDR, 0, 2
 
   // Move value from register to PRU1 DRAM
-  SBBO  DAC_DATA, ADDR_PRU1_DRAM, 0, 2
+  SBBO DAC_DATA, ADDR_PRU1_DRAM, 0, 2
 
   MOV DAC_DATA, 0
   MOV PRU_DDR_XFER_SAMPLE, 0
@@ -81,7 +81,7 @@ INIT:
   // Incrememnt memory addresses
   ADD ADDR_PRU_SHARED, ADDR_PRU_SHARED, 2
   ADD ADDR_PRU1_DRAM, ADDR_PRU1_DRAM, 2
-  ADD ADDR_DDR, ADDR_DDR, 2
+  //ADD ADDR_DDR, ADDR_DDR, 2
   ADD CYCLES, CYCLES, 1
 
   // Cycle back

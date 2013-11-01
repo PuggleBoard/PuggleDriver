@@ -117,11 +117,11 @@ static int init(app_data *info) {
 		return -ENOMEM;
 	}
 
-		printf("Initializing memory.\n");
-		memset((void *)info->ddr_memory, 0, info->ddr_size);
-		info->pru_params = info->pru_memory;
+	printf("Initializing memory.\n");
+	memset((void *)info->ddr_memory, 0, info->ddr_size);
+	info->pru_params = info->pru_memory;
 
-		printf("Initializing PRU parameters.\n");
+	printf("Initializing PRU parameters.\n");
 
 	// Set the run flag to stop
 	sharedMem_int[PRU_SHARED_OFFSET] = 0;
@@ -213,12 +213,21 @@ void intHandler(int val) {
 
 void* module_thread(void *arg) {
 	int i = 0;
+	int j = 1;
+	double val;
 	while(system_status) {
 		while(sharedMem_int[PRU_SHARED_OFFSET==1]) {
 			uint32_t *ddr = info.ddr_memory;
-			printf("%d\n", (unsigned short int)ddr[i]);
-			ddr++;
-			ddr++;
+			//val = *ddr;
+			//val = 2.0*4.096*(.00001525902)*(*ddr)-4.096;
+			ddr[0] = j;
+			if(j>65000){
+				j=0;
+			}
+			else
+				j++;
+			//ddr++;
+			//ddr++;
 		}
 	}
 	return NULL;
