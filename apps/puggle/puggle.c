@@ -105,7 +105,7 @@ static int init(app_data *info) {
 
 	printf("Initializing PRU parameters.\n");
 
-	// Set the run flag to 1
+	// Set the run flag to stop
 	sharedMem_int[PRU_SHARED_OFFSET] = 0;
 
 	// Which I/O channels did the user select?
@@ -139,10 +139,21 @@ static int init(app_data *info) {
 	}
 
 	// Set frequency
-	sharedMem_int[PRU_SHARED_OFFSET+3] = sampling_freq;
+	if(sampling_freq == 1) {
+		sharedMem_int[PRU_SHARED_OFFSET+3] = 1;
+	}
+	else if(sampling_freq == 2) {
+		sharedMem_int[PRU_SHARED_OFFSET+3] = 2;
+	}
+	else if(sampling_freq == 3) {
+		sharedMem_int[PRU_SHARED_OFFSET+3] = 3;
+	}
+	else if(sampling_freq ==4) {
+		sharedMem_int[PRU_SHARED_OFFSET+3] = 4;
+	}
 
 	// Printout configuration
-	printf("System configuration is:\n #AI: %d\n #AO: %d\n Sampling Frequency Option: %d\n", sharedMem_int[PRU_SHARED_OFFSET+1], sharedMem_int[PRU_SHARED_OFFSET+2], sharedMem_int[PRU_SHARED_OFFSET+3]);
+	printf("System configuration is:\n #AI: %d #AO: %d\n Sampling Frequency Option: %d\n", sharedMem_int[PRU_SHARED_OFFSET+1], sharedMem_int[PRU_SHARED_OFFSET+2], sharedMem_int[PRU_SHARED_OFFSET+3]);
 
 	// Write DRAM base addr into PRU memory
 	info->pru_params->ddr_base_address = info->ddr_base_address;

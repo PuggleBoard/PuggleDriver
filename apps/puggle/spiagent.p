@@ -188,7 +188,7 @@ CH_3:
 CH_4:
     MOV DAC_TX, DAC_CH4
     MOV ADC_TX, ADC_CH1
-    MOV CHAN_NUM, 0
+    //MOV CHAN_NUM, 0
     JMP START_ACQ
 
 START_ACQ:
@@ -200,7 +200,7 @@ START_ACQ:
     DAC_XFER_WORD DAC_DATA, DAC_TX
   
     // Increment channel number if necessary
-    ADD CHAN_NUM, CHAN_NUM, 1
+    //ADD CHAN_NUM, CHAN_NUM, 1
 
     // Check run/stop
     QBBS INIT_RESET, CONTROLS.t0
