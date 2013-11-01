@@ -38,6 +38,10 @@
 #define ALIGN_TO_PAGE_SIZE(x, pagesize)   ((x)-((x)%pagesize))
 #define handle_error(msg) 								do { perror(msg); exit(EXIT_FAILURE); } while (0)
 
+#define UIO_PRUSS_SYSFS_BASE        			"/sys/class/uio/uio0/maps/map1"
+#define UIO_PRUSS_DRAM_SIZE             	UIO_PRUSS_SYSFS_BASE "/size"
+#define UIO_PRUSS_DRAM_ADDR             	UIO_PRUSS_SYSFS_BASE "/addr"
+
 #define PRU_SHARED_OFFSET									0
 #define DDR_BASE_ADDR											0x80000000
 #define OFFSET_DDR												0x00001000
@@ -68,10 +72,27 @@ static int num_ai_channels;
 static int num_ao_channels;
 static int sampling_freq;
 
+static uint32_t read_uint32_hex_from_file(const char *file) {
+	size_t len = 0;
+	ssize_t bytes_read;
+	char *line;
+	uint32_t value = 0;
+	FILE *f = fopen(file, "r");
+	if (f) {
+		bytes_read = getline(&line, &len, f);
+		if (bytes_read > 0) {
+			value = strtoul(line, NULL, 0);
+		}
+	}
+	if (f) fclose(f);
+	if (line) free(line);
+	return value;
+}
+
 static int load_pruss_dram_info(app_data *info) {
-	info->ddr_size = 0x0FFFFFFF;
-	info->ddr_base_address = DDR_BASE_ADDR;
-	//printf("DDR size is %dMB starting at address 0x%08lX\n", (int)info->ddr_size/1024/1024, info->ddr_base_address);
+	info->ddr_size = read_uint32_hex_from_file(UIO_PRUSS_DRAM_SIZE);
+	info->ddr_base_address = read_uint32_hex_from_file(UIO_PRUSS_DRAM_ADDR);
+	//printf("DDR size is %dMB starting at address 0x%08lX\n", (unsigned int)info->ddr_size/1024, info->ddr_base_address);
 	return 0;
 }
 
@@ -100,10 +121,11 @@ static int init(app_data *info) {
 		return -ENOMEM;
 	}
 
-	printf("Initializing memory.\n");
-	info->pru_params = info->pru_memory;
+		printf("Initializing memory.\n");
+		memset((void *)info->ddr_memory, 0, info->ddr_size);
+		info->pru_params = info->pru_memory;
 
-	printf("Initializing PRU parameters.\n");
+		printf("Initializing PRU parameters.\n");
 
 	// Set the run flag to stop
 	sharedMem_int[PRU_SHARED_OFFSET] = 0;
@@ -148,7 +170,7 @@ static int init(app_data *info) {
 	else if(sampling_freq == 3) {
 		sharedMem_int[PRU_SHARED_OFFSET+3] = 3;
 	}
-	else if(sampling_freq ==4) {
+	else if(sampling_freq == 4) {
 		sharedMem_int[PRU_SHARED_OFFSET+3] = 4;
 	}
 
@@ -196,9 +218,12 @@ void intHandler(int val) {
 void* work_thread(void *arg) {
 	int i = 0;
 	while(system_status) {
-		uint32_t *ddr = info.ddr_memory;
-		//printf("%d\n", (unsigned short int)ddr[i]);
-		i++;
+		while(sharedMem_int[PRU_SHARED_OFFSET==1]) {
+			uint32_t *ddr = info.ddr_memory;
+			//printf("%d\n", (unsigned short int)ddr[i]);
+			ddr++;
+			ddr++;
+		}
 	}
 	return NULL;
 }
