@@ -58,14 +58,25 @@ INIT:
   // Move value from register to DDR
   SBBO PRU_DDR_XFER_SAMPLE, ADDR_DDR, 0, 2
 
+  delayFourty
+  delayFourty
+  delayFourty
+  delayFourty
+  delayFourty
+  delayFourty
+  delayFourty
+  delayFourty
+  delayFourty
+  delayFourty
+
   // Read DDR memory and store into register
   LBBO  DAC_DATA, ADDR_DDR, 0, 2
 
   // Move value from register to PRU1 DRAM
   SBBO  DAC_DATA, ADDR_PRU1_DRAM, 0, 2
 
-  //MOV DAC_DATA, 0
-  //MOV PRU_DDR_XFER_SAMPLE, 0
+  MOV DAC_DATA, 0
+  MOV PRU_DDR_XFER_SAMPLE, 0
 
   // Incrememnt memory addresses
   ADD ADDR_PRU_SHARED, ADDR_PRU_SHARED, 2

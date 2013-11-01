@@ -211,12 +211,12 @@ void intHandler(int val) {
 	}
 }
 
-void* work_thread(void *arg) {
+void* module_thread(void *arg) {
 	int i = 0;
 	while(system_status) {
 		while(sharedMem_int[PRU_SHARED_OFFSET==1]) {
 			uint32_t *ddr = info.ddr_memory;
-			//printf("%d\n", (unsigned short int)ddr[i]);
+			printf("%d\n", (unsigned short int)ddr[i]);
 			ddr++;
 			ddr++;
 		}
@@ -225,11 +225,14 @@ void* work_thread(void *arg) {
 }
 
 int main(int argc, char *argv[]) {
+	printf("Starting PuggleDriver.\n");
+
 	if(argc != 4){
 		printf("Please enter following arguments to execute Puggle: #AI #AO Fs\n");
 		return -1;
 	}
 	else {
+		printf("OK, looks like you know what you're doing...I guess I'll run.\n");
 		num_ai_channels = atoi(argv[1]);
 		num_ao_channels = atoi(argv[2]);
 		sampling_freq = atoi(argv[3]);
@@ -238,8 +241,6 @@ int main(int argc, char *argv[]) {
 
 	unsigned int ret;
 	pthread_t tid;
-
-	printf("Starting PuggleDriver.\n");
 
 	// Initialize data
 	tpruss_intc_initdata pruss_intc_initdata = PRUSS_INTC_INITDATA;
@@ -270,10 +271,10 @@ int main(int argc, char *argv[]) {
 	signal(SIGINT, intHandler);
 
 	// Create worker thread
-	pthread_create(&tid, NULL, &work_thread, NULL);
+	pthread_create(&tid, NULL, &module_thread, NULL);
 
 	// Run Puggle until worker thread is killed
-	while(work_thread) {
+	while(module_thread) {
 	}
 
 	// Wait until PRU1 has finished execution
