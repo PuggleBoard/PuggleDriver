@@ -33,7 +33,7 @@
 #define DAC_CH3         r10
 #define DAC_CH4         r11
 #define ADC_INIT        r12
-#define BLOCK_COUNT     r13
+#define CYCLES     r13
 #define INIT_CYCLES     r14
 #define CONTROLS        r20
 #define CUR_PAGE        r21
@@ -61,7 +61,7 @@ MOV   r1, CTPPR_1_1
 ST32  r0, r1
 
 // Set counter for number of blocks copied
-MOV BLOCK_COUNT, 0
+MOV CYCLES, 0
 
 // Setup memory addresses
 MOV ADDR_PRU_SHARED, PRU_SHARED_ADDR
@@ -143,15 +143,15 @@ SET_CHANNEL:
   MOV ADC_DATA, 0
 
   // Incrememnt Counter
-  ADD BLOCK_COUNT, BLOCK_COUNT, 1
+  ADD CYCLES, CYCLES, 1
 
   // Check PRU shared address
-  QBLE CONTINUE, BLOCK_COUNT, 200
+  QBLE CONTINUE, CYCLES, 200
 
     // Reset PRU Shared memory address
     MOV ADDR_PRU_SHARED, PRU_SHARED_ADDR
     MOV ADDR_PRU1_DRAM, OWN_DRAM_ADDR
-    MOV BLOCK_COUNT, 0
+    MOV CYCLES, 0
     JMP MEM_DONE
 
   CONTINUE:

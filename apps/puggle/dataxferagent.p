@@ -70,7 +70,7 @@ INIT:
   ADD CYCLES, CYCLES, 1
 
   // Cycle back
-  QBLE INIT, CYCLES, 150
+  QBLE INIT, CYCLES, 200
 
   // Reset memory addresses
   MOV ADDR_DDR, 0x80001000
