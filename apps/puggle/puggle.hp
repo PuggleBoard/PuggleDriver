@@ -22,80 +22,75 @@
 #define _PUGGLE_HP_
 
 // TI Constants
-#define PRU0_PRU1_INTERRUPT    				17
-#define PRU1_PRU0_INTERRUPT    				18
-#define PRU0_ARM_INTERRUPT     				19
-#define PRU1_ARM_INTERRUPT      			20
-#define ARM_PRU0_INTERRUPT      			21
-#define ARM_PRU1_INTERRUPT      			22
+#define PRU0_PRU1_INTERRUPT    			17
+#define PRU1_PRU0_INTERRUPT    			18
+#define PRU0_ARM_INTERRUPT     			19
+#define PRU1_ARM_INTERRUPT      		20
+#define ARM_PRU0_INTERRUPT      		21
+#define ARM_PRU1_INTERRUPT      		22
 
 // Memory pointers in constant table
-#define CONST_PRUSSINTC 					C0
-#define CONST_PRUCFG	     				C4
-#define CONST_PRU_DATA0        				C24
-#define CONST_PRU_DATA1        				C25
-#define CONST_PRU_SHAREDRAM	   				C28
-#define CONST_DDR            				C31
-
-#define LOCAL_BUFFER_PAGE_SIZE              2048
-#define LOCAL_BUFFER_NUM_PAGES              4
-#define LOCAL_BUFFER_SIZE                   (LOCAL_BUFFER_PAGE_SIZE * LOCAL_BUFFER_NUM_PAGES)
-#define LOCAL_BUFFER_INFO_OFFSET            LOCAL_BUFFER_SIZE
+#define CONST_PRUSSINTC 					  C0
+#define CONST_PRUCFG	     				  C4
+#define CONST_PRU_DATA0        		  C24
+#define CONST_PRU_DATA1        		  C25
+#define CONST_PRU_SHAREDRAM	   		  C28
+#define CONST_DDR          			    C31
 
 // Constant table for PRU0
-#define CTBIR_0        						0x22020 // address for constant table block index register (CTBIR)
-#define CTPPR_0_0        					0x22028 // address for constant table programmable pointer register 0(CTPPR_0) for PRU0
-#define CTPPR_0_1        					0x2202C // address for constant table programmable pointer register 1(CTPPR_1) for PRU0
+#define CTBIR_0        						  0x22020 // address for constant table block index register (CTBIR)
+#define CTPPR_0_0        				  	0x22028 // address for constant table programmable pointer register 0(CTPPR_0) for PRU0
+#define CTPPR_0_1        			  		0x2202C // address for constant table programmable pointer register 1(CTPPR_1) for PRU0
 
 // Constant table for PRU1
-#define CTBIR_1        						0x24024 // address for constant table block index register (CTBIR)
-#define CTPPR_1_0        					0x24028 // address for constant table programmable pointer register 0(CTPPR_0) for PRU1
-#define CTPPR_1_1        					0x2402C // address for constant table programmable pointer register 1(CTPPR_1) for PRU1
+#define CTBIR_1        			  			0x24024 // address for constant table block index register (CTBIR)
+#define CTPPR_1_0        	  				0x24028 // address for constant table programmable pointer register 0(CTPPR_0) for PRU1
+#define CTPPR_1_1          					0x2402C // address for constant table programmable pointer register 1(CTPPR_1) for PRU1
 
 // Memory addresses
-#define DDR_BASE_ADDR						0x80000000
-#define OFFSET_DDR							0x00001000
+#define DDR_BASE_ADDR   						0x80000000
+#define OFFSET_DDR						    	0x00001000
 
 #define PRU_DATA0_ADDR		    			0x00002000
 #define PRU_DATA1_ADDR				    	0x00000000
 #define COMMANDS_ADDR               0x00010000 		// address to store acquisition control commands in PRU shared RAM
 #define PRU_SHARED_ADDR   					0x00010004 		// address to begin storing acquired data in PRU shared RAM
-#define	OFFSET_SHAREDRAM					0
+#define	OFFSET_SHAREDRAM					  0
 
 // DAC outputs
-#define DAC_OUTPUT_1						0   // address to store dac ch 1 output
-#define DAC_OUTPUT_2						4   // address to store dac ch 2 output
-#define DAC_OUTPUT_3						8	// address to store dac ch 3 outpu
-#define DAC_OUTPUT_4						12  // address to store dac ch 4 output
+#define DAC_OUTPUT_1								0   // address to store dac ch 1 output
+#define DAC_OUTPUT_2								2   // address to store dac ch 2 output
+#define DAC_OUTPUT_3								4	  // address to store dac ch 3 outpu
+#define DAC_OUTPUT_4								6   // address to store dac ch 4 output
 
 // Onboard ADC/DAC SPI Bus (Hacked until v2.1)
-#define SCLK	  							R30.t9
-#define ADC_CS								R30.t10
-#define DAC_CS								R30.t11
-#define MOSI   								R30.t8
-#define MISO   								R31.t6
-#define CNV   								R30.t7
+#define SCLK	  										R30.t9
+#define ADC_CS											R30.t10
+#define DAC_CS											R30.t11
+#define MOSI   											R30.t8
+#define MISO   											R31.t6
+#define CNV   											R30.t7
 
 // Onboard ADC/DAC SPI Bus
-//#define SCLK	  					  R30.t7
-//#define ADC_CS							R30.t11
-//#define DAC_CS							R30.t6
-//#define MOSI   							R30.t9
-//#define MISO   							R30.t10
+//#define SCLK	  					  			R30.t7
+//#define ADC_CS										R30.t11
+//#define DAC_CS										R30.t6
+//#define MOSI   										R30.t9
+//#define MISO   										R30.t10
 
 // AUX DIO
-#define DIO_0								R30.1	
-#define DIO_1								R31.0	
-#define DIO_2								R31.3	
-#define DIO_3								R31.2	
-#define DIO_4								R30.5		
-#define DIO_5								R30.4	
+#define DIO_0												R30.1	
+#define DIO_1												R31.0	
+#define DIO_2												R31.3	
+#define DIO_3												R31.2	
+#define DIO_4												R30.5		
+#define DIO_5												R30.4	
 
 // Useful defines
-#define NOP 								MOV R29, R29
+#define NOP 												MOV R29, R29
 
 // Magic number
-#define MAGIC_NUM							0xbabe7175
+#define MAGIC_NUM										0xbabe7175
 
 // TI Macros
 .macro LD32

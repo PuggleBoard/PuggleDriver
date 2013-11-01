@@ -38,8 +38,10 @@
 #define TOTAL_PAGES_WRITTEN r28
 
 #define DAC_DATA            r1
-#define ADDR_PRU1_DRAM      r2
 #define ADDR_DDR            r3
+#define ADDR_PRU1_DRAM      r2
+#define ADDR_PRU_SHARED     r4
+#define PRU_DDR_XFER_SAMPLE r5
 
 START:
 // Enable OCP
@@ -57,15 +59,29 @@ MOV   r0, 0x00100000
 MOV   r1, CTPPR_0_1
 ST32  r0, r1
 
-MOV ADDR_PRU1_DRAM, PRU_DATA1_ADDR
 MOV ADDR_DDR, 0x80001000
+MOV ADDR_PRU1_DRAM, PRU_DATA1_ADDR
+MOV ADDR_PRU_SHARED, PRU_SHARED_ADDR
 
 INIT:
+
+  // Read PRU memory and store into register
+  LBBO PRU_DDR_XFER_SAMPLE, ADDR_PRU_SHARED, 0, 2
+
+  // Move value from register to DDR
+  SBBO PRU_DDR_XFER_SAMPLE, ADDR_DDR, 0, 2
+
   // Read DDR memory and store into register
   LBBO  DAC_DATA, ADDR_DDR, 0, 2
 
   // Move value from register to PRU1 DRAM
   SBBO  DAC_DATA, ADDR_PRU1_DRAM, 0, 2
+
+  // Incrememnt memory addresses
+  ADD ADDR_PRU_SHARED, ADDR_PRU_SHARED, 2
+  ADD ADDR_PRU1_DRAM, ADDR_PRU1_DRAM, 2
+  ADD ADDR_DDR, ADDR_DDR, 2
+
   JMP INIT
 
 EXIT:

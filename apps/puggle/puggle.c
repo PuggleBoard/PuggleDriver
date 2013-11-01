@@ -35,9 +35,6 @@
 #define PRU_NUM0 													0
 #define PRU_NUM1 													1
 #define DEBUG
-//#define UIO_PRUSS_SYSFS_BASE	  					"/sys/class/uio/uio0/maps/map1"
-//#define UIO_PRUSS_DRAM_SIZE	  		        UIO_PRUSS_SYSFS_BASE "/size"
-//#define UIO_PRUSS_DRAM_ADDR 			        UIO_PRUSS_SYSFS_BASE "/addr"
 #define ALIGN_TO_PAGE_SIZE(x, pagesize)   ((x)-((x)%pagesize))
 #define handle_error(msg) 								do { perror(msg); exit(EXIT_FAILURE); } while (0)
 
@@ -60,30 +57,16 @@ typedef struct {
 	int mem_fd;
 } app_data;
 
+// System flags
 app_data info;
-int status = 0;
+int thread_status = 0;
+int system_status = 0;
 static unsigned int *sharedMem_int;
 
-void sleepms(int ms) {
-	nanosleep((struct timespec[]){{0, ms*100000}}, NULL);
-}
-
-static uint32_t read_uint32_hex_from_file(const char *file) {
-	size_t len = 0;
-	ssize_t bytes_read;
-	char *line;
-	uint32_t value = 0;
-	FILE *f = fopen(file, "r");
-	if (f) {
-		bytes_read = getline(&line, &len, f);
-		if (bytes_read > 0) {
-			value = strtoul(line, NULL, 0);
-		}
-	}
-	if (f) fclose(f);
-	if (line) free(line);
-	return value;
-}
+// I/O Configuration
+static int num_ai_channels;
+static int num_ao_channels;
+static int sampling_freq;
 
 static int load_pruss_dram_info(app_data *info) {
 	info->ddr_size = 0x0FFFFFFF;
@@ -135,14 +118,6 @@ static int init(app_data *info) {
 	return(0);
 }
 
-void check(app_data *info) {
-	int i = 0;
-	uint32_t *ddr = info->ddr_memory;
-	for (i = 0; i < 128; i++) {
-		printf("%i: 0x%X\n", i, ddr[i]);
-	}
-}
-
 void deinit(int val) {
 	prussdrv_pru_disable(PRU_NUM0);
 	prussdrv_pru_disable(PRU_NUM1);
@@ -152,8 +127,8 @@ void deinit(int val) {
 }
 
 void intHandler(int val) {
-	status = (info.pru_params->run_flag==1 ? 0 : 1);
-	if(!status) {
+	thread_status = (info.pru_params->run_flag==1 ? 0 : 1);
+	if(!thread_status) {
 		// Disable run_flag and reset PRUs
 		info.pru_params->run_flag=0;
 		printf("Data acquisition status: stopped.\n");
@@ -165,28 +140,40 @@ void intHandler(int val) {
 		 */
 		info.pru_params->run_flag=1;
 		prussdrv_exec_program(PRU_NUM1, "./spiagent.bin");
-		prussdrv_exec_program(PRU_NUM0, "./dataxferagent.bin");
+		//prussdrv_exec_program(PRU_NUM0, "./dataxferagent.bin");
 		printf("Data acquisition status: started.\n");
 	}
 }
 
 void* work_thread(void *arg) {
-	int i;
-	unsigned short int* valp;
-	unsigned short int val;
-	valp=(unsigned short int*)sharedMem_int[PRU_SHARED_OFFSET+2];
-	if(!info.pru_params->run_flag) {
-		printf("Data transfer started.\n");
-		for(i=0; i<65000; i++) {
-			val=valp;
-			printf("%d\n", val);
-			valp+=2;
-		}
+	/*int i;
+		unsigned short int* valp;
+		unsigned short int val;*/
+	while(system_status) {
+		/*valp=(unsigned short int*)&sharedMem_int[PRU_SHARED_OFFSET+2];
+			while(!info.pru_params->run_flag) {
+			val=*valp;
+		//printf("%d\n", val);
+		//valp++;
+		//valp++;
+		}*/
 	}
 	return NULL;
 }
 
-int main (void) {
+int main(int argc, char *argv[]) {
+
+	if(argc != 4){
+		printf("Please enter following arguments to execute Puggle: #AI #AO Fs\n");
+		return -1;
+	}
+	else {
+		num_ai_channels = atoi(argv[1]);
+		num_ao_channels = atoi(argv[2]);
+		sampling_freq = atoi(argv[3]);
+		system_status = 1;
+		printf("%d %d %d\n", num_ai_channels, num_ao_channels, sampling_freq);
+	}
 
 	unsigned int ret;
 	pthread_t tid;
@@ -226,23 +213,33 @@ int main (void) {
 
 	// Run Puggle until worker thread is killed
 	while(work_thread) {
-		sleepms(250);
+		int i;
+		unsigned short int* valp;
+		unsigned short int val;
+		while(system_status) {
+			valp=(unsigned short int*)&sharedMem_int[PRU_SHARED_OFFSET+2];
+			while(!info.pru_params->run_flag) {
+				//val=*valp;
+				//printf("%d\n", val);
+				//valp++;
+				//valp++;
+			}
+		}
 	}
 
 	// Wait until PRU1 has finished execution
 	prussdrv_pru_wait_event(PRU_EVTOUT_1);
-	printf("SPIAgent complete.\n");
+	//printf("SPIAgent complete.\n");
 
 	// Wait until PRU0 has finished execution
 	prussdrv_pru_wait_event(PRU_EVTOUT_0);
-	printf("DataXferAgent complete.\n");
+	//printf("DataXferAgent complete.\n");
 
 	// clear pru interrupts
 	prussdrv_pru_clear_event(PRU1_ARM_INTERRUPT);
 	prussdrv_pru_clear_event(PRU0_ARM_INTERRUPT);
 
 	// Deinitialize
-	check(&info);
 	deinit(&info);
 	return(0);
 }
