@@ -106,7 +106,43 @@ static int init(app_data *info) {
 	printf("Initializing PRU parameters.\n");
 
 	// Set the run flag to 1
-	info->pru_params->run_flag = 0;
+	sharedMem_int[PRU_SHARED_OFFSET] = 0;
+
+	// Which I/O channels did the user select?
+	
+	// ADC channel control bits [4:1]
+	if(num_ai_channels == 1){
+		sharedMem_int[PRU_SHARED_OFFSET+1] = 1;
+	}
+	else if(num_ai_channels == 2){
+		sharedMem_int[PRU_SHARED_OFFSET+1] = 2;
+	}
+	else if(num_ai_channels == 3){
+		sharedMem_int[PRU_SHARED_OFFSET+1] = 3;
+	}
+	else if(num_ai_channels == 4){
+		sharedMem_int[PRU_SHARED_OFFSET+1] = 4;
+	}
+
+	// DAC channel control bits [8:5]
+	if(num_ai_channels == 1){
+		sharedMem_int[PRU_SHARED_OFFSET+2] = 1;
+	}
+	else if(num_ai_channels == 2){
+		sharedMem_int[PRU_SHARED_OFFSET+2] = 2;
+	}
+	else if(num_ai_channels == 3){
+		sharedMem_int[PRU_SHARED_OFFSET+2] = 3;
+	}
+	else if(num_ai_channels == 4){
+		sharedMem_int[PRU_SHARED_OFFSET+2] = 4;
+	}
+
+	// Set frequency
+	sharedMem_int[PRU_SHARED_OFFSET+3] = sampling_freq;
+
+	// Printout configuration
+	printf("System configuration is:\n #AI: %d\n #AO: %d\n Sampling Frequency: %d\n", sharedMem_int[PRU_SHARED_OFFSET+1], sharedMem_int[PRU_SHARED_OFFSET+2], sharedMem_int[PRU_SHARED_OFFSET+3]);
 
 	// Write DRAM base addr into PRU memory
 	info->pru_params->ddr_base_address = info->ddr_base_address;
@@ -127,18 +163,18 @@ void deinit(int val) {
 }
 
 void intHandler(int val) {
-	thread_status = (info.pru_params->run_flag==1 ? 0 : 1);
+	thread_status = (sharedMem_int[PRU_SHARED_OFFSET]==1 ? 0 : 1);
 	if(!thread_status) {
-		// Disable run_flag and reset PRUs
-		info.pru_params->run_flag=0;
+		// Disable run/stop bit and reset PRUs
+		sharedMem_int[PRU_SHARED_OFFSET] = 0;
 		printf("Data acquisition status: stopped.\n");
 	}
 	else {
-		/* Enable run_flag and start PRUs
+		/* Enable run/stop bit and start PRUs
 		 * Generate SPI on PRU1 and Transfer data
 		 * from PRU Shared space to User Space on PRU0
 		 */
-		info.pru_params->run_flag=1;
+		sharedMem_int[PRU_SHARED_OFFSET] = 1;
 		prussdrv_exec_program(PRU_NUM1, "./spiagent.bin");
 		prussdrv_exec_program(PRU_NUM0, "./dataxferagent.bin");
 		printf("Data acquisition status: started.\n");
@@ -146,17 +182,16 @@ void intHandler(int val) {
 }
 
 void* work_thread(void *arg) {
-	/*int i;
-		unsigned short int* valp;
-		unsigned short int val;*/
+	int i;
+	unsigned short int* valp;
+	unsigned short int val;
 	while(system_status) {
-		/*valp=(unsigned short int*)&sharedMem_int[PRU_SHARED_OFFSET+2];
-			while(!info.pru_params->run_flag) {
-			val=*valp;
-		//printf("%d\n", val);
-		//valp++;
-		//valp++;
-		}*/
+		valp=(unsigned short int*)&sharedMem_int[PRU_SHARED_OFFSET];
+		while(sharedMem_int[PRU_SHARED_OFFSET]==1) {
+			printf("%d\n", *valp);
+			valp++;
+			valp++;
+		}
 	}
 	return NULL;
 }
@@ -172,7 +207,6 @@ int main(int argc, char *argv[]) {
 		num_ao_channels = atoi(argv[2]);
 		sampling_freq = atoi(argv[3]);
 		system_status = 1;
-		printf("%d %d %d\n", num_ai_channels, num_ao_channels, sampling_freq);
 	}
 
 	unsigned int ret;
@@ -218,7 +252,7 @@ int main(int argc, char *argv[]) {
 		unsigned short int val;
 		while(system_status) {
 			valp=(unsigned short int*)&sharedMem_int[PRU_SHARED_OFFSET+2];
-			while(!info.pru_params->run_flag) {
+			while(sharedMem_int[PRU_SHARED_OFFSET]==0) {
 				//val=*valp;
 				//printf("%d\n", val);
 				//valp++;

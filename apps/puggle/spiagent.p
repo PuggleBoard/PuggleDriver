@@ -95,7 +95,7 @@ ADC_XFER_WORD ADC_DATA, ADC_INIT
 ADC_XFER_WORD ADC_DATA, ADC_INIT
  
 // Move in config from PRU shared
-LBCO CONTROLS, CONST_PRU_SHAREDRAM, 0, 2
+LBCO CONTROLS, CONST_PRU_SHAREDRAM, 0, 4
 
 // Wait until told to start
 WBS CONTROLS.t0
@@ -107,17 +107,13 @@ SET_CHANNEL:
   CLR CNV
 
   // Update config flags
-  LBCO CONTROLS, CONST_PRU_SHAREDRAM, 0, 2
+  LBCO CONTROLS, CONST_PRU_SHAREDRAM, 0, 4
   
   // Copy data from PRU1 DRAM into each channel
   LBBO DAC_CH1.w0, ADDR_PRU1_DRAM, 0, 2
   LBBO DAC_CH2.w0, ADDR_PRU1_DRAM, 0, 2
   LBBO DAC_CH3.w0, ADDR_PRU1_DRAM, 0, 2
   LBBO DAC_CH4.w0, ADDR_PRU1_DRAM, 0, 2
-  //LBBO DAC_CH1.w0, ADDR_PRU_SHARED, 0, 2
-  //LBBO DAC_CH2.w0, ADDR_PRU_SHARED, 0, 2
-  //LBBO DAC_CH3.w0, ADDR_PRU_SHARED, 0, 2
-  //LBBO DAC_CH4.w0, ADDR_PRU_SHARED, 0, 2
 
   // Disable CONVST
   SET CNV
@@ -154,8 +150,8 @@ SET_CHANNEL:
     MOV CYCLES, 0
     JMP MEM_DONE
 
+  // Ensure timing consistency with RESET_ADDR label
   CONTINUE:
-    // Ensure timing consistency with RESET_ADDR label
     NOP
     NOP
     NOP
