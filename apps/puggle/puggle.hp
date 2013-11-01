@@ -8,7 +8,7 @@
 //
 //	Created in 2013 by: Yogi Patel <yapatel@gatech.edu>
 //  Written by: Yogi Patel <yapatel@gatech.edu>
-//  						Jon Newman <jnewman6@gatech.edu>
+//  			Jon Newman <jnewman6@gatech.edu>
 //
 //	To the extent possible under law, the author(s) have dedicated all copyright
 //	and related and neighboring rights to this software to the public domain
@@ -22,83 +22,75 @@
 #define _PUGGLE_HP_
 
 // TI Constants
-#define PRU0_PRU1_INTERRUPT    				17
-#define PRU1_PRU0_INTERRUPT    				18
-#define PRU0_ARM_INTERRUPT     				19
-#define PRU1_ARM_INTERRUPT      			20
-#define ARM_PRU0_INTERRUPT      			21
-#define ARM_PRU1_INTERRUPT      			22
+#define PRU0_PRU1_INTERRUPT    			17
+#define PRU1_PRU0_INTERRUPT    			18
+#define PRU0_ARM_INTERRUPT     			19
+#define PRU1_ARM_INTERRUPT      		20
+#define ARM_PRU0_INTERRUPT      		21
+#define ARM_PRU1_INTERRUPT      		22
 
 // Memory pointers in constant table
-#define CONST_PRUSSINTC 							C0
-#define CONST_PRUCFG	     						C4
-#define CONST_PRU_DATA0        				C24
-#define CONST_PRU_DATA1        				C25
-#define CONST_PRU_SHAREDRAM	   				C28
-#define CONST_DDR            					C31
-
-#define LOCAL_BUFFER_PAGE_SIZE        2048
-#define LOCAL_BUFFER_NUM_PAGES        4
-#define LOCAL_BUFFER_SIZE             (LOCAL_BUFFER_PAGE_SIZE * LOCAL_BUFFER_NUM_PAGES)
-#define LOCAL_BUFFER_INFO_OFFSET      LOCAL_BUFFER_SIZE
+#define CONST_PRUSSINTC 					  C0
+#define CONST_PRUCFG	     				  C4
+#define CONST_PRU_DATA0        		  C24
+#define CONST_PRU_DATA1        		  C25
+#define CONST_PRU_SHAREDRAM	   		  C28
+#define CONST_DDR          			    C31
 
 // Constant table for PRU0
-#define CTBIR_0        								0x22020 // address for constant table block index reggister (CTBIR)
-#define CTPPR_0_0        							0x22028 // address for constant table programmable pointer register 0(CTPPR_0) for PRU0
-#define CTPPR_0_1        							0x2202C // address for constant table programmable pointer register 1(CTPPR_1) for PRU0
+#define CTBIR_0        						  0x22020 // address for constant table block index register (CTBIR)
+#define CTPPR_0_0        				  	0x22028 // address for constant table programmable pointer register 0(CTPPR_0) for PRU0
+#define CTPPR_0_1        			  		0x2202C // address for constant table programmable pointer register 1(CTPPR_1) for PRU0
 
 // Constant table for PRU1
-#define CTBIR_1        								0x24024 // address for constant table block index reggister (CTBIR)
-#define CTPPR_1_0        							0x24028 // address for constant table programmable pointer register 0(CTPPR_0) for PRU1
-#define CTPPR_1_1        							0x2402C // address for constant table programmable pointer register 1(CTPPR_1) for PRU1
+#define CTBIR_1        			  			0x24024 // address for constant table block index register (CTBIR)
+#define CTPPR_1_0        	  				0x24028 // address for constant table programmable pointer register 0(CTPPR_0) for PRU1
+#define CTPPR_1_1          					0x2402C // address for constant table programmable pointer register 1(CTPPR_1) for PRU1
 
 // Memory addresses
-#define DDR_BASE_ADDR									0x80000000
-#define OFFSET_DDR										0x00001000
+#define DDR_BASE_ADDR   						0x80000000		// ddr base address
+#define DDR_OFFSET						    	0x00001000		// ddr offset (required)
 
-#define PRU_DATA0_ADDR				    		0x00000000
-#define PRU_DATA1_ADDR		    				0x00002000
-#define COMMANDS_ADDR                 0x00010000 		// address to store acquisition control commands in PRU shared RAM
-#define PRU_SHARED_ADDR   						0x00010004 		// address to begin storing acquired data in PRU shared RAM
-#define	OFFSET_SHAREDRAM							0
+#define OTHER_DRAM_ADDR		        	0x00000000		// address of each prus own dram
+#define OWN_DRAM_ADDR		       			0x00002000		// address for each pru to touch other's dram
+#define COMMANDS_ADDR               0x00010000 		// address to store acquisition control commands in PRU shared RAM
+#define PRU_SHARED_ADDR   					0x00010004 		// address to begin storing acquired data in PRU shared RAM
+#define	OFFSET_SHAREDRAM					  0
 
 // DAC outputs
-#define DAC_OUTPUT_1									0	// address to store dac ch 1 output
-#define DAC_OUTPUT_2							    4	// address to store dac ch 2 output
-#define DAC_OUTPUT_3									8	// address to store dac ch 3 output
-#define DAC_OUTPUT_4									12// address to store dac ch 4 output
+#define DAC_OUTPUT_1								0   // address to store dac ch 1 output
+#define DAC_OUTPUT_2								2   // address to store dac ch 2 output
+#define DAC_OUTPUT_3								4	  // address to store dac ch 3 outpu
+#define DAC_OUTPUT_4								6   // address to store dac ch 4 output
 
-// SPI Line for onboard AIO
+// Onboard ADC/DAC SPI Bus (Hacked until v2.1)
+#define SCLK	  										R30.t9
+#define ADC_CS											R30.t10
+#define DAC_CS											R30.t11
+#define MOSI   											R30.t8
+#define MISO   											R31.t6
+#define CNV   											R30.t7
 
-// hacked lines for now
-#define SCLK	  											R30.t9
-#define ADC_CS												R30.t10
-#define DAC_CS												R30.t11
-#define MOSI   												R30.t8
-#define MISO   												R31.t6
-#define CNV   												R30.t7
-
-// Actual lines to use
-//#define SCLK	  											R30.t7
-//#define ADC_CS												R30.t11
-//#define DAC_CS												R30.t6
-//#define MOSI   												R30.t9
-//#define MISO   												R31.t8
-//#define CNV   												R30.t10
+// Onboard ADC/DAC SPI Bus
+//#define SCLK	  					  			R30.t7
+//#define ADC_CS										R30.t11
+//#define DAC_CS										R30.t6
+//#define MOSI   										R30.t9
+//#define MISO   										R30.t10
 
 // AUX DIO
-#define DIO_0													R30.1	
-#define DIO_1													R31.0	
-#define DIO_2													R31.3	
-#define DIO_3													R31.2	
-#define DIO_4													R30.5		
-#define DIO_5													R30.4	
+#define DIO_0												R30.1	
+#define DIO_1												R31.0	
+#define DIO_2												R31.3	
+#define DIO_3												R31.2	
+#define DIO_4												R30.5		
+#define DIO_5												R30.4	
 
 // Useful defines
-#define NOP 													MOV R0, R0
+#define NOP 												MOV R29, R29
 
 // Magic number
-#define MAGIC_NUM											0xbabe7175
+#define MAGIC_NUM										0xbabe7175
 
 // TI Macros
 .macro LD32
@@ -131,137 +123,6 @@
 	SBBO src,dst,#0x00,1
 .endm
 
-.macro delayOne
-	MOV r29, 0
-.endm
-
-.macro delayTwo
-	MOV r29, 0
-	MOV r29, 0
-.endm
-
-.macro delayThree
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-.endm
-
-.macro delayFour
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-.endm
-
-.macro delayFive
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-.endm
-
-.macro delayTen
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-.endm
-
-.macro delayTwenty
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-.endm
-
-.macro delayFourty
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-	MOV r29, 0
-.endm
-
-.macro delay
-.mparam loops,tempreg=r29
-	MOV tempreg, loops
-	LOOP:
-	SUB tempreg, tempreg, 1
-		QBNE LOOP, tempreg, 0
-.endm
-
-.macro delay_ns
-.mparam time_ns,tempreg=r29
-	delay time_ns/5, tempreg
-.endm
-
-.macro delay_ms
-.mparam time_ms,tempreg=r29
-	delay_ns time_ms*1000000, tempreg
-.endm
-
-.macro delay_s
-	delay_ms time_s*1000, tempreg
-.endm
-
 // Global Registers
 .struct gReg
 	.u32 regPtr
@@ -270,5 +131,279 @@
 
 // Global Register Assignment
 .assign gReg, r12, *, global
+
+// SPI Operations
+
+// Single SPI duplex bit transfer
+.macro SPI_XFER_BIT
+.mparam SPI_RX, SPI_TX, BIT
+ 
+    // Output MOSI
+    QBBS MOSI_HIGH, SPI_TX, BIT
+        CLR MOSI
+        JMP MOSI_DONE
+
+    MOSI_HIGH:
+        SET MOSI
+        NOP
+
+    MOSI_DONE:
+        SET SCLK
+        NOP
+ 
+    // Read MISO
+    QBBC MISO_LOW, MISO
+        SET SPI_RX, SPI_RX, BIT
+        JMP MISO_DONE
+
+    MISO_LOW:
+        CLR SPI_RX, SPI_RX, BIT
+        NOP
+
+    MISO_DONE:
+        CLR SCLK        
+        NOP
+ 
+.endm
+
+// Single SPI duplex bit transfer with RX bit inversion
+.macro SPI_XFER_INV_BIT
+.mparam SPI_RX, SPI_TX, BIT
+
+
+    // Output MOSI
+    QBBS MOSI_HIGH, SPI_TX, BIT
+        CLR MOSI
+        JMP MOSI_DONE
+
+    MOSI_HIGH:
+        SET MOSI
+        NOP
+
+    MOSI_DONE:
+        SET SCLK
+        NOP
+ 
+    // Read inverted MISO
+    QBBC MISO_LOW, MISO
+        CLR SPI_RX, SPI_RX, BIT
+        JMP MISO_DONE
+
+    MISO_LOW:
+        SET SPI_RX, SPI_RX, BIT
+        NOP
+
+    MISO_DONE:
+        CLR SCLK
+        NOP
+
+.endm
+
+
+// ADC word transfer with RX bit inversion (16 bits)
+.macro ADC_XFER_INV_WORD
+.mparam RX, TX
+
+    CLR ADC_CS
+    delayTwo
+
+    SPI_XFER_INV_BIT RX, TX, 15
+    SPI_XFER_INV_BIT RX, TX, 14
+    SPI_XFER_INV_BIT RX, TX, 13
+    SPI_XFER_INV_BIT RX, TX, 12
+    SPI_XFER_INV_BIT RX, TX, 11
+    SPI_XFER_INV_BIT RX, TX, 10
+    SPI_XFER_INV_BIT RX, TX, 9
+    SPI_XFER_INV_BIT RX, TX, 8
+    SPI_XFER_INV_BIT RX, TX, 7
+    SPI_XFER_INV_BIT RX, TX, 6
+    SPI_XFER_INV_BIT RX, TX, 5
+    SPI_XFER_INV_BIT RX, TX, 4
+    SPI_XFER_INV_BIT RX, TX, 3
+    SPI_XFER_INV_BIT RX, TX, 2
+    SPI_XFER_INV_BIT RX, TX, 1
+    SPI_XFER_INV_BIT RX, TX, 0
+
+    SET ADC_CS
+    SET SCLK
+
+.endm
+
+// ADC word transfer (16 bits)
+.macro ADC_XFER_WORD
+.mparam RX, TX
+
+    CLR ADC_CS
+    delayTwo
+
+    SPI_XFER_BIT RX, TX, 15
+    SPI_XFER_BIT RX, TX, 14
+    SPI_XFER_BIT RX, TX, 13
+    SPI_XFER_BIT RX, TX, 12
+    SPI_XFER_BIT RX, TX, 11
+    SPI_XFER_BIT RX, TX, 10
+    SPI_XFER_BIT RX, TX, 9
+    SPI_XFER_BIT RX, TX, 8
+    SPI_XFER_BIT RX, TX, 7
+    SPI_XFER_BIT RX, TX, 6
+    SPI_XFER_BIT RX, TX, 5
+    SPI_XFER_BIT RX, TX, 4
+    SPI_XFER_BIT RX, TX, 3
+    SPI_XFER_BIT RX, TX, 2
+    SPI_XFER_BIT RX, TX, 1
+    SPI_XFER_BIT RX, TX, 0
+
+    SET ADC_CS
+    SET SCLK
+
+.endm
+
+// DAC word transfer (24 bits: 8 bits config, 16 bits data)
+.macro DAC_XFER_WORD
+.mparam RX, TX
+
+    CLR DAC_CS
+    delayTwo
+
+    SPI_XFER_BIT RX, TX, 23
+    SPI_XFER_BIT RX, TX, 22
+    SPI_XFER_BIT RX, TX, 21
+    SPI_XFER_BIT RX, TX, 20
+    SPI_XFER_BIT RX, TX, 19
+    SPI_XFER_BIT RX, TX, 18
+    SPI_XFER_BIT RX, TX, 17
+    SPI_XFER_BIT RX, TX, 16
+    SPI_XFER_BIT RX, TX, 15
+    SPI_XFER_BIT RX, TX, 14
+    SPI_XFER_BIT RX, TX, 13
+    SPI_XFER_BIT RX, TX, 12
+    SPI_XFER_BIT RX, TX, 11
+    SPI_XFER_BIT RX, TX, 10
+    SPI_XFER_BIT RX, TX, 9
+    SPI_XFER_BIT RX, TX, 8
+    SPI_XFER_BIT RX, TX, 7
+    SPI_XFER_BIT RX, TX, 6
+    SPI_XFER_BIT RX, TX, 5
+    SPI_XFER_BIT RX, TX, 4
+    SPI_XFER_BIT RX, TX, 3
+    SPI_XFER_BIT RX, TX, 2
+    SPI_XFER_BIT RX, TX, 1
+    SPI_XFER_BIT RX, TX, 0
+
+    SET DAC_CS
+    SET SCLK
+
+.endm
+
+// Delay macros
+
+.macro delayOne
+	NOP
+.endm
+
+.macro delayTwo
+	NOP
+	NOP
+.endm
+
+.macro delayThree
+	NOP
+	NOP
+	NOP
+.endm
+
+.macro delayFour
+	NOP
+	NOP
+	NOP
+	NOP
+.endm
+
+.macro delayFive
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+.endm
+
+.macro delayTen
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+.endm
+
+.macro delayTwenty
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+.endm
+
+.macro delayFourty
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+.endm
 
 #endif // puggle.hp
