@@ -48,11 +48,11 @@
 #define CTPPR_1_1          					0x2402C // address for constant table programmable pointer register 1(CTPPR_1) for PRU1
 
 // Memory addresses
-#define DDR_BASE_ADDR   						0x80000000
-#define DDR_OFFSET						    	0x00001000
+#define DDR_BASE_ADDR   						0x80000000		// ddr base address
+#define DDR_OFFSET						    	0x00001000		// ddr offset (required)
 
-#define OTHER_DRAM_ADDR		        	0x00000000
-#define OWN_DRAM_ADDR		       			0x00002000
+#define OTHER_DRAM_ADDR		        	0x00000000		// address of each prus own dram
+#define OWN_DRAM_ADDR		       			0x00002000		// address for each pru to touch other's dram
 #define COMMANDS_ADDR               0x00010000 		// address to store acquisition control commands in PRU shared RAM
 #define PRU_SHARED_ADDR   					0x00010004 		// address to begin storing acquired data in PRU shared RAM
 #define	OFFSET_SHAREDRAM					  0
