@@ -41,10 +41,7 @@
 #define UIO_PRUSS_SYSFS_BASE        			"/sys/class/uio/uio0/maps/map1"
 #define UIO_PRUSS_DRAM_SIZE             	UIO_PRUSS_SYSFS_BASE "/size"
 #define UIO_PRUSS_DRAM_ADDR             	UIO_PRUSS_SYSFS_BASE "/addr"
-
 #define PRU_SHARED_OFFSET									0
-#define DDR_BASE_ADDR											0x80000000
-#define OFFSET_DDR												0x00001000
 
 typedef struct {
 	uint32_t    run_flag;
@@ -97,7 +94,6 @@ static int load_pruss_dram_info(app_data *info) {
 }
 
 static int init(app_data *info) {
-
 	load_pruss_dram_info(info);
 
 	info->mem_fd = open("/dev/mem", O_RDWR);
@@ -229,7 +225,6 @@ void* work_thread(void *arg) {
 }
 
 int main(int argc, char *argv[]) {
-
 	if(argc != 4){
 		printf("Please enter following arguments to execute Puggle: #AI #AO Fs\n");
 		return -1;
@@ -283,11 +278,9 @@ int main(int argc, char *argv[]) {
 
 	// Wait until PRU1 has finished execution
 	prussdrv_pru_wait_event(PRU_EVTOUT_1);
-	//printf("SPIAgent complete.\n");
 
 	// Wait until PRU0 has finished execution
 	prussdrv_pru_wait_event(PRU_EVTOUT_0);
-	//printf("DataXferAgent complete.\n");
 
 	// clear pru interrupts
 	prussdrv_pru_clear_event(PRU1_ARM_INTERRUPT);
