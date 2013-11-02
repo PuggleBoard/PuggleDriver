@@ -74,7 +74,7 @@ int main(int argc, char* argv[])
 	
 	// A1 EEPROM Data struct
 	eeprom[4] = 0x41;
-	eeprom[5] = 0x30;
+	eeprom[5] = 0x31;
 
 	printf("Enter Name of Board in ASCII (max 32): ");
 	fgets(buffer, sizeof(buffer), stdin);
