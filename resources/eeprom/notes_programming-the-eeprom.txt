@@ -1,0 +1,114 @@
+Jon Newman
+2013 11 02
+Programming the EEPROM
+
+1. To start, assume that all three address pins on the EEPROM chip are grounded. The chip has a hardset start address of 0x5, followed by the value provided by the address pins. So with all three grounded, the address is 0x50.
+
+2. Lets try to detect the 24C256 on the i2c bus
+
+options: 
+
+-r = use 'read byte' command to probe bus
+-y = Ignore interactive confirmation
+
+root@beaglebone:~# i2cdetect -r -y 1
+     0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
+00:          -- -- -- -- -- -- -- -- -- -- -- -- -- 
+10: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+20: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+30: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+40: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+50: 50 -- -- -- UU UU UU UU -- -- -- -- -- -- -- -- 
+60: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+70: -- -- -- -- -- -- -- -- 
+
+We can see that it is sitting at 0x50 as expected. Also, we note that for address 0x54 to 0x57 there are UU symbols. This indicates that drivers have been loaded to handle chips at those address. This is because the beaglebone automatically loads the 24C256 drivers for the valid cape address at boot up. Therefore, our chip is actually sitting at an invalid address (at least for being used as a cape ID). 
+
+3. We can still fill the chip with info (i.e. program it at this point so that it contains the board ID info. Later we can install the chip and switch its address, using the DIP switches, to a valid cape value. Its contents can then be automatically read at boot up. For now, lets tell the kernel to instantiate a 24C256 driver at address 0x50 
+
+echo 24c256 0x50 > /sys/bus/i2c/devices/i2c-1/new_device 
+
+There is obviously a lot going on under the hood here, but we can see the result of this line be examining the contents of the newly created /sys/bus/i2c/devices/1-0050 directory:
+
+root@beaglebone:ls /sys/bus/i2c/devices/1-0050
+driver	eeprom	modalias  name	power  subsystem  uevent
+
+we see that we now have a driver loaded into this address positition. So lets write some junk to the chip.
+
+root@beaglebone:~# echo "Here is some text to be stored in out EEPROM" > /sys/bus/i2c/devices/1-0050/eeprom
+
+and then we can read what we wrote
+
+root@beaglebone:~# cat /sys/bus/i2c/devices/1-0050/eeprom | hexdump -C 
+00000000  48 65 72 65 20 69 73 20  73 6f 6d 65 20 74 65 78  |Here is some tex|
+00000010  74 20 74 6f 20 62 65 20  73 74 6f 72 65 64 20 69  |t to be stored i|
+00000020  6e 20 6f 75 74 20 45 45  50 52 4f 4d 0a ff ff ff  |n out EEPROM....|
+00000030  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff  |................|
+
+
+4. OK, cool, so that seems to be working well. Lets do the real deal with the PuggleBoard's built in EEPROM. First of all, lets choose a valid address using the DIP switches on the board. I set both to 'on' which grouds A0 and A1. A2 is always tied high. Therefore, the address of the board is 0x54. Next reboot the beagleboard and note that at boot, the 24C256 driver is pre-loaded for the 0x54 address. So, we don't have to do any intialization and we can write to the 24C256 chip. MAKING SURE TO GROUND THE WRITE-PROTECT PIN, we can simply run
+
+echo "Here is some text to be stored in out EEPROM" > /sys/bus/i2c/devices/1-0054/eeprom
+
+and read it
+
+root@beaglebone:~# cat /sys/bus/i2c/devices/1-0054/eeprom | hexdump -C 
+00000000  48 65 72 65 20 69 73 20  73 6f 6d 65 20 74 65 78  |Here is some tex|
+00000010  74 20 74 6f 20 62 65 20  73 74 6f 72 65 64 20 69  |t to be stored i|
+00000020  6e 20 6f 75 74 20 45 45  50 52 4f 4d 0a ff ff ff  |n out EEPROM....|
+00000030  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff  |................|
+
+cool.
+
+5. So now, lets actually put some useful information on the chip. I will be modifying Ken Keller's mkeeprom.c, which is a command line program that produces a file with the correct byte offsets and content to conform with the BeagleBone SRM's description of the EEPROM contents. This program asks a series of questions and the produces the file that can be echoed over to the EEPROM when you are finished. Entering all the info is very tedious, so I just put all the answers in a file and then provide that as input to the program. All I did was make the question set compatable with A1 EEPROM standards. Its available in ./PuggleBoard/eeprom/utils. Here we go:
+
+jon@T410 ~/github/PuggleBoard/eeprom/utils $ gcc -o mkeeprom mkeeprom.c 
+jon@T410 ~/github/PuggleBoard/eeprom/utils $ ./mkeeprom < pb_2v1_input
+
+where 
+
+jon@T410 ~/github/PuggleBoard/eeprom/utils $ cat pb_2v1_input (comments added post hoc)
+
+PuggleBoard             // Name of Cape
+02v1                    // Version
+www.puggleboard.com     // Company              
+PuggleBoard-02v1        // Part Number
+4413PB02100001           // Serial number: WWYY&&&&NNNN W=week, Y=year, &=assembly code, N=incrementing board number        
+7                       // Max current drawn from VDD_3V3EXP
+150                     // Max current drawn from VDD_5V
+0                       // Max current drawn from SYS_5V
+0                       // Current supplied to VDD_5V
+9                       // Number of pins used by cape; End header info, start entering pin info.
+8                       // Header to which this pin belongs
+21                      // Pin number on header
+1                       // Pin used?
+2                       // Type? 1=input, 2=output, 3=bidirectional
+0                       // Slew? 0=fast, 1=slow:
+0                       // RX Enabled? 0=disabled, 1=enabled
+0                       // Pullup or Pulldown? 0=pulldown, 1=pullup
+0                       // Pullup or Pulldown? 0=pulldown, 1=pullup
+6                       // Pin Mux Mode? (0 through 7)
+...                     // Repeat for remaining pins...
+
+In my case the pins used are the following
+
+P8:
+
+27  OUT (CONVST)
+28  IN  (MISO)
+29  OUT (MOSI)
+30  OUT (ADC_CS)
+39  OUT (DAC_CS)
+40  OUT (SCLK)  
+41  BI  (GPIO1)
+42  BI  (GPIO2)
+43  BI  (GPIO3)
+44  BI  (GPIO4)
+45  BI  (GPIO5)
+46  BI  (GPIO6)
+
+This can be expanded later if we implement ways to allow the user to manipulate the GPIO on header P9 through PuggleDriver.
+
+
+
+
