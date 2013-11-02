@@ -107,7 +107,9 @@ P8:
 45  BI  (GPIO5)
 46  BI  (GPIO6)
 
-This can be expanded later if we implement ways to allow the user to manipulate the GPIO on header P9 through PuggleDriver.
+This can be expanded later if we implement ways to allow the user to manipulate the GPIO on header P9 through PuggleDriver. I wrote the parameter (pb_2v1_input) file, created the eeprom data file (pb_2v1_data.eeprom), and added both the PuggleDriver repo along with this text document. I then programmed the 24C256 chip, located at 0x54, using 
+
+root@beaglebone:~/PuggleDriver/resources/eeprom# cat pb_2v1_data.eeprom > /sys/bus/i2c/devices/1-0054/eeprom
 
 
 
