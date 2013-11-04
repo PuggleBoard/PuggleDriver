@@ -22,11 +22,12 @@
 #include "puggle.hp"
 
 #define DAC_DATA            r1
-#define ADDR_DDR            r3
 #define ADDR_PRU1_DRAM      r2
+#define ADDR_DDR            r3
 #define ADDR_PRU_SHARED     r4
 #define PRU_DDR_XFER_SAMPLE r5
 #define CYCLES              r6
+#define ADDR_DDR_DAC        r7
 
 START:
 // Enable OCP
@@ -53,11 +54,46 @@ MOV CYCLES, 0
 INIT:
 
   // Read PRU memory and store into register
-  //LBBO PRU_DDR_XFER_SAMPLE, ADDR_PRU_SHARED, 0, 2
+  LBBO PRU_DDR_XFER_SAMPLE, ADDR_PRU_SHARED, 0, 2
 
   // Move value from register to DDR
-  //SBBO PRU_DDR_XFER_SAMPLE, ADDR_DDR, 0, 2
+  SBBO PRU_DDR_XFER_SAMPLE, ADDR_DDR, 0, 2
 
+  delayFourty
+  delayFourty
+  delayFourty
+  delayFourty
+  delayFourty
+  delayFourty
+  delayFourty
+  delayFourty
+  delayFourty
+  delayFourty
+  delayFourty
+  delayFourty
+  delayFourty
+  delayFourty
+  delayFourty
+  delayFourty
+  delayFourty
+  delayFourty
+  delayFourty
+  delayFourty
+  delayFourty
+  delayFourty
+  delayFourty
+  delayFourty
+  delayFourty
+  delayFourty
+  delayFourty
+  delayFourty
+  delayFourty
+  delayFourty
+  delayFourty
+  delayFourty
+  delayFourty
+  delayFourty
+  delayFourty
   delayFourty
   delayFourty
   delayFourty
@@ -70,7 +106,7 @@ INIT:
   delayFourty
 
   // Read DDR memory and store into register
-  LBBO DAC_DATA, ADDR_DDR, 0, 2
+  LBBO DAC_DATA, ADDR_DDR, 64, 2
 
   // Move value from register to PRU1 DRAM
   SBBO DAC_DATA, ADDR_PRU1_DRAM, 0, 2
@@ -80,19 +116,21 @@ INIT:
 
   // Incrememnt memory addresses
   ADD ADDR_PRU_SHARED, ADDR_PRU_SHARED, 2
-  ADD ADDR_PRU1_DRAM, ADDR_PRU1_DRAM, 2
+  //ADD ADDR_PRU1_DRAM, ADDR_PRU1_DRAM, 2
   //ADD ADDR_DDR, ADDR_DDR, 2
   ADD CYCLES, CYCLES, 1
 
   // Cycle back
-  QBLE INIT, CYCLES, 200
+  QBLE INITTEMP, CYCLES, 200
 
   // Reset memory addresses
-  MOV ADDR_DDR, DDR_ADDR
-  MOV ADDR_PRU1_DRAM, OTHER_DRAM_ADDR
+  //MOV ADDR_DDR, DDR_ADDR
+  //MOV ADDR_PRU1_DRAM, OTHER_DRAM_ADDR
   MOV ADDR_PRU_SHARED, PRU_SHARED_ADDR
   MOV CYCLES, 0
   JMP INIT
+  INITTEMP:
+    JMP INIT
 
 EXIT:
   MOV r31.b0, PRU0_ARM_INTERRUPT+16

@@ -47,6 +47,7 @@ typedef struct {
 	uint32_t    run_flag;
 	uint32_t    ddr_base_address;
 	uint32_t    ddr_bytes_available;
+	uint32_t		dac_offset;
 } pru_params;
 
 typedef struct {
@@ -180,6 +181,9 @@ static int init(app_data *info) {
 	// Write # bytes available
 	info->pru_params->ddr_bytes_available = info->ddr_size;
 
+	// Write dac offset
+	info->pru_params->dac_offset = 0x000000ff;
+
 	printf("Initialization complete.\n");
 	return(0);
 }
@@ -217,17 +221,13 @@ void* module_thread(void *arg) {
 	double val;
 	while(system_status) {
 		while(info.pru_params->run_flag == 1) {
-			uint32_t *ddr = info.ddr_memory;
-			//val = *ddr;
-			//val = 2.0*4.096*(.00001525902)*(*ddr)-4.096;
-			ddr[0] = j;
-			if(j>1000){
-				j=0;
-			}
-			else
-				j++;
-			//ddr++;
-			//ddr++;
+			uint32_t *readme = info.ddr_memory;
+			uint32_t *ddr = info.ddr_memory+64;
+			printf("%d \n", *readme);
+			val = 2.0*4.096*(.00001525902)*(525)-4.096;
+			//printf("%f 0x%08lX\n", val, ddr);
+			val =  (val+4.096)/(2.0*4.096*0.00001525902);
+			*ddr = *readme;
 		}
 	}
 	return NULL;
@@ -241,7 +241,6 @@ int main(int argc, char *argv[]) {
 		return -1;
 	}
 	else {
-		printf("OK, looks like you know what you're doing...I guess I'll run.\n");
 		num_ai_channels = atoi(argv[1]);
 		num_ao_channels = atoi(argv[2]);
 		sampling_freq = atoi(argv[3]);
@@ -283,8 +282,8 @@ int main(int argc, char *argv[]) {
 	pthread_create(&tid, NULL, &module_thread, NULL);
 
 	// Run Puggle until worker thread is killed
-	while(module_thread) {
-	}
+	//while(module_thread) {
+	//}
 
 	// Wait until PRU1 has finished execution
 	prussdrv_pru_wait_event(PRU_EVTOUT_1);

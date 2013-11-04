@@ -21,6 +21,13 @@
 #ifndef _PUGGLE_HP_
 #define _PUGGLE_HP_
 
+.struct AppParams
+  .u32    RunFlag
+  .u32    DDRBaseAddress
+  .u32    DDRBytesAvailable
+  .u32		DACOffset
+.ends
+
 // TI Constants
 #define PRU0_PRU1_INTERRUPT    			17
 #define PRU1_PRU0_INTERRUPT    			18
@@ -50,7 +57,7 @@
 // Memory addresses
 #define DDR_BASE_ADDR   						0x80000000		// ddr base address
 #define DDR_OFFSET						    	0x00001000		// ddr offset (required)
-#define DDR_ADDR                    0x9CB00000    // custom mapped ddr
+#define DDR_ADDR                		0x9CF80000    // custom mapped ddr
 
 #define OTHER_DRAM_ADDR		        	0x00000000		// address of each prus own dram
 #define OWN_DRAM_ADDR		       			0x00002000		// address for each pru to touch other's dram
