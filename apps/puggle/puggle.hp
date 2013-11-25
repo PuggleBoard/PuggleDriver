@@ -86,13 +86,14 @@
 //#define MOSI   										R30.t9
 //#define MISO   										R30.t10
 
-// AUX DIO
-#define DIO_0												R30.1	
-#define DIO_1												R31.0	
-#define DIO_2												R31.3	
-#define DIO_3												R31.2	
-#define DIO_4												R30.5		
-#define DIO_5												R30.4	
+
+// Intan chip SPI Bus
+#define INTAN_MISO1										R31.1	
+#define INTAN_SCLK										R30.0	
+#define INTAN_CS1										R30.3	
+#define INTAN_MISO2										R31.2	
+#define INTAN_MOSI										R30.5		
+#define INTAN_CS2										R30.4	
 
 // Useful defines
 #define NOP 												MOV R29, R29
@@ -142,7 +143,7 @@
 
 // SPI Operations
 
-// Single SPI duplex bit transfer
+// Single SPI duplex bit transfer for onboard DAC
 .macro SPI_XFER_BIT
 .mparam SPI_RX, SPI_TX, BIT
  
@@ -174,7 +175,7 @@
  
 .endm
 
-// Single SPI duplex bit transfer with RX bit inversion
+// Single SPI duplex bit transfer with RX bit inversion for onboard ADC
 .macro SPI_XFER_INV_BIT
 .mparam SPI_RX, SPI_TX, BIT
 
@@ -205,6 +206,54 @@
         CLR SCLK
         NOP
 
+.endm
+
+// Single SPI duplex bit transfer for Intan chip
+.macro INTAN_SPI_XFER_BIT
+.mparam SPI_RX1, SPI_RX2, SPI_TX, BIT
+ 
+    // Output MOSI
+    CLR INTAN_SCLK
+    QBBS MOSI_HIGH, SPI_TX, BIT
+        CLR MOSI
+        JMP MOSI_DONE
+
+    MOSI_HIGH:
+        SET INTAN_MOSI
+        NOP
+
+    MOSI_DONE:
+ 
+    // START MISO1
+    QBBC MISO1_LOW, INTAN_MISO1
+        SET SPI_RX1, SPI_RX1, BIT
+        SET INTAN_SCLK 
+
+    // Read MISO2
+    QBBC MISO2_LOW, INTAN_MISO2
+        SET SPI_RX2, SPI_RX2, BIT
+        JMP MISO_DONE
+
+    MISO2_LOW:
+        CLR SPI_RX2, SPI_RX2, BIT
+        JMP MISO_DONE
+
+    // FINISH MISO1
+    MISO1_LOW:
+        CLR SPI_RX1, SPI_RX1, BIT
+        SET INTAN_SCLK 
+    
+    // Read MISO2
+    QBBC MISO2_LOW, INTAN_MISO2
+        SET SPI_RX2, SPI_RX2, BIT
+        JMP MISO_DONE
+
+    MISO2_LOW:
+        CLR SPI_RX2, SPI_RX2, BIT
+        JMP MISO_DONE
+
+    MISO_DONE:  
+     
 .endm
 
 
@@ -300,6 +349,37 @@
 
     SET DAC_CS
     SET SCLK
+
+.endm
+
+// Intan word transfer (16 bits)
+.macro INTAN_XFER_WORD
+.mparam RX, TX
+
+    CLR INTAN_CS1
+    CLR INTAN_CS2
+    delayOne
+
+    INTAN_SPI_XFER_BIT RX1, RX2, TX, 15
+    INTAN_SPI_XFER_BIT RX1, RX2, TX, 14
+    INTAN_SPI_XFER_BIT RX1, RX2, TX, 13
+    INTAN_SPI_XFER_BIT RX1, RX2, TX, 12
+    INTAN_SPI_XFER_BIT RX1, RX2, TX, 11
+    INTAN_SPI_XFER_BIT RX1, RX2, TX, 10
+    INTAN_SPI_XFER_BIT RX1, RX2, TX, 9
+    INTAN_SPI_XFER_BIT RX1, RX2, TX, 8
+    INTAN_SPI_XFER_BIT RX1, RX2, TX, 7
+    INTAN_SPI_XFER_BIT RX1, RX2, TX, 6
+    INTAN_SPI_XFER_BIT RX1, RX2, TX, 5
+    INTAN_SPI_XFER_BIT RX1, RX2, TX, 4
+    INTAN_SPI_XFER_BIT RX1, RX2, TX, 3
+    INTAN_SPI_XFER_BIT RX1, RX2, TX, 2
+    INTAN_SPI_XFER_BIT RX1, RX2, TX, 1
+    INTAN_SPI_XFER_BIT RX1, RX2, TX, 0
+
+    SET INTAN_CS1
+    SET INTAN_CS2
+    SET INTAN_SCLK
 
 .endm
 
