@@ -23,7 +23,6 @@
 
 #include "puggle.hp"
 
-#define CHAN_NUM        r3
 #define ADC_CH1         r4
 #define ADC_CH2         r5
 #define ADC_CH3         r6
@@ -63,9 +62,9 @@ ST32  r0, r1
 // Configure the block index register for PRU0 by setting c24_blk_index[7:0] and
 // c25_blk_index[7:0] field to 0x00 and 0x00, respectively.  This will make C24 point
 // to 0x00000000 (PRU0 DRAM) and C25 point to 0x00002000 (PRU1 DRAM).
-MOV       r0, 0x00000000
-MOV       r1, CTBIR_1
-ST32      r0, r1
+MOV   r0, 0x00000000
+MOV   r1, CTBIR_1
+ST32  r0, r1
 
 // Set counter for number of blocks copied
 MOV CYCLES, 0
@@ -90,9 +89,6 @@ SET DAC_CS
 SET ADC_CS
 SET SCLK
 CLR MOSI
-
-// Set initialization parameters
-//MOV CHAN_NUM, 1
 
 // Run four initialization cycles (to get channels in phase)
 MOV ADC_INIT, 0xe7ff
@@ -196,7 +192,6 @@ CH_3:
 CH_4:
     MOV DAC_TX, DAC_CH4
     MOV ADC_TX, ADC_CH1
-    //MOV CHAN_NUM, 0
     JMP START_ACQ
 
 START_ACQ:
@@ -207,9 +202,6 @@ START_ACQ:
     // Collect DAC sample
     DAC_XFER_WORD DAC_DATA, DAC_TX
   
-    // Increment channel number if necessary
-    //ADD CHAN_NUM, CHAN_NUM, 1
-
     // Check run/stop
     QBBS INIT_RESET, CONTROLS.t0
     JMP EXIT
