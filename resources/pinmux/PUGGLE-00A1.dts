@@ -1,0 +1,79 @@
+/*
+	 -------------------------------------------------------------------------
+
+	 This file is part of the Puggle Data Conversion and Processing System
+	 Copyright (C) 2013 Puggle
+
+	 -------------------------------------------------------------------------
+
+	 Written in 2013 by: Yogi Patel <yapatel@gatech.edu>
+
+	 Minor comment and code pieces borrowed from Terrence McGucking.
+
+	 To the extent possible under law, the author(s) have dedicated all copyright
+	 and related and neighboring rights to this software to the public domain
+	 worldwide. This software is distributed without any warranty.
+
+	 You should have received a copy of the CC Public Domain Dedication along with
+	 this software. If not, see <http://creativecommons.org/licenses/by-sa/3.0/legalcode>.
+ */
+
+/dts-v1/;
+/plugin/;
+
+/ {
+	compatible = "ti,beaglebone", "ti,beaglebone-black";
+
+	/* identification */
+	part-number = "PUGGLEBOARD";
+	version = "00A1";
+
+	/* Pins used */
+	exclusive-use =
+
+		/* Pins for Intan RHD2132 */
+		"P9.17", /* SPI0_CS0	*/
+		"P9.18", /* SPI0_D1_MOSI   */
+		"P9.21", /* SPI0_D0_MISO  */
+		"P9.22", /* SPI0_SCLK */
+
+		/* Pins for BOB */
+		"P9.27", /* ADC CONVST PRU0: pr1_pru0_pru_r30_5 */
+		"P9.28", /* SPI1_CS0 	*/
+		"P9.29", /* SPI1_D0_MISO   */
+		"P9.30", /* SPI1_D1_MOSI	*/
+		"P9.31", /* SPI1_SCLK	*/
+		"P9.42", /* SPI1_CS1	*/
+
+		/* Hardware used */
+		"spi0",
+		"spi1",
+		"pruss",
+		"pru0";
+
+	fragment@0 {
+		target = <&am33xx_pinmux>;
+		__overlay__ {
+spi1_pins: pinmux_spi1_pins {
+				pinctrl-single,pins = <
+					0x190 0x13		/* spi1_sclk, OUTPUT_PULLUP | MODE3 */
+					0x194 0x23		/* spi1_d0, INPUT_PULLDOWN  | MODE3 */
+					0x198 0x13		/* spi1_d1, OUTPUT_PULLUP | MODE3 */
+					0x19c 0x13		/* spi1_cs0, OUTPUT_PULLUP | MODE3 */
+					0x164 0x12		/* spi1_cs1, OUTPUT_PULLUP | MODE2 */
+					>;
+			};
+		};
+	};
+
+	fragment@1 {
+		target = <&spi1>;
+		__overlay__ {
+							 #address-cells 	= <1>;
+							 #size-cells 	= <0>;
+							 status = "okay";
+							 pinctrl-names = "default";
+							 pinctrl-0 = <&spi1_pins>;
+		};
+	};
+};

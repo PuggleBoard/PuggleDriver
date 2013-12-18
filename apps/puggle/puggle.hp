@@ -73,3 +73,24 @@
 
 #define samples     r14     //Samples per point initial value
 #define sampc       r15     //Samples count
+
+#define NOP					MOV r29, r29
+
+.macro delayTwenty
+NOP
+NOP
+NOP
+NOP
+NOP
+NOP
+NOP
+NOP
+NOP
+NOP
+NOP
+NOP
+NOP
+NOP
+NOP
+NOP
+.endm

@@ -67,15 +67,56 @@ MOV addr, MCSPI_CH0CTRL
 MOV val, EN_CH
 SBBO val, addr, 0, 4
 
+delayTwenty
+delayTwenty
+delayTwenty
+delayTwenty
+delayTwenty
+delayTwenty
+delayTwenty
+delayTwenty
+delayTwenty
+delayTwenty
+delayTwenty
+
 // Write ADC configuration to SPI_TX0
-//MOV addr, MCSPI_TX0
-//MOV val, ADC_CONFIG
-//SBBO val, addr, 0, 4
+MOV addr, MCSPI_TX0
+MOV val, ADC_CONFIG
+SBBO val, addr, 0, 4
+
+delayTwenty
+delayTwenty
+delayTwenty
+delayTwenty
+delayTwenty
+delayTwenty
+delayTwenty
+delayTwenty
+delayTwenty
+delayTwenty
+delayTwenty
 
 // Write magic number to SPI_TX0
 MOV addr, MCSPI_TX0
 MOV val, MAGIC
 SBBO val, addr, 0, 4
+
+// Disable channel 0
+MOV addr, MCSPI_CH0CTRL
+MOV val, DIS_CH
+SBBO val, addr, 0 ,4
+
+delayTwenty
+delayTwenty
+delayTwenty
+delayTwenty
+delayTwenty
+delayTwenty
+delayTwenty
+delayTwenty
+delayTwenty
+delayTwenty
+delayTwenty
 
 // Configure channel 1 - DAC
 
@@ -99,15 +140,44 @@ MOV addr, MCSPI_CH1CTRL
 MOV val, EN_CH
 SBBO val, addr, 0, 4
 
+delayTwenty
+delayTwenty
+delayTwenty
+delayTwenty
+delayTwenty
+delayTwenty
+delayTwenty
+delayTwenty
+delayTwenty
+delayTwenty
+delayTwenty
+
 // Write DAC configuration to SPI_TX1
-//MOV addr, MCSPI_TX1
-//MOV val, DAC_CONFIG
-//SBBO val, addr, 0, 4
+MOV addr, MCSPI_TX1
+MOV val, DAC_CONFIG
+SBBO val, addr, 0, 4
+
+delayTwenty
+delayTwenty
+delayTwenty
+delayTwenty
+delayTwenty
+delayTwenty
+delayTwenty
+delayTwenty
+delayTwenty
+delayTwenty
+delayTwenty
 
 // Write magic number to SPI_TX1
 MOV addr, MCSPI_TX1
 MOV val, MAGIC
 SBBO val, addr, 0, 4
+
+// Disable channel 1
+MOV addr, MCSPI_CH1CTRL
+MOV val, DIS_CH
+SBBO val, addr, 0 ,4
 
 #ifdef AM33XX
 	//Send notification to Host for program completion
