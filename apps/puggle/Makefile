@@ -21,7 +21,7 @@ INCDIR_APP_LOADER ?= ../../utils/include
 BINDIR ?= ../bin
 GCC = gcc -w
 
-CFLAGS += -Wall -I$(INCDIR_APP_LOADER) -D__DEBUG -mtune=cortex-a8 -march=armv7-a
+CFLAGS += -Wall -I$(INCDIR_APP_LOADER) -D__DEBUG -mtune=cortex-a8 -march=armv7-a -mfpu=neon
 LDFLAGS += -L$(LIBDIR_APP_LOADER) -lprussdrv -lpthread
 OBJDIR = obj
 TARGET = $(BINDIR)/puggle
