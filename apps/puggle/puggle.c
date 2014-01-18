@@ -30,11 +30,11 @@
 #include <unistd.h>
 #include "prussdrv.h"
 #include <pruss_intc_mapping.h>
+#include "rt_os.h"
 
 #define AM33XX
 #define PRU_NUM0 													0
 #define PRU_NUM1 													1
-#define DEBUG
 #define ALIGN_TO_PAGE_SIZE(x, pagesize)   ((x)-((x)%pagesize))
 #define handle_error(msg) 								do { perror(msg); exit(EXIT_FAILURE); } while (0)
 
@@ -42,6 +42,8 @@
 #define UIO_PRUSS_DRAM_SIZE             	UIO_PRUSS_SYSFS_BASE "/size"
 #define UIO_PRUSS_DRAM_ADDR             	UIO_PRUSS_SYSFS_BASE "/addr"
 #define PRU_SHARED_OFFSET									0
+
+#define DEBUG															1
 
 typedef struct {
 	uint32_t    run_flag;

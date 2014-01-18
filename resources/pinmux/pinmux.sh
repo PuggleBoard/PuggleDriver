@@ -17,6 +17,12 @@
 ##
 
 #!/bin/sh
+
+if ! id | grep -q root; then
+  echo "must be run as root"
+	exit
+fi
+
 set -x
 set -e
 export SLOTS=/sys/devices/bone_capemgr.8/slots
