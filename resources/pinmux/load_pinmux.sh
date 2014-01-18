@@ -33,4 +33,4 @@ cat $SLOTS
 echo puggle-4ch > $SLOTS
 #dmesg | tail
 cat $SLOTS
-./check.sh
+./check_pinmux.sh

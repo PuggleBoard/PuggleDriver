@@ -20,10 +20,12 @@
 /plugin/;
 
 / {
-	compatible = "ti,beaglebone", "ti,beaglebone-black";
-
 	/* identification */
+	compatible = "ti,beaglebone", "ti,beaglebone-black";
 	part-number = "puggle-4ch";
+	board-name = "puggleboard";
+	manufacturer = "PuggleBoard";
+	version = "00A0";
 
 	fragment@0 {
 		target = <&am33xx_pinmux>;
