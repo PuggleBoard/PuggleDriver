@@ -30,7 +30,6 @@
 #include <unistd.h>
 #include "prussdrv.h"
 #include <pruss_intc_mapping.h>
-//#include "rt_os.h"
 
 #define AM33XX
 #define PRU_NUM0 													0
