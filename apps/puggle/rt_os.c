@@ -32,7 +32,7 @@ typedef struct {
 static bool init_rt = false;
 static pthread_key_t is_rt_key;
 
-int RT::OS::initiate(void) {
+int RT::initiate(void) {
 	rt_timer_set_mode(TM_ONESHOT);
 
 	// overrie blocking limit on memory
@@ -50,11 +50,11 @@ int RT::OS::initiate(void) {
 	return 0;
 }
 
-void RT::OS::shutdown(void) {
+void RT::shutdown(void) {
 	pthread_key_delete(is_rt_key);
 }
 
-int RT::OS::createTask(RT::OS::Task *task,void *(*entry)(void *),void *arg,int prio) {
+int RT::createTask(RT::Task *task,void *(*entry)(void *),void *arg,int prio) {
 	int retval = 0;
 	xenomai_task_t *t = new xenomai_task_t;
 	int priority = 99;
@@ -64,7 +64,7 @@ int RT::OS::createTask(RT::OS::Task *task,void *(*entry)(void *),void *arg,int p
 		priority -= prio;
 
 	if((retval = rt_task_create(&t->task,"Pugggle RT Thread",0,priority,T_FPU|T_JOINABLE))) {
-		ERROR_MSG("RT::OS::createTask : failed to create task\n");
+		ERROR_MSG("RT::createTask : failed to create task\n");
 		return retval;
 	}
 
@@ -74,34 +74,34 @@ int RT::OS::createTask(RT::OS::Task *task,void *(*entry)(void *),void *arg,int p
 	pthread_setspecific(is_rt_key,reinterpret_cast<const void *>(t));
 
 	if((retval = rt_task_start(&t->task,reinterpret_cast<void(*)(void *)>(entry),arg))) {
-		ERROR_MSG("RT::OS::createTask : failed to start task\n");
+		ERROR_MSG("RT::createTask : failed to start task\n");
 		return retval;
 	}
 
 	return 0;
 }
 
-void RT::OS::deleteTask(RT::OS::Task task) {
+void RT::deleteTask(RT::Task task) {
 	xenomai_task_t *t = reinterpret_cast<xenomai_task_t *>(task);
 	rt_task_delete(&t->task);
 }
 	
-bool RT::OS::isRealtime(void) {
+bool RT::isRealtime(void) {
 	if(init_rt && pthread_getspecific(is_rt_key))
 		return true;
 	return false;
 }
 
-long long RT::OS::getTime(void) {
+long long RT::getTime(void) {
 	return rt_timer_tsc2ns(rt_timer_tsc());
 }
 
-int RT::OS::setPeriod(RT::OS::Task task,long long period) {
+int RT::setPeriod(RT::Task task,long long period) {
 	xenomai_task_t *t = reinterpret_cast<xenomai_task_t *>(task);
 	t->period = period;
 	return rt_task_set_periodic(&t->task,TM_NOW,period);
 }
 
-void RT::OS::sleepTimestep(RT::OS::Task task) {
+void RT::sleepTimestep(RT::Task task) {
 	rt_task_wait_period(0);
 }

@@ -16,6 +16,7 @@
 	 this software. If not, see <http://creativecommons.org/licenses/by-sa/3.0/legalcode>.
  */
 
+// System includes
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/mman.h>
@@ -30,6 +31,15 @@
 #include <unistd.h>
 #include "prussdrv.h"
 #include <pruss_intc_mapping.h>
+#include <sys/resource.h>
+
+// Xenomai native skin inludes
+#include <native/task.h>
+#include <native/timer.h>
+
+// Custom includes
+#include "puggle.h"
+#include "debug.h"
 
 #define AM33XX
 #define PRU_NUM0 													0
@@ -43,6 +53,11 @@
 #define PRU_SHARED_OFFSET									0
 
 #define DEBUG															1
+
+typedef struct {
+	long long period;
+	RT_TASK task;
+} xenomai_task_t;
 
 typedef struct {
 	uint32_t    run_flag;

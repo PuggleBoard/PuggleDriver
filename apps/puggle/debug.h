@@ -1,20 +1,20 @@
 /*
- Copyright (C) 2011 Georgia Institute of Technology, University of Utah, Weill Cornell Medical College
+	 -------------------------------------------------------------------------
 
- This program is free software: you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
+	 This file is part of the Puggle Data Conversion and Processing System
+	 Copyright (C) 2013 Puggle
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
+	 -------------------------------------------------------------------------
 
- You should have received a copy of the GNU General Public License
- along with this program.  If not, see <http://www.gnu.org/licenses/>.
+	 Written in 2013 by: Yogi Patel <yapatel@gatech.edu>
 
- */
+	 To the extent possible under law, the author(s) have dedicated all copyright
+	 and related and neighboring rights to this software to the public domain
+	 worldwide. This software is distributed without any warranty.
+
+	 You should have received a copy of the CC Public Domain Dedication along with
+	 this software. If not, see <http://creativecommons.org/licenses/by-sa/3.0/legalcode>.
+	 */
 
 #ifndef DEBUG_H
 #define DEBUG_H
