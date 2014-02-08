@@ -18,6 +18,11 @@
 
 #!/bin/bash
 
+if ! id | grep -q root; then
+  echo "must be run as root"
+	exit
+fi
+
 wget -c --no-check-certificate https://raw.github.com/RobertCNelson/tools/master/pkgs/dtc.sh
 chmod +x dtc.sh
 ./dtc.sh
