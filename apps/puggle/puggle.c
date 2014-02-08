@@ -14,7 +14,7 @@
 
 	 You should have received a copy of the CC Public Domain Dedication along with
 	 this software. If not, see <http://creativecommons.org/licenses/by-sa/3.0/legalcode>.
-	 */
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -30,7 +30,7 @@
 #include <unistd.h>
 #include "prussdrv.h"
 #include <pruss_intc_mapping.h>
-#include "rt_os.h"
+//#include "rt_os.h"
 
 #define AM33XX
 #define PRU_NUM0 													0
@@ -66,11 +66,6 @@ app_data info;
 int thread_status = 0;
 int system_status = 0;
 static unsigned int *sharedMem_int;
-
-// I/O Configuration
-static int num_ai_channels;
-static int num_ao_channels;
-static int sampling_freq;
 
 static uint32_t read_uint32_hex_from_file(const char *file) {
 	size_t len = 0;
@@ -129,53 +124,8 @@ static int init(app_data *info) {
 	// Set the run flag to stop
 	info->pru_params->run_flag = 0;
 
-	// Which I/O channels did the user select?
-
-	// ADC channel controls
-	if(num_ai_channels == 1) {
-		//sharedMem_int[PRU_SHARED_OFFSET+1] = 1;
-	}
-	else if(num_ai_channels == 2) {
-		//sharedMem_int[PRU_SHARED_OFFSET+1] = 3;
-	}
-	else if(num_ai_channels == 3) {
-		//sharedMem_int[PRU_SHARED_OFFSET+1] = 7;
-	}
-	else if(num_ai_channels == 4) {
-		//sharedMem_int[PRU_SHARED_OFFSET+1] = 15;
-	}
-
-	// DAC channel controls
-	if(num_ai_channels == 1){
-		//sharedMem_int[PRU_SHARED_OFFSET+2] = 1;
-	}
-	else if(num_ai_channels == 2){
-		//sharedMem_int[PRU_SHARED_OFFSET+2] = 3;
-	}
-	else if(num_ai_channels == 3){
-		//sharedMem_int[PRU_SHARED_OFFSET+2] = 7;
-	}
-	else if(num_ai_channels == 4){
-		//sharedMem_int[PRU_SHARED_OFFSET+2] = 15;
-	}
-
-	// Set frequency
-	if(sampling_freq == 1) {
-		//sharedMem_int[PRU_SHARED_OFFSET+3] = 1;
-	}
-	else if(sampling_freq == 2) {
-		//sharedMem_int[PRU_SHARED_OFFSET+3] = 2;
-	}
-	else if(sampling_freq == 3) {
-		//sharedMem_int[PRU_SHARED_OFFSET+3] = 3;
-	}
-	else if(sampling_freq == 4) {
-		//sharedMem_int[PRU_SHARED_OFFSET+3] = 4;
-	}
-
 	// Printout configuration
-	//printf("System configuration is:\n #AI: %d #AO: %d\n Sampling Frequency Option: %d\n",
-			//sharedMem_int[PRU_SHARED_OFFSET+1], sharedMem_int[PRU_SHARED_OFFSET+2], sharedMem_int[PRU_SHARED_OFFSET+3]);
+	//sharedMem_int[PRU_SHARED_OFFSET+1], sharedMem_int[PRU_SHARED_OFFSET+2], sharedMem_int[PRU_SHARED_OFFSET+3]);
 
 	// Write DRAM base addr into PRU memory
 	info->pru_params->ddr_base_address = info->ddr_base_address;
@@ -238,16 +188,12 @@ void* module_thread(void *arg) {
 int main(int argc, char *argv[]) {
 	printf("Starting PuggleDriver.\n");
 
-	if(argc != 4){
-		printf("Please enter following arguments to execute Puggle: #AI #AO Fs\n");
-		return -1;
+	if(geteuid() != 0) {
+		printf("Error: Need to be root. (i.e. sudo puggle)\n");
+		exit(1);
 	}
-	else {
-		num_ai_channels = atoi(argv[1]);
-		num_ao_channels = atoi(argv[2]);
-		sampling_freq = atoi(argv[3]);
-		system_status = 1;
-	}
+
+	system_status = 1;
 
 	unsigned int ret;
 	pthread_t tid;
