@@ -55,9 +55,12 @@
 #define DEBUG															1
 
 typedef struct {
-	long long period;
-	RT_TASK task;
+	long long puggle_rt_period;
+	RT_TASK puggle_rt_task;
 } xenomai_task_t;
+
+static bool init_rt = false;
+static pthread_key_t is_rt_key;
 
 typedef struct {
 	uint32_t    run_flag;
@@ -101,7 +104,7 @@ static uint32_t read_uint32_hex_from_file(const char *file) {
 static int load_pruss_dram_info(app_data *info) {
 	info->ddr_size = read_uint32_hex_from_file(UIO_PRUSS_DRAM_SIZE);
 	info->ddr_base_address = read_uint32_hex_from_file(UIO_PRUSS_DRAM_ADDR);
-	printf("DDR size is %dMB starting at address 0x%08lX\n", (unsigned int)info->ddr_size/1024, info->ddr_base_address);
+	//printf("DDR size is %dMB starting at address 0x%08lX\n", (unsigned int)info->ddr_size/1024, info->ddr_base_address);
 	return 0;
 }
 
@@ -181,12 +184,15 @@ void intHandler(int val) {
 	}
 }
 
-void* module_thread(void *arg) {
+void *module_thread(void *arg) {
 	int i = 0;
 	int j = 1;
 	double val;
+	printf("hello 1\n");
 	while(system_status) {
+	printf("hello 2\n");
 		while(info.pru_params->run_flag == 1) {
+	printf("hello 3\n");
 			uint32_t *readme = info.ddr_memory;
 			uint32_t *ddr = info.ddr_memory+64;
 			printf("%d \n", *readme);
@@ -202,13 +208,9 @@ void* module_thread(void *arg) {
 int main(int argc, char *argv[]) {
 	printf("Starting PuggleDriver.\n");
 
-	if(geteuid() != 0) {
-		printf("Error: Need to be root. (i.e. sudo puggle)\n");
-		exit(1);
-	}
-
 	system_status = 1;
 
+	unsigned int retval = 0;
 	unsigned int ret;
 	pthread_t tid;
 
@@ -240,8 +242,14 @@ int main(int argc, char *argv[]) {
 	// Initialize flags and controller for start/stop of PRUs
 	signal(SIGINT, intHandler);
 
+	// Initiate RT thread
+	initiate();
+
 	// Create worker thread
-	pthread_create(&tid, NULL, &module_thread, NULL);
+	//pthread_create(&tid, NULL, &module_thread, NULL);
+	xenomai_task_t *puggle;
+	retval = createTask(&puggle);
+	printf("%d\n",retval);
 
 	// Run Puggle until worker thread is killed
 	//while(module_thread) {
@@ -260,4 +268,72 @@ int main(int argc, char *argv[]) {
 	// Deinitialize
 	deinit(&info);
 	return(0);
+}
+	
+int initiate(void) {
+	rt_timer_set_mode(TM_ONESHOT);
+
+	// overrie blocking limit on memory
+	struct rlimit rlim = { RLIM_INFINITY, RLIM_INFINITY };
+	setrlimit(RLIMIT_MEMLOCK,&rlim);
+
+	if(mlockall(MCL_CURRENT | MCL_FUTURE)) {
+		ERROR_MSG("Failed to lock memory.\n");
+		return -EPERM;
+	}
+
+	pthread_key_create(&is_rt_key,0);
+	init_rt = true;
+
+	printf("Thread initiation complete.\n");
+	return 0;
+}
+
+void shutdown(void) {
+	pthread_key_delete(is_rt_key);
+}
+
+int createTask(Task *task) {
+	int resval = 0;
+	xenomai_task_t *t = &task;
+
+	if((resval = rt_task_create(&t->puggle_rt_task, "Puggle", 0, 99, T_FPU | T_JOINABLE))) {
+		ERROR_MSG("Failed to create task.\n");
+		return resval;
+	}
+
+	pthread_setspecific(is_rt_key, (const void *)(t));
+
+	if((resval = rt_task_start(&t->puggle_rt_task, &module_thread, 0))) {
+		ERROR_MSG("Failed to start task.\n");
+		return resval;
+	}
+
+	printf("RT thread started.\n");
+	return 0;
+}
+
+void deleteTask(Task task) {
+	xenomai_task_t *t = (xenomai_task_t *)(task);
+	rt_task_delete(&t->puggle_rt_task);
+}
+	
+bool isRealtime(void) {
+	if(init_rt && pthread_getspecific(is_rt_key))
+		return true;
+	return false;
+}
+
+long long getTime(void) {
+	return rt_timer_tsc2ns(rt_timer_tsc());
+}
+
+int setPeriod(Task task, long long period) {
+	xenomai_task_t *t = (xenomai_task_t *)(task);
+	t->puggle_rt_period = period;
+	return rt_task_set_periodic(&t->puggle_rt_period, TM_NOW, period);
+}
+
+void sleepTimestep(Task task) {
+	rt_task_wait_period(0);
 }

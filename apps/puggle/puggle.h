@@ -23,11 +23,13 @@
 typedef void *Task;
 int initiate(void);
 void shutdown(void);
-int createTask(Task *,void *(*)(void *),void *,int);
+int createTask(Task *);
 void deleteTask(Task);
-int setPeriod(Task,long long);
+int setPeriod(Task, long long);
 void sleepTimestep(Task);
 bool isRealtime(void);
+
+void *module_thread(void *);
 
 /*!
  * Returns the current CPU time in nanoseconds. In general
