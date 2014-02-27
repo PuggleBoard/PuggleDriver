@@ -16,8 +16,21 @@
 ##	this software. If not, see <http://creativecommons.org/licenses/by-sa/3.0/legalcode>.
 ##
 
-#!/bin/bash
+#!/bin/sh
 
-ifconfig usb0 192.168.7.2
-route add default gw 192.168.7.1
-echo "nameserver 8.8.8.8" >> /etc/resolv.conf
+if ! id | grep -q root; then
+  echo "must be run as root"
+	exit
+fi
+
+set -x
+set -e
+export SLOTS=/sys/devices/bone_capemgr.8/slots
+export PINS=/sys/kernel/debug/pinctrl/44e10800.pinmux/pins
+dtc -O dtb -o puggle-4ch-00A0.dtbo -b 0 -@ puggle-4ch.dts
+cp puggle-4ch-00A0.dtbo /lib/firmware/
+cat $SLOTS
+echo puggle-4ch > $SLOTS
+#dmesg | tail
+cat $SLOTS
+./check_pinmux.sh

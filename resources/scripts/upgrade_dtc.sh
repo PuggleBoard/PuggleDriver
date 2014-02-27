@@ -16,15 +16,13 @@
 ##	this software. If not, see <http://creativecommons.org/licenses/by-sa/3.0/legalcode>.
 ##
 
-#!/bin/sh
-set -x
-set -e
-export SLOTS=/sys/devices/bone_capemgr.8/slots
-export PINS=/sys/kernel/debug/pinctrl/44e10800.pinmux/pins
-dtc -O dtb -o puggle-4ch-00A0.dtbo -b 0 -@ puggle-4ch.dts
-cp puggle-4ch-00A0.dtbo /lib/firmware/
-cat $SLOTS
-echo puggle-4ch > $SLOTS
-#dmesg | tail
-cat $SLOTS
-./check.sh
+#!/bin/bash
+
+if ! id | grep -q root; then
+  echo "must be run as root"
+	exit
+fi
+
+wget -c --no-check-certificate https://raw.github.com/RobertCNelson/tools/master/pkgs/dtc.sh
+chmod +x dtc.sh
+./dtc.sh

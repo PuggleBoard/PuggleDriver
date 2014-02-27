@@ -3,4 +3,5 @@
 // Ignore binary files
 *.bin
 *.so
-
+*.dtbo
+*.a
