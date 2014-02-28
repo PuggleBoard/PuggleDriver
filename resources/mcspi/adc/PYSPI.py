@@ -118,8 +118,8 @@ class SPI_SETUP():
         vSBE                    = (SBE << 23)        # start bit enable  , 0x0 default set by WL
         vSPIENSLV               = (SPIENSLV << 21)   # spi select signal detection on ch 0
         vFORCE                  = (FORCE << 20)      # manual assertion to keep SPIEN active between SPI words
-				vTURBO                  = (TURBO << 19)      # 0x0 turbo is deactivated 
-				vIS                     = (IS << 18)         # Input select SPIDAT1 selected for reception
+        vTURBO                  = (TURBO << 19)      # 0x0 turbo is deactivated 
+        vIS                     = (IS << 18)         # Input select SPIDAT1 selected for reception
         vDPE1                   = (DPE1 << 17)       # 0x1 no Transmission enable for data line 1
         vDPE0                   = (DPE0 << 16)       # data line zero selected for transmission
         vDMAR                   = (DMAR << 15)       # DMA read request is enable
@@ -131,9 +131,8 @@ class SPI_SETUP():
         vPOL                    = (POL << 1)         # SPI clock is held low during ative state
         vPHA                    = (PHA)              # data latched on odd numbered edges of SPICLK
         CH_CONF = 0x00000000 | vCLKG | vFFER | vFFEW | vTCS | vSBPOL | vSBE | vSPIENSLV| vFORCE | vTURBO | vIS | vDPE1 | vDPE0 | vDMAR | vDMAW | vTRM | vWL | vEPOL | vCLKD | vPOL | vPHA
-    
+        
         print "CH_CONF " + hex(CH_CONF)  +"\n"
-
         return CH_CONF
 
 class Reg_Helper():   

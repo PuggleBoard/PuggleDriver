@@ -16,7 +16,7 @@
 
 	 You should have received a copy of the CC Public Domain Dedication along with
 	 this software. If not, see <http://creativecommons.org/licenses/by-sa/3.0/legalcode>.
-	 */
+ */
 
 /dts-v1/;
 /plugin/;
@@ -58,40 +58,40 @@
 	fragment@0 {
 		target = <&am33xx_pinmux>;
 		__overlay__ {
-			spi1: pinux_spi1 {
+spi1: pinux_spi1 {
 				pinctrl-single,pins = <
-							 0x190 0x13	/* P9_31 = mcasp0_aclkx.spi1_sclk , OUTPUT_PULLUP | MODE3 */
-							 0x194 0x13	/* P9_29 = mcasp0_fsx.spi1_d0	  , OUTPUT_PULLUP  | MODE3 */
-							 0x198 0x33	/* P9_30 = mcasp0_axr0.spi1_d1	  , INPUT_PULLUP | MODE3 */
-							 0x19c 0x13	/* P9_28 = mcasp0_ahclkr.spi1_cs0 , OUTPUT_PULLUP | MODE3 */
-							 0x164 0x12      /* P9_42 = GPIO0_7 =  eCAP0_in_PWM0_out.gpio0[7] , OUTPUT_PULLUP | MODE2 */
-				>;
+					0x190 0x13		/* P9_31 = mcasp0_aclkx.spi1_sclk , OUTPUT_PULLUP | MODE3 */
+					0x194 0x13		/* P9_29 = mcasp0_fsx.spi1_d0	  , OUTPUT_PULLUP  | MODE3 */
+					0x198 0x33		/* P9_30 = mcasp0_axr0.spi1_d1	  , INPUT_PULLUP | MODE3 */
+					0x19c 0x13		/* P9_28 = mcasp0_ahclkr.spi1_cs0 , OUTPUT_PULLUP | MODE3 */
+					0x164 0x12    /* P9_42 = GPIO0_7 =  eCAP0_in_PWM0_out.gpio0[7] , OUTPUT_PULLUP | MODE2 */
+					>;
 			};
 
-			spi0: pinux_spi0 {
+spi0: pinux_spi0 {
 				pinctrl-single,pins = <
-							 0x150 0x30  	/* spi0_sclk, INPUT_PULLUP | MODE0 */
-							 0x154 0x30  	/* spi0_d0, INPUT_PULLUP | MODE0 */
-							 0x158 0x30  	/* spi0_d1, INPUT_PULLUP | MODE0 */
-							 0x15c 0x30  	/* spi0_cs0, INPUT_PULLUP | MODE0 */
-				>;
+					0x150 0x30  	/* spi0_sclk, INPUT_PULLUP | MODE0 */
+					0x154 0x30  	/* spi0_d0, INPUT_PULLUP | MODE0 */
+					0x158 0x30  	/* spi0_d1, INPUT_PULLUP | MODE0 */
+					0x15c 0x30  	/* spi0_cs0, INPUT_PULLUP | MODE0 */
+					>;
 			};
 
-			pru: pinux_pru {
+pru: pinux_pru {
+			 pinctrl-single,pins = <
+				 0x03c 0x26 	/* P8_15 = BUSY,  INPUT_PULLDOWN  | MODE6 */
+				 0x034 0x16 	/* P8_11 = CONV,  OUTPUT_PULLUP   | MODE6 */
+				 0x030 0x16 	/* P8_12 = LDAC,  OUTPUT_PULLUP   | MODE6 */
+				 0x1aC 0x05 	/* P9_25 = RESET, OUTPUT_PULLDOWN | MODE5 */
+				 >;
+		 };
+
+gpio: pinux_gpio {
 				pinctrl-single,pins = <
-									0x03c 0x26 	/* P8_15 = BUSY,  INPUT_PULLDOWN  | MODE6 */
-									0x034 0x16 	/* P8_11 = CONV,  OUTPUT_PULLUP   | MODE6 */
-									0x030 0x16 	/* P8_12 = LDAC,  OUTPUT_PULLUP   | MODE6 */
-									0x1aC 0x05 	/* P9_25 = RESET, OUTPUT_PULLDOWN | MODE5 */
-				>;
-			};
-			
-			gpio: pinux_gpio {
-				pinctrl-single,pins = <
-											0x090 0x07 	/* P8_7  = OS_0 ,GPIO2_2,   OUTPUT_PULLDOWN | MODE 7 */
-											0x094 0x07 	/* P8_8  = OS_1,GPIO2_3    gpmc_oen_ren.gpio2[3], OUTPUT_PULLDOWN | MODE 7*/
-											0x09C 0x07 	/* P8_9  = OS_2,GPIO2_5,    OUTPUT_PULLDOWN | MODE 7*/
-				>;
+					0x090 0x07 	/* P8_7  = OS_0 ,GPIO2_2,   OUTPUT_PULLDOWN | MODE 7 */
+					0x094 0x07 	/* P8_8  = OS_1,GPIO2_3    gpmc_oen_ren.gpio2[3], OUTPUT_PULLDOWN | MODE 7*/
+					0x09C 0x07 	/* P8_9  = OS_2,GPIO2_5,    OUTPUT_PULLDOWN | MODE 7*/
+					>;
 			};
 		};
 	};
@@ -99,48 +99,48 @@
 	fragment@1 {
 		target = <&spi1>;
 		__overlay__ {
-			spi1_helper: helper {
-				compatible = "bone-pinmux-helper";
-				pinctrl-names = "default";
-				pinctrl-0 = <&spi1>;
-				status = "okay";
-			};
+spi1_helper: helper {
+							 compatible = "bone-pinmux-helper";
+							 pinctrl-names = "default";
+							 pinctrl-0 = <&spi1>;
+							 status = "okay";
+						 };
 		};
 	};
 
 	fragment@2 {
 		target = <&spi0>;
 		__overlay__ {
-			spi0_helper: helper {
-				compatible = "bone-pinmux-helper";
-				pinctrl-names = "default";
-				pinctrl-0 = <&spi0>;
-				status = "okay";
-			};
+spi0_helper: helper {
+							 compatible = "bone-pinmux-helper";
+							 pinctrl-names = "default";
+							 pinctrl-0 = <&spi0>;
+							 status = "okay";
+						 };
 		};
 	};
 
 	fragment@3 {
 		target = <&pru>;
 		__overlay__ {
-			pru_helper: helper {
-				compatible = "bone-pinmux-helper";
-				pinctrl-names = "default";
-				pinctrl-0 = <&pru>;
-				status = "okay";
-			};
+pru_helper: helper {
+							compatible = "bone-pinmux-helper";
+							pinctrl-names = "default";
+							pinctrl-0 = <&pru>;
+							status = "okay";
+						};
 		};
 	};
 
 	fragment@4 {
 		target = <&ocp>;
 		__overlay__ {
-			gpio_helper: helper {
-				compatible = "gpio-of-helper";
-				pinctrl-names = "default";
-				pinctrl-0 = <&gpio>;
-				status = "okay";
-			};
+gpio_helper: helper {
+							 compatible = "gpio-of-helper";
+							 pinctrl-names = "default";
+							 pinctrl-0 = <&gpio>;
+							 status = "okay";
+						 };
 		};
 	};
 };

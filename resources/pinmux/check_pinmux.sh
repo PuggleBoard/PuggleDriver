@@ -26,9 +26,19 @@ fi
 set -x
 set -e
 export PINS=/sys/kernel/debug/pinctrl/44e10800.pinmux/pins
-cat $PINS | grep 8bc
-cat $PINS | grep 8b8
-cat $PINS | grep 8ec
-cat $PINS | grep 8e8
-cat $PINS | grep 8e4
-cat $PINS | grep 8e0
+cat $PINS | grep 990
+cat $PINS | grep 994
+cat $PINS | grep 998
+cat $PINS | grep 99c
+cat $PINS | grep 964
+cat $PINS | grep 950
+cat $PINS | grep 954
+cat $PINS | grep 958
+cat $PINS | grep 95c
+cat $PINS | grep 83c
+cat $PINS | grep 834
+cat $PINS | grep 830
+cat $PINS | grep 9aC
+cat $PINS | grep 890
+cat $PINS | grep 894
+cat $PINS | grep 89C
