@@ -13,7 +13,6 @@ CM_PER = 0x44E00000
 CM_PER_SPI1_CLK_CTRL =  0x50
 CM_PER_SPI0_CLK_CTRL =  0x4C
 
-#TODO: put inside a dictionary or make a object for these offsets 
 MCSPI_REVISION      = 0x000
 MCSPI_SYSCONFIG     = 0x110
 MCSPI_SYSSTATUS     = 0x114
@@ -39,6 +38,7 @@ MCSPI_CH1CTRL       = 0x148
 MCSPI_TX1           = 0x14c
 MCSPI_RX1           = 0x150
 
+####Configure MCSPI Modulesl####
 spi_setup = SPI_SETUP()
 
 reg = Reg_Helper()
@@ -68,15 +68,17 @@ reg.grabAndSet(MCSPI_SYSCONFIG, spimem0, bit = 1, value = 0x1, name = "MCSPI SYS
 #check MCSPI0 is reset
 reg.waitTillSet(MCSPI_SYSSTATUS, spimem0, bit = 0, value = 0x1, name = "MCspi1SYSstatus")
 
-####SETUP SPI1 Master#####
+
+
+####Configure MCSPI1 for using ADC and DAC#####
 
 #setup modcontrol with default values
 MODCONTROL = spi_setup.setMODCONTROL(SINGLE = 0)
-reg.setAndCheckReg(MCSPI_MODULCTRL, spimem, MODCONTROL, name = "MCSPI_MODULCTRL")
+reg.setAndCheckReg(MCSPI_MODULCTRL, spimem, MODCONTROL, name = "MCSPI1_MODULCTRL")
 
 #set up the sysconfig register with defaults
 SYSCONFIG = spi_setup.setSYSCONFIG()
-reg.setAndCheckReg(MCSPI_SYSCONFIG, spimem, SYSCONFIG, name = "MCSPI_SYSCONFIG")
+reg.setAndCheckReg(MCSPI_SYSCONFIG, spimem, SYSCONFIG, name = "MCSPI1_SYSCONFIG")
 
 #get value of interupt register status
 irq = reg.getReg(MCSPI_IRQSTATUS, spimem)
@@ -84,20 +86,20 @@ print"inital status of MCSPI_IRQSTATUS :"
 reg.printValue(irq)
 
 #clear interupt status bits write all ones
-reg.setAndCheckReg(MCSPI_IRQSTATUS, spimem, 0xffffffff, name = "MCSPI_IRQSTATUS")
+reg.setAndCheckReg(MCSPI_IRQSTATUS, spimem, 0xffffffff, name = "MCSPI1_IRQSTATUS")
 
 #set up interupts
 IRQENABLE = spi_setup.setIRQENABLE()
-reg.setAndCheckReg(MCSPI_IRQENABLE, spimem, IRQENABLE, name = "MCSPI_IRQENABLE")
+reg.setAndCheckReg(MCSPI_IRQENABLE, spimem, IRQENABLE, name = "MCSPI1_IRQENABLE")
 
-####SETUP Channel 0 on McSPI 1 - ADC#####
+####Configure Channel 0 on MCSPI1 - ADC#####
 
 # make sure channel is disabled
 reg.setAndCheckReg(MCSPI_CH0CTRL, spimem, 0x00000000)
 
 # set up channel configuration
 CH_CONF = spi_setup.setCH_CONF(FFER = 1, FFEW =0, FORCE = 0, TURBO = 0, CLKD = 2, TRM = 0, WL = 0xf, IS = 1, DPE1 = 1, DPE0 = 0, DMAR = 1, DMAW = 1, EPOL = 1, POL = 1, PHA = 0)
-reg.setAndCheckReg(MCSPI_CH0CONF, spimem, CH_CONF, name = "MCSPI_CH0CONF")
+reg.setAndCheckReg(MCSPI_CH0CONF, spimem, CH_CONF, name = "MCSPI1_CH0CONF")
 
 # setup transfer level for turbo mode
 XFER = spi_setup.setXFERLEVEL(WCNT= 0x0)
@@ -107,9 +109,9 @@ reg.setAndCheckReg(MCSPI_XFERLEVEL, spimem, XFER, name ="XFERLevel")
 reg.setAndCheckReg(MCSPI_CH0CTRL, spimem, 0x00000001, name = "enable CH")
 
 # check if txs status bit is cleared
-reg.waitTillSet(MCSPI_CH0STAT, spimem, bit = 1, value = 1, name = "MCSPI_CH0STAT TXS")
+reg.waitTillSet(MCSPI_CH0STAT, spimem, bit = 1, value = 1, name = "MCSPI1_CH0STAT TXS")
 
-# Configure Channel 1 on McSPI - DAC
+####Configure Channel 1 on MCSPI1 - DAC####
 
 #make sure channel is disabled
 reg.setAndCheckReg(MCSPI_CH1CTRL, spimem, 0x00000000)
@@ -121,10 +123,12 @@ reg.setAndCheckReg(MCSPI_CH1CONF, spimem, CH_CONF, name = "MCSPI_CH0CONF")
 #enable channel
 reg.setAndCheckReg(MCSPI_CH1CTRL, spimem, 0x00000001, name = "enable CH")
 
-####setup Slave#####
 
-MODCONTROLslave = spi_setup.setMODCONTROL( FDAA = 1, MS = 1, PIN34 = 1,SINGLE = 0)
-reg.setAndCheckReg(MCSPI_MODULCTRL, spimem0, MODCONTROLslave, name = " MCSPI0 MODCONTRL Slave")
+
+####Configure MCSPI0 for Intan RHD2132#####
+
+MODCONTROL = spi_setup.setMODCONTROL( FDAA = 1, MS = 1, PIN34 = 1,SINGLE = 0)
+reg.setAndCheckReg(MCSPI_MODULCTRL, spimem0, MODCONTROL, name = "MCSPI0_MODCONTRL")
 
 #set up the sysconfig register with defaults
 SYSCONFIG = spi_setup.setSYSCONFIG()
@@ -157,7 +161,11 @@ reg.setAndCheckReg(MCSPI_XFERLEVEL, spimem0, XFER, name ="XFERLevel")
 reg.setAndCheckReg(MCSPI_CH0CTRL, spimem0, 0x00000001, name = "enable CH")
 
 #check if txs status bit is cleared
-reg.waitTillSet(MCSPI_CH0STAT, spimem0, bit = 1, value = 1, name = "MCSPI_CH0STAT TXS")
+reg.waitTillSet(MCSPI_CH0STAT, spimem0, bit = 1, value = 1, name = "MCSPI1_CH0STAT TXS")
+
+
+
+####Test Setups####
 
 #send 6 values
 for i in range(8):
