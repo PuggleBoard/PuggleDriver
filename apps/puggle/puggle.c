@@ -159,7 +159,6 @@ static int init(app_data *info) {
 
 void deinit(int val) {
 	prussdrv_pru_disable(PRU_NUM0);
-	prussdrv_pru_disable(PRU_NUM1);
 	prussdrv_exit();
 	munmap(info.ddr_memory, info.ddr_size);
 	close(info.mem_fd);
@@ -178,8 +177,7 @@ void intHandler(int val) {
 		 * from PRU Shared space to User Space on PRU0
 		 */
 		info.pru_params->run_flag = 1;
-		prussdrv_exec_program(PRU_NUM1, "./spiagent.bin");
-		prussdrv_exec_program(PRU_NUM0, "./dataxferagent.bin");
+		prussdrv_exec_program(PRU_NUM0, "./puggle.bin");
 		printf("Data acquisition status: started.\n");
 	}
 }
@@ -188,19 +186,16 @@ void *module_thread(void *arg) {
 	int i = 0;
 	int j = 1;
 	double val;
-	printf("hello 1\n");
 	while(system_status) {
-	printf("hello 2\n");
-		while(info.pru_params->run_flag == 1) {
-	printf("hello 3\n");
+		//while(info.pru_params->run_flag == 1) {
 			uint32_t *readme = info.ddr_memory;
 			uint32_t *ddr = info.ddr_memory+64;
-			printf("%d \n", *readme);
+			//printf("%d \n", *readme);
 			val = 2.0*4.096*(.00001525902)*(525)-4.096;
 			//printf("%f 0x%08lX\n", val, ddr);
 			val =  (val+4.096)/(2.0*4.096*0.00001525902);
 			*ddr = *readme;
-		}
+		//}
 	}
 	return NULL;
 }
@@ -240,29 +235,24 @@ int main(int argc, char *argv[]) {
 	init(&info);
 
 	// Initialize flags and controller for start/stop of PRUs
-	signal(SIGINT, intHandler);
+	//signal(SIGINT, intHandler);
 
 	// Initiate RT thread
 	initiate();
 
 	// Create worker thread
-	//pthread_create(&tid, NULL, &module_thread, NULL);
-	xenomai_task_t *puggle;
+	pthread_create(&tid, NULL, &module_thread, NULL);
+	/*xenomai_task_t *puggle;
 	retval = createTask(&puggle);
-	printf("%d\n",retval);
+	printf("%d\n",retval);*/
 
-	// Run Puggle until worker thread is killed
-	//while(module_thread) {
-	//}
-
-	// Wait until PRU1 has finished execution
-	prussdrv_pru_wait_event(PRU_EVTOUT_1);
+	prussdrv_exec_program(PRU_NUM0, "./puggle.bin");
+	printf("Data acquisition status: started.\n");
 
 	// Wait until PRU0 has finished execution
 	prussdrv_pru_wait_event(PRU_EVTOUT_0);
 
 	// clear pru interrupts
-	prussdrv_pru_clear_event(PRU1_ARM_INTERRUPT);
 	prussdrv_pru_clear_event(PRU0_ARM_INTERRUPT);
 
 	// Deinitialize

@@ -38,6 +38,8 @@ MCSPI_CH1CTRL       = 0x148
 MCSPI_TX1           = 0x14c
 MCSPI_RX1           = 0x150
 
+
+
 ####Configure MCSPI Modulesl####
 spi_setup = SPI_SETUP()
 
@@ -57,16 +59,16 @@ reg.setAndCheckReg(CM_PER_SPI1_CLK_CTRL, Cmem, 0x2, name = "CM_PER_SPI1_CLK_CTRL
 reg.setAndCheckReg(CM_PER_SPI0_CLK_CTRL, Cmem, 0x2, name = "CM_PER_SPI0_CLK_CTRL")
 
 #Reset MCSPI1:
-reg.grabAndSet(MCSPI_SYSCONFIG, spimem, bit = 1, value = 0x1, name = "MCSPI SYS COnfig")
+reg.grabAndSet(MCSPI_SYSCONFIG, spimem, bit = 1, value = 0x1, name = "MCSPI1 SYSconfig")
 
 #check MCSPI is reset
-reg.waitTillSet(MCSPI_SYSSTATUS, spimem, bit = 0, value = 0x1, name = "MCspi1SYSstatus")
+reg.waitTillSet(MCSPI_SYSSTATUS, spimem, bit = 0, value = 0x1, name = "MCSPI1 SYSstatus")
 
 #Reset MCSPI0:
-reg.grabAndSet(MCSPI_SYSCONFIG, spimem0, bit = 1, value = 0x1, name = "MCSPI SYS COnfig")
+reg.grabAndSet(MCSPI_SYSCONFIG, spimem0, bit = 1, value = 0x1, name = "MCSPI0 SYSconfig")
 
 #check MCSPI0 is reset
-reg.waitTillSet(MCSPI_SYSSTATUS, spimem0, bit = 0, value = 0x1, name = "MCspi1SYSstatus")
+reg.waitTillSet(MCSPI_SYSSTATUS, spimem0, bit = 0, value = 0x1, name = "MCSPI1 SYSstatus")
 
 
 
@@ -98,7 +100,7 @@ reg.setAndCheckReg(MCSPI_IRQENABLE, spimem, IRQENABLE, name = "MCSPI1_IRQENABLE"
 reg.setAndCheckReg(MCSPI_CH0CTRL, spimem, 0x00000000)
 
 # set up channel configuration
-CH_CONF = spi_setup.setCH_CONF(FFER = 1, FFEW =0, FORCE = 0, TURBO = 0, CLKD = 2, TRM = 0, WL = 0xf, IS = 1, DPE1 = 1, DPE0 = 0, DMAR = 1, DMAW = 1, EPOL = 1, POL = 1, PHA = 0)
+CH_CONF = spi_setup.setCH_CONF(FFER = 1, FFEW =0, FORCE = 0, TURBO = 0, CLKD = 2, TRM = 0, WL = 0xe, IS = 1, DPE1 = 1, DPE0 = 0, DMAR = 1, DMAW = 1, EPOL = 1, POL = 1, PHA = 0)
 reg.setAndCheckReg(MCSPI_CH0CONF, spimem, CH_CONF, name = "MCSPI1_CH0CONF")
 
 # setup transfer level for turbo mode
@@ -176,13 +178,13 @@ for i in range(8):
 
 #print value of tx register
 tx = reg.getReg(MCSPI_TX0, spimem)
-print "contents of TX0 register are after write and TXS set:"
-reg.printValue(tx)
+#print "contents of TX0 register are after write and TXS set:"
+#reg.printValue(tx)
 
 #print value of txs bit
 txsSet = reg.getReg(MCSPI_CH0STAT, spimem)
-print "TXS set:"
-reg.printValue(txsSet)
+#print "TXS set:"
+#reg.printValue(txsSet)
 
 for i in range(8):
     #Check value for RX register of SPI
@@ -190,8 +192,8 @@ for i in range(8):
     data = data & 0x3ffff 
     ## TODO: this is needed to get rid of data from previous call  data in FIFO includes previous 16 LSB from last
     ## write into FIFO data is not padded.  
-    print "RX SLave data is"
-    reg.printValue(data)
+#print "RX SLave data is"
+#reg.printValue(data)
 
 #disbale the channel
 reg.setAndCheckReg(MCSPI_CH0CTRL, spimem, 0x00000000)
