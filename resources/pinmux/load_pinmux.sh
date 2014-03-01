@@ -30,7 +30,7 @@ export PINS=/sys/kernel/debug/pinctrl/44e10800.pinmux/pins
 dtc -O dtb -o puggle-4ch-00A0.dtbo -b 0 -@ puggle-4ch.dts
 cp puggle-4ch-00A0.dtbo /lib/firmware/
 cat $SLOTS
-echo puggle-4ch > $SLOTS
+echo puggle-4ch:00A0 > $SLOTS
 #dmesg | tail
 cat $SLOTS
 ./check_pinmux.sh
