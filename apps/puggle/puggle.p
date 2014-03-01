@@ -67,27 +67,53 @@ MOV addr, MCSPI_CH0CTRL
 MOV val, EN_CH
 SBBO val, addr, 0, 4
 
-// Write configuration to both ADC and DAC
-
 // Write ADC configuration to SPI_TX0
+//MOV addr, MCSPI_TX0
+//MOV val, ADC_CONFIG
+//SBBO val, addr, 0, 4
+
+// Write magic number to SPI_TX0
 MOV addr, MCSPI_TX0
-MOV val, ADC_CONFIG
+MOV val, MAGIC
 SBBO val, addr, 0, 4
 
-ACQUIRE:
+// Configure channel 1 - DAC
 
-	// Write magic number to SPI_TX0
-	MOV addr, MCSPI_TX0
-	MOV val, MAGIC
-	SBBO val, addr, 0, 4
+// Disable channel 1
+MOV addr, MCSPI_CH1CTRL
+MOV val, DIS_CH
+SBBO val, addr, 0 ,4
 
-	JMP ACQUIRE
+// Configure channel 1
+MOV addr, MCSPI_CH1CONF     
+MOV val, DAC_CH1_CONF
+SBBO val, addr, 0, 4
 
-//#ifdef AM33XX
+// Set XFER Level
+MOV addr, MCSPI_XFERLEVEL
+MOV val, ADC_XFER
+SBBO val, addr, 0, 4
+
+// Enable Channel 1
+MOV addr, MCSPI_CH1CTRL
+MOV val, EN_CH
+SBBO val, addr, 0, 4
+
+// Write DAC configuration to SPI_TX1
+//MOV addr, MCSPI_TX1
+//MOV val, DAC_CONFIG
+//SBBO val, addr, 0, 4
+
+// Write magic number to SPI_TX1
+MOV addr, MCSPI_TX1
+MOV val, MAGIC
+SBBO val, addr, 0, 4
+
+#ifdef AM33XX
 	//Send notification to Host for program completion
-//	MOV R31.b0, PRU0_ARM_INTERRUPT+16
-//#else
-//	MOV R31.b0, PRU0_ARM_INTERRUPT
-//#endif
+	MOV R31.b0, PRU0_ARM_INTERRUPT+16
+#else
+	MOV R31.b0, PRU0_ARM_INTERRUPT
+#endif
 
-//HALT
+HALT

@@ -56,13 +56,15 @@
 #define ADC_XFER 								0x40000
 
 #define ADC_CH0_CONF 						0x100E87C6
+#define DAC_CH1_CONF 						0x100E87C6
 
 #define ADC_CONFIG							0x11110fff
+#define DAC_CONFIG							0x11110fff
 
 #define RESET_IRQ_STAT          0xffffffff
 #define DIS_CH                  0x00000000
 #define EN_CH                   0x00000001
-#define MAGIC               		0x100101af
+#define MAGIC               		0x01
 
 // Configure global registers
 
