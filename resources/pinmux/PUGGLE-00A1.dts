@@ -56,11 +56,11 @@
 		__overlay__ {
 spi1_pins: pinmux_spi1_pins {
 				pinctrl-single,pins = <
-					0x190 0x1B		/* spi1_sclk, OUTPUT_PULLUP | MODE3 */
-					0x194 0x2B		/* spi1_d0, INPUT_PULLDOWN  | MODE3 */
-					0x198 0x1B		/* spi1_d1, OUTPUT_PULLUP | MODE3 */
-					0x19c 0x1B		/* spi1_cs0, OUTPUT_PULLUP | MODE3 */
-					0x164 0x1A		/* spi1_cs1, OUTPUT_PULLUP | MODE2 */
+					0x190 0xB		/* spi1_sclk, OUTPUT | MODE3 */
+					0x194 0xB		/* spi1_d0, OUTPUT  | MODE3 */
+					0x198 0x2B	/* spi1_d1, INPUT | MODE3 */
+					0x19c 0xB		/* spi1_cs0, OUTPUT | MODE3 */
+					0x164 0xA		/* spi1_cs1, OUTPUT | MODE2 */
 					>;
 			};
 		};

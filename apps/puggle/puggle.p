@@ -45,12 +45,12 @@ MOV addr, MCSPI_IRQENABLE
 MOV val, ADC_IRQENABLE
 SBBO val, addr, 0, 4
 
-// Configure channel 0 - ADC
-
 // Disable channel 0
 MOV addr, MCSPI_CH0CTRL
 MOV val, DIS_CH
 SBBO val, addr, 0 ,4
+
+// Configure channel 0 - ADC
 
 // Configure channel 0
 MOV addr, MCSPI_CH0CONF     
@@ -67,24 +67,11 @@ MOV addr, MCSPI_CH0CTRL
 MOV val, EN_CH
 SBBO val, addr, 0, 4
 
-delayTwenty
-delayTwenty
-delayTwenty
-delayTwenty
-delayTwenty
-delayTwenty
-delayTwenty
-delayTwenty
-delayTwenty
-delayTwenty
-delayTwenty
-
 // Write ADC configuration to SPI_TX0
 MOV addr, MCSPI_TX0
 MOV val, ADC_CONFIG
 SBBO val, addr, 0, 4
 
-delayTwenty
 delayTwenty
 delayTwenty
 delayTwenty
@@ -117,6 +104,15 @@ delayTwenty
 delayTwenty
 delayTwenty
 delayTwenty
+delayTwenty
+delayTwenty
+delayTwenty
+delayTwenty
+delayTwenty
+delayTwenty
+delayTwenty
+delayTwenty
+delayTwenty
 
 // Configure channel 1 - DAC
 
@@ -130,34 +126,16 @@ MOV addr, MCSPI_CH1CONF
 MOV val, DAC_CH1_CONF
 SBBO val, addr, 0, 4
 
-// Set XFER Level
-MOV addr, MCSPI_XFERLEVEL
-MOV val, ADC_XFER
-SBBO val, addr, 0, 4
-
 // Enable Channel 1
 MOV addr, MCSPI_CH1CTRL
 MOV val, EN_CH
 SBBO val, addr, 0, 4
-
-delayTwenty
-delayTwenty
-delayTwenty
-delayTwenty
-delayTwenty
-delayTwenty
-delayTwenty
-delayTwenty
-delayTwenty
-delayTwenty
-delayTwenty
 
 // Write DAC configuration to SPI_TX1
 MOV addr, MCSPI_TX1
 MOV val, DAC_CONFIG
 SBBO val, addr, 0, 4
 
-delayTwenty
 delayTwenty
 delayTwenty
 delayTwenty
