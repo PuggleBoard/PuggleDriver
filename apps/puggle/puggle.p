@@ -79,7 +79,7 @@ START:
 
 	// Write ADC configuration to SPI_TX0
 	MOV addr, MCSPI_TX0
-	MOV val, ADC_CONFIG
+	MOV val, 0x0 //ADC_CONFIG
 	SBBO val, addr, 0, 4
 
 	// Disable channel 0
@@ -109,7 +109,7 @@ START:
 
 	// Write ADC configuration to SPI_TX0
 	MOV addr, MCSPI_TX0
-	MOV val, READ_ADC_CONFIG
+	MOV val, 0x0 //READ_ADC_CONFIG
 	SBBO val, addr, 0, 4
 
 	// Disable channel 0
@@ -133,7 +133,6 @@ START:
 
 	delay
 
-	JMP EXIT
 	JMP RUN_AQ
 
 	CHECKTX0:
