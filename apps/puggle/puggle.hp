@@ -24,7 +24,6 @@
 #define MCSPI_WAKEUPENABLE 			0x481a0120
 #define MCSPI_SYST 							0x481a0124
 #define MCSPI_MODULCTRL 				0x481a0128
-
 #define MCSPI_XFERLEVEL 				0x481a017c
 
 // Registers for DMA aligned addresses with FIFO
@@ -58,8 +57,9 @@
 #define ADC_CH0_CONF 						0x100E87C6
 #define DAC_CH1_CONF 						0x000E2BC6
 
-#define ADC_CONFIG							0x11110fff
-#define DAC_CONFIG							0x00000000
+#define READ_ADC_CONFIG					0x1100
+#define ADC_CONFIG							0x11110
+#define DAC_CONFIG							0xf0000f00
 
 #define RESET_IRQ_STAT          0xffffffff
 #define DIS_CH                  0x00000000
@@ -70,9 +70,6 @@
 
 #define addr        r1
 #define val         r2
-
-#define samples     r14     //Samples per point initial value
-#define sampc       r15     //Samples count
 
 #define NOP					MOV r29, r29
 
@@ -93,4 +90,21 @@ NOP
 NOP
 NOP
 NOP
+NOP
+NOP
+NOP
+NOP
+.endm
+
+.macro delay
+delayTwenty
+delayTwenty
+delayTwenty
+delayTwenty
+delayTwenty
+delayTwenty
+delayTwenty
+delayTwenty
+delayTwenty
+delayTwenty
 .endm

@@ -45,7 +45,7 @@ START:
 	MOV val, ADC_IRQENABLE
 	SBBO val, addr, 0, 4
 
-	// Configure channel 0 - ADC
+	// Configure MCSPI1 channel 0 - ADC
 
 	// Disable channel 0
 	MOV addr, MCSPI_CH0CTRL
@@ -62,7 +62,7 @@ START:
 	MOV val, ADC_XFER
 	SBBO val, addr, 0, 4
 
-	// Configure channel 1 - DAC
+	// Configure MCSPI1 channel 1 - DAC
 
 	// Disable channel 1
 	MOV addr, MCSPI_CH1CTRL
@@ -74,38 +74,12 @@ START:
 	MOV val, DAC_CH1_CONF
 	SBBO val, addr, 0, 4
 
-	delayTwenty
-	delayTwenty
-	delayTwenty
-	delayTwenty
-	delayTwenty
-	delayTwenty
-	delayTwenty
-	delayTwenty
-	delayTwenty
-	delayTwenty
-
-	CALL ENABLE
+	CONFIGURE:
+	CALL ENABLE_CH0
 
 	// Write ADC configuration to SPI_TX0
 	MOV addr, MCSPI_TX0
 	MOV val, ADC_CONFIG
-	SBBO val, addr, 0, 4
-
-	delayTwenty
-	delayTwenty
-	delayTwenty
-	delayTwenty
-	delayTwenty
-	delayTwenty
-	delayTwenty
-	delayTwenty
-	delayTwenty
-	delayTwenty
-
-	// Write magic number to SPI_TX0
-	MOV addr, MCSPI_TX0
-	MOV val, MAGIC
 	SBBO val, addr, 0, 4
 
 	// Disable channel 0
@@ -113,39 +87,13 @@ START:
 	MOV val, DIS_CH
 	SBBO val, addr, 0 ,4
 
-	delayTwenty
-	delayTwenty
-	delayTwenty
-	delayTwenty
-	delayTwenty
-	delayTwenty
-	delayTwenty
-	delayTwenty
-	delayTwenty
-	delayTwenty
-	delayTwenty
-	delayTwenty
-	delayTwenty
-	delayTwenty
-	delayTwenty
-	delayTwenty
-	delayTwenty
-	delayTwenty
+	delay
+
+	CALL ENABLE_CH1
 
 	// Write DAC configuration to SPI_TX1
 	MOV addr, MCSPI_TX1
 	MOV val, DAC_CONFIG
-	SBBO val, addr, 0, 4
-
-	delayTwenty
-	delayTwenty
-	delayTwenty
-	delayTwenty
-	delayTwenty
-
-	// Write magic number to SPI_TX1
-	MOV addr, MCSPI_TX1
-	MOV val, MAGIC
 	SBBO val, addr, 0, 4
 
 	// Disable channel 1
@@ -153,24 +101,67 @@ START:
 	MOV val, DIS_CH
 	SBBO val, addr, 0 ,4
 
-	CHECKTXS:
+	delay
+
+	RUN_AQ:
+
+	CALL ENABLE_CH0
+
+	// Write ADC configuration to SPI_TX0
+	MOV addr, MCSPI_TX0
+	MOV val, READ_ADC_CONFIG
+	SBBO val, addr, 0, 4
+
+	// Disable channel 0
+	MOV addr, MCSPI_CH0CTRL
+	MOV val, DIS_CH
+	SBBO val, addr, 0 ,4
+
+	delay
+
+	CALL ENABLE_CH1
+
+	// Write DAC configuration to SPI_TX1
+	MOV addr, MCSPI_TX1
+	MOV val, MCSPI_DAFRX
+	SBBO val, addr, 0, 4
+
+	// Disable channel 1
+	MOV addr, MCSPI_CH1CTRL
+	MOV val, DIS_CH
+	SBBO val, addr, 0 ,4
+
+	delay
+
+	JMP EXIT
+	JMP RUN_AQ
+
+	CHECKTX0:
 		MOV addr, MCSPI_CH0STAT
 		LBBO val, addr, 0, 4
-		QBBC CHECKTXS, val.t1
+		QBBC CHECKTX0, val.t1
 		JMP r18.w0
 
-	ENABLE:
+	ENABLE_CH0:
 		// Enable Channel 0
 		MOV addr, MCSPI_CH0CTRL
 		MOV val, EN_CH
 		SBBO val, addr, 0, 4
+		JAL r18.w0, CHECKTX0
+		RET
 
+	CHECKTX1:
+		MOV addr, MCSPI_CH1STAT
+		LBBO val, addr, 0, 4
+		QBBC CHECKTX1, val.t1
+		JMP r18.w0
+
+	ENABLE_CH1:
 		// Enable Channel 1
 		MOV addr, MCSPI_CH1CTRL
 		MOV val, EN_CH
 		SBBO val, addr, 0, 4
-
-		JAL r18.w0, CHECKTXS
+		JAL r19.w0, CHECKTX1
 		RET
 
 	EXIT:
