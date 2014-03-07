@@ -10,12 +10,35 @@
 #define MCSPI1 0x481a0000
 
 #define CM_PER 0x44E00000
-#define CM_PER_SPI1_CLK_CTRL 0x50 | CM_PER
 #define CM_PER_SPI0_CLK_CTRL 0x4C | CM_PER
+#define CM_PER_SPI1_CLK_CTRL 0x50 | CM_PER
 
 // Cn is the constants table for spi0 it is c6 address of 0x4803_0000
 // c16 is for spi10x481a_0000
 
+// MCSPI_0
+#define MCSPI0_REVISION 				0x000
+#define MCSPI0_SYSCONFIG 				0x48030110
+#define MCSPI0_SYSSTATUS 				0x48030114
+#define MCSPI0_IRQSTATUS 				0x48030118
+#define MCSPI0_IRQENABLE				0x4803011c
+#define MCSPI0_WAKEUPENABLE 		0x48030120
+#define MCSPI0_SYST 						0x48030124
+#define MCSPI0_MODULCTRL 				0x48030128
+#define MCSPI0_XFERLEVEL 				0x4803017c
+
+// Registers for DMA aligned addresses with FIFO
+#define MCSPI0_DAFTX						0x48030180
+#define MCSPI0_DAFRX 						0x480301a0
+
+// Configure registers for CH0 - INTAN RHD 2132
+#define MCSPI0_CH0CONF 					0x4803012c
+#define MCSPI0_CH0STAT 					0x48030130
+#define MCSPI0_CH0CTRL 					0x48030134
+#define MCSPI0_TX0 							0x48030138
+#define MCSPI0_RX0 							0x4803013c
+
+// MCSPI_1
 #define MCSPI_REVISION 					0x000
 #define MCSPI_SYSCONFIG 				0x481a0110
 #define MCSPI_SYSSTATUS 				0x481a0114
@@ -46,6 +69,7 @@
 
 // Configure SYSCONFIG
 
+#define CM_PER_SPI0_CLK_EN      0x2
 #define CM_PER_SPI1_CLK_EN      0x2
 #define RESET                   0x2
 #define MODCONTROL              0x100

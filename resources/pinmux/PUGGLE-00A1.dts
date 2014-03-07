@@ -80,12 +80,12 @@ spi1_pins: pinmux_spi1_pins {
 	fragment@2 {
 		target = <&am33xx_pinmux>;
 		__overlay__ {
-spi1_pins: pinmux_spi1_pins {
+spi0_pins: pinmux_spi0_pins {
 				pinctrl-single,pins = <
-					0x150 0x4		/* spi0_sclk, OUTPUT | MODE0 */
-					0x154 0x4		/* spi0_d0, OUTPUT  | MODE0 */
-					0x158 0x24	        /* spi0_d1, INPUT | MODE0 */
-					0x15c 0x4		/* spi0_cs0, OUTPUT | MODE0 */
+					0x150 0x8		/* spi0_sclk, OUTPUT | MODE0 */
+					0x154 0x8		/* spi0_d0, OUTPUT  | MODE0 */
+					0x158 0x28	/* spi0_d1, INPUT | MODE0 */
+					0x15c 0x8		/* spi0_cs0, OUTPUT | MODE0 */
 					>;
 			};
 		};
