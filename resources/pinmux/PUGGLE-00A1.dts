@@ -33,15 +33,15 @@
 
 		/* Pins for Intan RHD2132 */
 		"P9.17", /* SPI0_CS0	*/
-		"P9.18", /* SPI0_D1_MOSI   */
-		"P9.21", /* SPI0_D0_MISO  */
+		"P9.18", /* SPI0_D1_MISO   */
+		"P9.21", /* SPI0_D0_MOSI  */
 		"P9.22", /* SPI0_SCLK */
 
 		/* Pins for BOB */
 		"P9.27", /* ADC CONVST PRU0: pr1_pru0_pru_r30_5 */
 		"P9.28", /* SPI1_CS0 	*/
-		"P9.29", /* SPI1_D0_MISO   */
-		"P9.30", /* SPI1_D1_MOSI	*/
+		"P9.29", /* SPI1_D0_MOSI   */
+		"P9.30", /* SPI1_D1_MISO	*/
 		"P9.31", /* SPI1_SCLK	*/
 		"P9.42", /* SPI1_CS1	*/
 

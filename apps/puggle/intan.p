@@ -65,10 +65,133 @@ START:
 	CONFIGURE:
 	CALL ENABLE_CH0
 
-	// Write ADC configuration to SPI_TX0
+	// Write R0 Config
 	MOV addr, MCSPI0_TX0
-	MOV val, 0x0 //ADC_CONFIG
+	MOV val, 0x80FE 
 	SBBO val, addr, 0, 4
+
+	CALL ENABLE_CH0
+
+	// Write R1 Config
+	MOV addr, MCSPI0_TX0
+	MOV val, 0x8102
+	SBBO val, addr, 0, 4
+
+	CALL ENABLE_CH0
+
+	// Write R2 Config
+	MOV addr, MCSPI0_TX0
+	MOV val, 0x8204
+	SBBO val, addr, 0, 4
+
+	CALL ENABLE_CH0
+
+	// Write R3 Config
+	MOV addr, MCSPI0_TX0
+	MOV val, 0x8300
+	SBBO val, addr, 0, 4
+
+	CALL ENABLE_CH0
+
+	// Write R4 Config
+	MOV addr, MCSPI0_TX0
+	MOV val, 0x8450
+	SBBO val, addr, 0, 4
+
+	CALL ENABLE_CH0
+
+	// Write R5 Config
+	MOV addr, MCSPI0_TX0
+	MOV val, 0x8500
+	SBBO val, addr, 0, 4
+
+	CALL ENABLE_CH0
+
+	// Write R6 Config
+	MOV addr, MCSPI0_TX0
+	MOV val, 0x8600
+	SBBO val, addr, 0, 4
+
+	CALL ENABLE_CH0
+
+	// Write R7 Config
+	MOV addr, MCSPI0_TX0
+	MOV val, 0x8700
+	SBBO val, addr, 0, 4
+
+	CALL ENABLE_CH0
+
+	// Write R8 Config
+	MOV addr, MCSPI0_TX0
+	MOV val, 0x8800
+	SBBO val, addr, 0, 4
+
+	CALL ENABLE_CH0
+
+	// Write R9 Config
+	MOV addr, MCSPI0_TX0
+	MOV val, 0x8900
+	SBBO val, addr, 0, 4
+
+	CALL ENABLE_CH0
+
+	// Write R10 Config
+	MOV addr, MCSPI0_TX0
+	MOV val, 0x8A00
+	SBBO val, addr, 0, 4
+
+	CALL ENABLE_CH0
+
+	// Write R11 Config
+	MOV addr, MCSPI0_TX0
+	MOV val, 0x8B00
+	SBBO val, addr, 0, 4
+
+	CALL ENABLE_CH0
+
+	// Write R12 Config
+	MOV addr, MCSPI0_TX0
+	MOV val, 0x8C00 
+	SBBO val, addr, 0, 4
+
+	CALL ENABLE_CH0
+
+	// Write R13 Config
+	MOV addr, MCSPI0_TX0
+	MOV val, 0x8D00 
+	SBBO val, addr, 0, 4
+
+	CALL ENABLE_CH0
+
+	// Write R14 Config
+	MOV addr, MCSPI0_TX0
+	MOV val, 0x8EFF 
+	SBBO val, addr, 0, 4
+
+	CALL ENABLE_CH0
+
+	// Write R15 Config
+	MOV addr, MCSPI0_TX0
+	MOV val, 0x8FFF 
+	SBBO val, addr, 0, 4
+
+	CALL ENABLE_CH0
+
+	// Write R16 Config
+	MOV addr, MCSPI0_TX0
+	MOV val, 0x90FF 
+	SBBO val, addr, 0, 4
+
+	CALL ENABLE_CH0
+
+	// Write R17 Config
+	MOV addr, MCSPI0_TX0
+	MOV val, 0x91FF 
+	SBBO val, addr, 0, 4
+
+	CALL ENABLE_CH0
+
+	
 
 	// Disable channel 0
 	MOV addr, MCSPI0_CH0CTRL
@@ -77,13 +200,15 @@ START:
 
 	delay
 
+	JMP EXIT
+
 	RUN_AQ:
 
 	CALL ENABLE_CH0
 
 	// Write ADC configuration to SPI_TX0
 	MOV addr, MCSPI0_TX0
-	MOV val, 0x0 //READ_ADC_CONFIG
+	MOV val, 0xC000 
 	SBBO val, addr, 0, 4
 
 	// Disable channel 0
