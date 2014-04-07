@@ -80,10 +80,19 @@
 
 #define ADC_CH0_CONF 						0x100E87C6
 #define DAC_CH1_CONF 						0x000E2BC6
+#define INTAN_CH0_CONF					0x100E87C4
 
 #define READ_ADC_CONFIG					0xEC
 #define ADC_CONFIG							0xE800
 #define DAC_CONFIG							0x31
+
+// INTAN Read Check
+
+#define READ_I	0xE800
+#define READ_N	0xE900
+#define READ_T	0xEA00
+#define READ_A	0xEB00
+#define READ_N2 0xEC00
 
 #define RESET_IRQ_STAT          0xffffffff
 #define DIS_CH                  0x00000000
