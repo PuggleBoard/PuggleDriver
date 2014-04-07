@@ -45,7 +45,7 @@ MOV addr, MCSPI0_IRQENABLE
 MOV val, ADC_IRQENABLE
 SBBO val, addr, 0, 4
 
-// Configure MCSPI0 channel 0 - RHD 2132
+// Configure MCSPI0 channel 0 - RHD2132
 
 // Disable channel 0
 MOV addr, MCSPI0_CH0CTRL
@@ -62,6 +62,7 @@ MOV addr, MCSPI0_XFERLEVEL
 MOV val, ADC_XFER
 SBBO val, addr, 0, 4
 
+// Configure RHD2132 registers
 CONFIGURE:
 CALL ENABLE_CH0
 
@@ -197,8 +198,6 @@ MOV val, DIS_CH
 SBBO val, addr, 0 ,4
 
 delay
-delay
-delay
 
 RUN_AQ:
 
@@ -209,12 +208,16 @@ MOV addr, MCSPI0_TX0
 MOV val, READ_I
 SBBO val, addr, 0, 4
 
+delay
+
 // Read N from Register 41
 CALL ENABLE_CH0
 
 MOV addr, MCSPI0_TX0
 MOV val, READ_N
 SBBO val, addr, 0, 4
+
+delay
 
 // Read T from Register 42
 CALL ENABLE_CH0
@@ -223,6 +226,8 @@ MOV addr, MCSPI0_TX0
 MOV val, READ_T
 SBBO val, addr, 0, 4
 
+delay
+
 // Read A from Register 43
 CALL ENABLE_CH0
 
@@ -230,12 +235,16 @@ MOV addr, MCSPI0_TX0
 MOV val, READ_A
 SBBO val, addr, 0, 4
 
+delay
+
 // Read N from Register 44
 CALL ENABLE_CH0
 
 MOV addr, MCSPI0_TX0
 MOV val, READ_N2
 SBBO val, addr, 0, 4
+
+delay
 
 // Disable channel 0
 MOV addr, MCSPI0_CH0CTRL

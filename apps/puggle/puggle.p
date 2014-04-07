@@ -133,8 +133,6 @@ SBBO val, addr, 0 ,4
 
 delay
 
-JMP RUN_AQ
-
 CHECKTX0:
 MOV addr, MCSPI_CH0STAT
 LBBO val, addr, 0, 4
