@@ -190,8 +190,6 @@ MOV addr, MCSPI0_TX0
 MOV val, 0x91FF 
 SBBO val, addr, 0, 4
 
-CALL ENABLE_CH0
-
 // Disable channel 0
 MOV addr, MCSPI0_CH0CTRL
 MOV val, DIS_CH
@@ -208,6 +206,11 @@ MOV addr, MCSPI0_TX0
 MOV val, READ_I
 SBBO val, addr, 0, 4
 
+// Disable channel 0
+MOV addr, MCSPI0_CH0CTRL
+MOV val, DIS_CH
+SBBO val, addr, 0 ,4
+
 delay
 
 // Read N from Register 41
@@ -216,6 +219,11 @@ CALL ENABLE_CH0
 MOV addr, MCSPI0_TX0
 MOV val, READ_N
 SBBO val, addr, 0, 4
+
+// Disable channel 0
+MOV addr, MCSPI0_CH0CTRL
+MOV val, DIS_CH
+SBBO val, addr, 0 ,4
 
 delay
 
@@ -226,6 +234,11 @@ MOV addr, MCSPI0_TX0
 MOV val, READ_T
 SBBO val, addr, 0, 4
 
+// Disable channel 0
+MOV addr, MCSPI0_CH0CTRL
+MOV val, DIS_CH
+SBBO val, addr, 0 ,4
+
 delay
 
 // Read A from Register 43
@@ -235,16 +248,19 @@ MOV addr, MCSPI0_TX0
 MOV val, READ_A
 SBBO val, addr, 0, 4
 
+// Disable channel 0
+MOV addr, MCSPI0_CH0CTRL
+MOV val, DIS_CH
+SBBO val, addr, 0 ,4
+
 delay
 
 // Read N from Register 44
 CALL ENABLE_CH0
 
 MOV addr, MCSPI0_TX0
-MOV val, READ_N2
+MOV val, READ_N
 SBBO val, addr, 0, 4
-
-delay
 
 // Disable channel 0
 MOV addr, MCSPI0_CH0CTRL
