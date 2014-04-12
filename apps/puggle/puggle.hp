@@ -57,9 +57,11 @@
 #define ADC_CH0_CONF 						0x100E87C6
 #define DAC_CH1_CONF 						0x000E2BC6
 
-#define READ_ADC_CONFIG					0xEC
-#define ADC_CONFIG							0xE800
-#define DAC_CONFIG							0x31
+#define READ_ADC_CFR  					0xC000
+#define ADC_CONFIG							0xF000
+#define DAC_CONFIG							0x3100
+#define READ_ADC_DATA           0xD000
+#define ADC_CH0                 0x0000
 
 #define RESET_IRQ_STAT          0xffffffff
 #define DIS_CH                  0x00000000
