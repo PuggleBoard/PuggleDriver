@@ -114,13 +114,11 @@ puggle_pins: pinmux_puggle_pins {
 	};
 
 	fragment@5 {
-		target = <&ocp>;
+		target = <&pruss>;
 		__overlay__ {
-test_helper: helper{
 							 status = "okay";
 							 pinctrl-names = "default";
 							 pinctrl-0 = <&puggle_pins>;
 						 };
 		};
-	};
 };
