@@ -101,4 +101,26 @@ spi0_pins: pinmux_spi0_pins {
 							 pinctrl-0 = <&spi0_pins>;
 		};
 	};
+
+	fragment@4 {
+		target = <&am33xx_pinmux>;
+		__overlay__ {
+puggle_pins: pinmux_puggle_pins {
+				pinctrl-single,pins = <
+					0x1aC 0x05		/* P9.27, OUTPUT | MODE5 */
+					>;
+			};
+		};
+	};
+
+	fragment@5 {
+		target = <&ocp>;
+		__overlay__ {
+test_helper: helper{
+							 status = "okay";
+							 pinctrl-names = "default";
+							 pinctrl-0 = <&puggle_pins>;
+						 };
+		};
+	};
 };
