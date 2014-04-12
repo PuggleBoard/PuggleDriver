@@ -116,6 +116,8 @@ puggle_pins: pinmux_puggle_pins {
 	fragment@5 {
 		target = <&pruss>;
 		__overlay__ {
+							 #address-cells	= <1>;
+							 #size-cells = <0>;
 							 status = "okay";
 							 pinctrl-names = "default";
 							 pinctrl-0 = <&puggle_pins>;
