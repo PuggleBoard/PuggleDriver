@@ -269,9 +269,7 @@ SBBO val, addr, 0 ,4
 
 delay
 
-JMP EXIT
-
-//JMP RUN_AQ
+JMP RUN_AQ
 
 // Check to make sure data is ready
 CHECKTX0:
