@@ -54,48 +54,44 @@
 	fragment@0 {
 		target = <&am33xx_pinmux>;
 		__overlay__ {
-	spi1_pins: pinmux_spi1_pins {
-				pinctrl-single,pins = <
-					0x190 0xB		/* spi1_sclk, OUTPUT | MODE3 */
-					0x194 0xB		/* spi1_d0, OUTPUT  | MODE3 */
-					0x198 0x2B	/* spi1_d1, INPUT | MODE3 */
-					0x19c 0xB		/* spi1_cs0, OUTPUT | MODE3 */
-					0x164 0xA		/* spi1_cs1, OUTPUT | MODE2 */
-					>;
-			};
+spi1_pins: pinmux_spi1_pins {
+						 pinctrl-single,pins = <
+							 0x190 0xB		/* spi1_sclk, OUTPUT | MODE3 */
+							 0x194 0xB		/* spi1_d0, OUTPUT  | MODE3 */
+							 0x198 0x2B	/* spi1_d1, INPUT | MODE3 */
+							 0x19c 0xB		/* spi1_cs0, OUTPUT | MODE3 */
+							 0x164 0xA		/* spi1_cs1, OUTPUT | MODE2 */
+							 >;
+					 };
 		};
 	};
 
 	fragment@1 {
 		target = <&spi1>;
 		__overlay__ {
-							 #address-cells 	= <1>;
-							 #size-cells 	= <0>;
-							 status = "okay";
-							 pinctrl-names = "default";
-							 pinctrl-0 = <&spi1_pins>;
+			status = "okay";
+			pinctrl-names = "default";
+			pinctrl-0 = <&spi1_pins>;
 		};
 	};
 
 	fragment@2 {
 		target = <&am33xx_pinmux>;
 		__overlay__ {
-	pruicss_pins: pinmux_pruicss_pins{
-			pinctrl-single,pins = <
-				0x1a4 0x05 	/* P9_27, CONVST, OUTPUT | MODE5 */
-				>;
-			};
+pruicss_pins: pinmux_pruicss_pins{
+								pinctrl-single,pins = <
+									0x1a0 0x05 	/* P9_27, CONVST, OUTPUT | MODE5 */
+									>;
+							};
 		};
 	};
 
 	fragment@3 {
-		target = <&pruss>;
+		target = <&ocp>;
 		__overlay__{
-			#address-cells = <1>;
-			#size-cells = <0>;
 			status = "okay";
 			pinctrl-names = "default";
-			pinctrl-0 	  = <&pruicss_pins>;
+			pinctrl-0 = <&pruicss_pins>;
 		};
 	};
 };
