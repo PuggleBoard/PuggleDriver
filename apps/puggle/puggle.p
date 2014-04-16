@@ -94,6 +94,7 @@ MOV val, DIS_CH
 SBBO val, addr, 0 ,4
 
 delay
+delayTwenty
 
 CALL ENABLE_CH0
 
@@ -110,6 +111,7 @@ MOV val, DIS_CH
 SBBO val, addr, 0 ,4
 
 delay
+delayTwenty
 
 CALL ENABLE_CH1
 
@@ -124,13 +126,15 @@ MOV val, DIS_CH
 SBBO val, addr, 0 ,4
 
 delay
+delayTwenty
 
-SET ADC_CONVST
-
+MOV r3, 1
 //////////////////////////////////////
 RUN_AQ:
 
+// WAIT ~1500ns
 delay
+delayTwenty
 
 CALL ENABLE_CH0
 
@@ -144,15 +148,19 @@ MOV addr, MCSPI_CH0CTRL
 MOV val, DIS_CH
 SBBO val, addr, 0 ,4
 
-CLR ADC_CONVST
-
 delay
+delayTwenty
+
+// SEND CONVST
+CLR R30.t7
+delayFourtyns
+SET R30.t7
 
 CALL ENABLE_CH1
 
 // Write DAC configuration to SPI_TX1
 MOV addr, MCSPI_TX1
-MOV val, MCSPI_RX0
+MOV val, 0x00310110 //MCSPI_RX0
 SBBO val, addr, 0, 4
 
 // Disable channel 1
@@ -161,8 +169,11 @@ MOV val, DIS_CH
 SBBO val, addr, 0 ,4
 
 delay
+delayTwenty
 
-JMP EXIT //RUN_AQ
+//ADD r3, r3, 1
+//QBEQ EXIT, r3, 10
+JMP RUN_AQ
 
 //////////////////////////////////////
 CHECKTX0:

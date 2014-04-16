@@ -178,7 +178,7 @@ void intHandler(int val) {
 		 */
 		info.pru_params->run_flag = 1;
 		prussdrv_exec_program(PRU_NUM0, "./puggle.bin");
-		printf("Data acquisition status: started.\n");
+		printf("Data acquisition status: started1.\n");
 	}
 }
 
@@ -247,7 +247,7 @@ int main(int argc, char *argv[]) {
 	printf("%d\n",retval);*/
 
 	prussdrv_exec_program(PRU_NUM0, "./puggle.bin");
-	printf("Data acquisition status: started.\n");
+	printf("Data acquisition status: started2.\n");
 
 	// Wait until PRU0 has finished execution
 	prussdrv_pru_wait_event(PRU_EVTOUT_0);

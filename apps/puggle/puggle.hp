@@ -54,16 +54,14 @@
 #define ADC_SYSCONFIG           0x00000311
 #define ADC_XFER 								0xFF0a
 
-#define ADC_CONVST              R30.t5
-
-#define ADC_CH0_CONF 						0x000E87C6 // change first bit to 1 for FIFO
+#define ADC_CH0_CONF 						0x000E87C6 // set first bit to 1 for FIFO
 #define DAC_CH1_CONF 						0x000E2BC6
 
-#define READ_ADC_CFR  					0xC000
-#define READ_ADC_DATA           0xD000
-#define ADC_CONFIG							0xF000
-#define ADC_CH0                 0x0000
-#define DAC_CONFIG							0x3100
+#define READ_ADC_CFR  					0x0000C000
+#define READ_ADC_DATA           0x0000D000
+#define ADC_CONFIG							0x0000F000
+#define ADC_CH0                 0x00000000
+#define DAC_CONFIG							0x00000000
 
 #define RESET_IRQ_STAT          0xffffffff
 #define DIS_CH                  0x00000000
@@ -90,6 +88,17 @@ NOP
 NOP
 NOP
 NOP
+NOP
+NOP
+NOP
+NOP
+NOP
+NOP
+NOP
+NOP
+.endm
+
+.macro delayFourtyns
 NOP
 NOP
 NOP
