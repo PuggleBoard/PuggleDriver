@@ -31,7 +31,7 @@
 		__overlay__ {
 			pinctrl_test: pinctrl_test_7_pins {
 											pinctrl-single,pins = <
-												0x1A4	0x05 /* P9.27, CONVST, OUTPUT | MODE5 */
+												0x1AC	0x05 /* P9.27, CONVST, OUTPUT | MODE5 */
 												>;
 										};
 		};

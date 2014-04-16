@@ -85,7 +85,7 @@ CALL ENABLE_CH0
 
 // Write ADC command to SPI_TX0
 MOV addr, MCSPI_TX0
-MOV val, ADC_CH0
+MOV val, 0x00003000 //ADC_CH0
 SBBO val, addr, 0, 4
 
 // Disable channel 0
@@ -149,18 +149,17 @@ MOV val, DIS_CH
 SBBO val, addr, 0 ,4
 
 delay
-delayTwenty
 
 // SEND CONVST
-CLR R30.t7
+CLR ADC_CONVST
 delayFourtyns
-SET R30.t7
+SET ADC_CONVST
 
 CALL ENABLE_CH1
 
 // Write DAC configuration to SPI_TX1
 MOV addr, MCSPI_TX1
-MOV val, 0x00310110 //MCSPI_RX0
+MOV val, MCSPI_RX0
 SBBO val, addr, 0, 4
 
 // Disable channel 1
