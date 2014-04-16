@@ -80,12 +80,14 @@ SBBO val, addr, 0, 4
 //////////////////////////////////////
 CONFIGURE:
 
-// Set ADC Channel to 0 before starting autocycle
+
 CALL ENABLE_CH0
 
-// Write ADC command to SPI_TX0
+// Write ADC configuration to SPI_TX0
+// Sets ADC CMR and CFR to default
+
 MOV addr, MCSPI_TX0
-MOV val, 0x00003000 //ADC_CH0
+MOV val, ADC_CONFIG
 SBBO val, addr, 0, 4
 
 // Disable channel 0
@@ -96,13 +98,12 @@ SBBO val, addr, 0 ,4
 delay
 delayTwenty
 
+// Set ADC Channel to 0 before starting autocycle
 CALL ENABLE_CH0
 
-// Write ADC configuration to SPI_TX0
-// Sets ADC CMR and CFR to default
-// Autocycle channels
+// Write ADC command to SPI_TX0
 MOV addr, MCSPI_TX0
-MOV val, ADC_CONFIG
+MOV val, ADC_CH0
 SBBO val, addr, 0, 4
 
 // Disable channel 0
@@ -155,11 +156,14 @@ CLR ADC_CONVST
 delayFourtyns
 SET ADC_CONVST
 
+// Setup output
+MakeWrUpA DAC_OUTPUT
+
 CALL ENABLE_CH1
 
 // Write DAC configuration to SPI_TX1
 MOV addr, MCSPI_TX1
-MOV val, MCSPI_RX0
+MOV val, DAC_OUTPUT
 SBBO val, addr, 0, 4
 
 // Disable channel 1

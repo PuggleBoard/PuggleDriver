@@ -54,16 +54,18 @@
 #define ADC_SYSCONFIG           0x00000311
 #define ADC_XFER 								0xFF0a
 
-#define ADC_CH0_CONF 						0x000E87C6 // set first bit to 1 for FIFO
+#define ADC_CH0_CONF 						0x100E87C6
 #define DAC_CH1_CONF 						0x000E2BC6
 
 #define READ_ADC_CFR  					0x0000C000
 #define READ_ADC_DATA           0x0000D000
-#define ADC_CONFIG							0x0000E7FF //0000F000
+#define ADC_CONFIG							0x0000E7FF //0x0000F000
 #define ADC_CH0                 0x00000000
 #define DAC_CONFIG							0x00000000
+#define DAC_OUTPUT							r4
+#define TEMP										r5
 
-#define ADC_CONVST							R30.t7
+#define ADC_CONVST							r30.t7
 
 #define RESET_IRQ_STAT          0xffffffff
 #define DIS_CH                  0x00000000
@@ -71,10 +73,8 @@
 #define MAGIC               		0x01a01a01
 
 // Configure global registers
-
 #define addr        r1
 #define val         r2
-
 #define NOP					MOV r29, r29
 
 .macro delayTwenty
@@ -138,6 +138,11 @@ delayTwenty
 //
 .macro  MakeWrUpA
 .mparam dst
-    mov     dst.w0, (MCSPI_RX0) & 0xFFFF
-    mov     dst.w2, 0x0031
+		MOV			addr, MCSPI_RX0
+		LBBO		TEMP, addr, 0, 4
+		//MOV			TEMP, 0xF000
+    AND     dst.w0.b0, TEMP, 0xFF
+    LSR			TEMP, TEMP, 8
+    AND     dst.w0.b1, TEMP, 0xFF
+    MOV     dst.w2, 0x0031
 .endm
