@@ -14,7 +14,7 @@
 
 	 You should have received a copy of the CC Public Domain Dedication along with
 	 this software. If not, see <http://creativecommons.org/licenses/by-sa/3.0/legalcode>.
-	 */
+ */
 
 /dts-v1/;
 /plugin/;
@@ -29,11 +29,12 @@
 	fragment@0 {
 		target = <&am33xx_pinmux>;
 		__overlay__ {
-			pinctrl_test: pinctrl_test_7_pins {
-											pinctrl-single,pins = <
-												0x1AC	0x05 /* P9.27, CONVST, OUTPUT | MODE5 */
-												>;
-										};
+pinctrl_test: pinctrl_test_7_pins {
+								pinctrl-single,pins = <
+									0x1AC	0x05 /* P9.25, CONVST, OUTPUT | MODE5 */
+									0x1A4 0x26 /* P9.27, ADC EOC, INPUT | MODE6 */
+									>;
+							};
 		};
 	};
 
