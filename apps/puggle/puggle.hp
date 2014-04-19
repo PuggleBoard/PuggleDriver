@@ -45,7 +45,6 @@
 #define MCSPI_RX1 							0x481a0150
 
 // Configure SYSCONFIG
-
 #define CM_PER_SPI1_CLK_EN      0x2
 #define RESET                   0x2
 #define MODCONTROL              0x100
@@ -64,6 +63,10 @@
 #define DAC_CONFIG							0x00000000
 #define DAC_OUTPUT							r4
 #define TEMP										r5
+
+// RESETS
+#define ADC_RESET								0x0000F000
+#define DAC_RESET								0x00000000
 
 #define ADC_CONVST							r30.t7
 
