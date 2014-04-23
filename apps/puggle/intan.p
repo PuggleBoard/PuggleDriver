@@ -62,6 +62,85 @@ MOV addr, MCSPI0_XFERLEVEL
 MOV val, ADC_XFER
 SBBO val, addr, 0, 4
 
+delay
+
+// ******************** TEST READ ********************
+// Write to ROM Register 
+CALL ENABLE_CH0
+MOV addr, MCSPI0_TX0
+MOV val, WRITE
+SBBO val, addr, 0, 4
+// Disable channel 0
+CALL DISABLE_CH0
+// Should receive: 0xFF00
+// CURRENTY RECEIVING: 
+
+delay
+
+
+// Read I from Register 40
+// I = 0x49
+CALL ENABLE_CH0
+MOV addr, MCSPI0_TX0
+MOV val, READ_I
+SBBO val, addr, 0, 4
+// Disable channel 0
+CALL DISABLE_CH0
+// CURRENTY RECEIVING: 0xFFBE 1011 0110
+// 0100 1001 = 49
+
+delay
+
+// Read N from Register 41
+// N = 0x4E
+CALL ENABLE_CH0
+MOV addr, MCSPI0_TX0
+MOV val, READ_N
+SBBO val, addr, 0, 4
+// Disable channel 0
+CALL DISABLE_CH0
+// CURRENTY RECEIVING: 0xFFB1 1011 0001
+// 0100 1110 = 0x4E
+
+delay
+
+// Read T from Register 42
+// T = 0x54
+CALL ENABLE_CH0
+MOV addr, MCSPI0_TX0
+MOV val, READ_T
+SBBO val, addr, 0, 4
+// Disable channel 0
+CALL DISABLE_CH0
+// CURRENTY RECEIVING: 0xFF 1010 1011
+// 0101 0100 = 0x54
+
+delay
+
+// Read A from Register 43
+// A = 0x41
+CALL ENABLE_CH0
+MOV addr, MCSPI0_TX0
+MOV val, READ_A
+SBBO val, addr, 0, 4
+// Disable channel 0
+CALL DISABLE_CH0
+// CURRENTY RECEIVING: 0xFFB1 1011 0001
+
+delay
+
+// Read N from Register 44
+// N = 0x4E
+CALL ENABLE_CH0
+MOV addr, MCSPI0_TX0
+MOV val, READ_N2
+SBBO val, addr, 0, 4
+// Disable channel 0
+CALL DISABLE_CH0
+// CURRENTY RECEIVING: 0xFFAB 1010 1011
+// ******************** END TEST ********************
+JMP EXIT
+
 // Configure RHD2132 registers
 CONFIGURE:
 CALL ENABLE_CH0
@@ -199,77 +278,7 @@ delay
 
 RUN_AQ:
 
-// Read I from Register 40
-CALL ENABLE_CH0
-
-MOV addr, MCSPI0_TX0
-MOV val, READ_I
-SBBO val, addr, 0, 4
-
-// Disable channel 0
-MOV addr, MCSPI0_CH0CTRL
-MOV val, DIS_CH
-SBBO val, addr, 0 ,4
-
-delay
-
-// Read N from Register 41
-CALL ENABLE_CH0
-
-MOV addr, MCSPI0_TX0
-MOV val, READ_N
-SBBO val, addr, 0, 4
-
-// Disable channel 0
-MOV addr, MCSPI0_CH0CTRL
-MOV val, DIS_CH
-SBBO val, addr, 0 ,4
-
-delay
-
-// Read T from Register 42
-CALL ENABLE_CH0
-
-MOV addr, MCSPI0_TX0
-MOV val, READ_T
-SBBO val, addr, 0, 4
-
-// Disable channel 0
-MOV addr, MCSPI0_CH0CTRL
-MOV val, DIS_CH
-SBBO val, addr, 0 ,4
-
-delay
-
-// Read A from Register 43
-CALL ENABLE_CH0
-
-MOV addr, MCSPI0_TX0
-MOV val, READ_A
-SBBO val, addr, 0, 4
-
-// Disable channel 0
-MOV addr, MCSPI0_CH0CTRL
-MOV val, DIS_CH
-SBBO val, addr, 0 ,4
-
-delay
-
-// Read N from Register 44
-CALL ENABLE_CH0
-
-MOV addr, MCSPI0_TX0
-MOV val, READ_N
-SBBO val, addr, 0, 4
-
-// Disable channel 0
-MOV addr, MCSPI0_CH0CTRL
-MOV val, DIS_CH
-SBBO val, addr, 0 ,4
-
-delay
-
-JMP RUN_AQ
+JMP EXIT //RUN_AQ
 
 // Check to make sure data is ready
 CHECKTX0:
@@ -285,6 +294,15 @@ MOV val, EN_CH
 SBBO val, addr, 0, 4
 JAL r18.w0, CHECKTX0
 RET
+
+// DISABLE Channel 0
+DISABLE_CH0:
+MOV addr, MCSPI0_CH0CTRL
+MOV val, DIS_CH
+SBBO val, addr, 0 ,4
+delay
+RET
+
 
 EXIT:
 #ifdef AM33XX

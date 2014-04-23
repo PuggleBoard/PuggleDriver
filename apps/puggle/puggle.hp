@@ -87,6 +87,7 @@
 
 // INTAN Read Check
 #define READ_I	0xE800
+#define WRITE   0xB80F
 #define READ_N	0xE900
 #define READ_T	0xEA00
 #define READ_A	0xEB00
