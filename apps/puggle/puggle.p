@@ -80,7 +80,6 @@ SBBO val, addr, 0, 4
 //////////////////////////////////////
 CONFIGURE:
 
-
 CALL ENABLE_CH0
 
 // Write ADC configuration to SPI_TX0

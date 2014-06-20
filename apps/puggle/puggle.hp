@@ -16,7 +16,7 @@
 // Cn is the constants table for spi0 it is c6 address of 0x4803_0000
 // c16 is for spi10x481a_0000
 
-// MCSPI_0 - INTANT
+// MCSPI_0 - INTAN
 #define MCSPI0_REVISION 				0x000
 #define MCSPI0_SYSCONFIG 				0x48030110
 #define MCSPI0_SYSSTATUS 				0x48030114
@@ -104,6 +104,8 @@
 #define READ_A	0xEB00
 #define READ_N2 0xEC00
 #define READ_ID 0xFF00
+
+#define ACQUIRE 0x3F00
 
 #define RESET_IRQ_STAT          0xffffffff
 #define DIS_CH                  0x00000000
