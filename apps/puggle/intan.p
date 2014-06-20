@@ -64,19 +64,9 @@ SBBO val, addr, 0, 4
 
 delay
 
+//JMP CONFIGURE
+
 // ******************** TEST READ ********************
-// Write to ROM Register 
-CALL ENABLE_CH0
-MOV addr, MCSPI0_TX0
-MOV val, WRITE
-SBBO val, addr, 0, 4
-// Disable channel 0
-CALL DISABLE_CH0
-// Should receive: 0xFF00
-// CURRENTY RECEIVING: 
-
-delay
-
 
 // Read I from Register 40
 // I = 0x49
@@ -84,10 +74,7 @@ CALL ENABLE_CH0
 MOV addr, MCSPI0_TX0
 MOV val, READ_I
 SBBO val, addr, 0, 4
-// Disable channel 0
 CALL DISABLE_CH0
-// CURRENTY RECEIVING: 0xFFBE 1011 0110
-// 0100 1001 = 49
 
 delay
 
@@ -97,10 +84,7 @@ CALL ENABLE_CH0
 MOV addr, MCSPI0_TX0
 MOV val, READ_N
 SBBO val, addr, 0, 4
-// Disable channel 0
 CALL DISABLE_CH0
-// CURRENTY RECEIVING: 0xFFB1 1011 0001
-// 0100 1110 = 0x4E
 
 delay
 
@@ -110,10 +94,7 @@ CALL ENABLE_CH0
 MOV addr, MCSPI0_TX0
 MOV val, READ_T
 SBBO val, addr, 0, 4
-// Disable channel 0
 CALL DISABLE_CH0
-// CURRENTY RECEIVING: 0xFF 1010 1011
-// 0101 0100 = 0x54
 
 delay
 
@@ -123,9 +104,7 @@ CALL ENABLE_CH0
 MOV addr, MCSPI0_TX0
 MOV val, READ_A
 SBBO val, addr, 0, 4
-// Disable channel 0
 CALL DISABLE_CH0
-// CURRENTY RECEIVING: 0xFFB1 1011 0001
 
 delay
 
@@ -135,14 +114,16 @@ CALL ENABLE_CH0
 MOV addr, MCSPI0_TX0
 MOV val, READ_N2
 SBBO val, addr, 0, 4
-// Disable channel 0
 CALL DISABLE_CH0
-// CURRENTY RECEIVING: 0xFFAB 1010 1011
-// ******************** END TEST ********************
+
 JMP EXIT
 
-// Configure RHD2132 registers
+// ******************** END TEST ********************
+
+// ******************** CONFIGURE INTAN REGISTERS ********************
+
 CONFIGURE:
+
 CALL ENABLE_CH0
 
 // Write R0 Config
@@ -274,11 +255,37 @@ MOV addr, MCSPI0_CH0CTRL
 MOV val, DIS_CH
 SBBO val, addr, 0 ,4
 
+// ******************** BEGIN ACQUISITION ********************
+
+delay
+
+// Clear convert command
+CALL ENABLE_CH0
+MOV addr, MCSPI0_TX0
+MOV val, 0x0000
+SBBO val, addr, 1, 4
+
+// Disable channel 0
+CALL DISABLE_CH0
+
 delay
 
 RUN_AQ:
 
-JMP EXIT //RUN_AQ
+// Read data in autocycle mode
+CALL ENABLE_CH0
+MOV addr, MCSPI0_TX0
+MOV val, ACQUIRE
+SBBO val, addr, 1, 4
+
+// Disable channel 0
+CALL DISABLE_CH0
+
+delay
+
+JMP RUN_AQ
+
+// ******************** END ACQUISITION ********************
 
 // Check to make sure data is ready
 CHECKTX0:
@@ -302,7 +309,6 @@ MOV val, DIS_CH
 SBBO val, addr, 0 ,4
 delay
 RET
-
 
 EXIT:
 #ifdef AM33XX

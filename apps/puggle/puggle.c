@@ -178,7 +178,7 @@ void intHandler(int val) {
 		 */
 		info.pru_params->run_flag = 1;
 		prussdrv_exec_program(PRU_NUM0, "./intan.bin");
-		printf("Data acquisition status: started1.\n");
+		printf("Data acquisition status: started.\n");
 	}
 }
 
@@ -188,13 +188,13 @@ void *module_thread(void *arg) {
 	double val;
 	while(system_status) {
 		//while(info.pru_params->run_flag == 1) {
-			uint32_t *readme = info.ddr_memory;
-			uint32_t *ddr = info.ddr_memory+64;
-			//printf("%d \n", *readme);
-			val = 2.0*4.096*(.00001525902)*(525)-4.096;
-			//printf("%f 0x%08lX\n", val, ddr);
-			val =  (val+4.096)/(2.0*4.096*0.00001525902);
-			*ddr = *readme;
+		uint32_t *readme = info.ddr_memory;
+		uint32_t *ddr = info.ddr_memory+64;
+		//printf("%d \n", *readme);
+		val = 2.0*4.096*(.00001525902)*(525)-4.096;
+		//printf("%f 0x%08lX\n", val, ddr);
+		val =  (val+4.096)/(2.0*4.096*0.00001525902);
+		*ddr = *readme;
 		//}
 	}
 	return NULL;
@@ -237,17 +237,17 @@ int main(int argc, char *argv[]) {
 	// Initialize flags and controller for start/stop of PRUs
 	//signal(SIGINT, intHandler);
 
-	// Initiate RT thread
-	initiate();
+	// Initialize RT thread
+	initialize();
 
 	// Create worker thread
 	pthread_create(&tid, NULL, &module_thread, NULL);
 	/*xenomai_task_t *puggle;
-	retval = createTask(&puggle);
-	printf("%d\n",retval);*/
+		retval = createTask(&puggle);
+		printf("%d\n",retval);*/
 
 	prussdrv_exec_program(PRU_NUM0, "./intan.bin");
-	printf("Data acquisition status: started2.\n");
+	printf("Data acquisition status: started.\n");
 
 	// Wait until PRU0 has finished execution
 	prussdrv_pru_wait_event(PRU_EVTOUT_0);
@@ -259,12 +259,12 @@ int main(int argc, char *argv[]) {
 	deinit(&info);
 	return(0);
 }
-	
-int initiate(void) {
+
+int initialize(void) {
 	rt_timer_set_mode(TM_ONESHOT);
 
-	// overrie blocking limit on memory
-	struct rlimit rlim = { RLIM_INFINITY, RLIM_INFINITY };
+	// override blocking limit on memory
+	struct rlimit rlim = {RLIM_INFINITY, RLIM_INFINITY};
 	setrlimit(RLIMIT_MEMLOCK,&rlim);
 
 	if(mlockall(MCL_CURRENT | MCL_FUTURE)) {
@@ -275,7 +275,7 @@ int initiate(void) {
 	pthread_key_create(&is_rt_key,0);
 	init_rt = true;
 
-	printf("Thread initiation complete.\n");
+	printf("Thread initialization complete.\n");
 	return 0;
 }
 
@@ -307,7 +307,7 @@ void deleteTask(Task task) {
 	xenomai_task_t *t = (xenomai_task_t *)(task);
 	rt_task_delete(&t->puggle_rt_task);
 }
-	
+
 bool isRealtime(void) {
 	if(init_rt && pthread_getspecific(is_rt_key))
 		return true;
