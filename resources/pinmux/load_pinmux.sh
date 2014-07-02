@@ -21,7 +21,7 @@ set -x
 set -e
 export SLOTS=/sys/devices/bone_capemgr.8/slots
 export PINS=/sys/kernel/debug/pinctrl/44e10800.pinmux/pins
-dtc -O dtb -o PUGGLE-00A0.dtbo -b 0 -@ PUGGLE.dts
+dtc -O dtb -o PUGGLEv3-00A0.dtbo -b 0 -@ PUGGLEv3.dts
 cp PUGGLE-00A0.dtbo /lib/firmware/
 cat $SLOTS
 echo PUGGLE > $SLOTS
