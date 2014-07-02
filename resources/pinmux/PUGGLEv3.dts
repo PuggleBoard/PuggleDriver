@@ -1,0 +1,103 @@
+/*
+	 -------------------------------------------------------------------------
+
+	 This file is part of the Puggle Data Conversion and Processing System
+	 Copyright (C) 2013 Puggle
+
+	 -------------------------------------------------------------------------
+
+	 Written in 2013 by: Yogi Patel <yapatel@gatech.edu>
+
+	 To the extent possible under law, the author(s) have dedicated all copyright
+	 and related and neighboring rights to this software to the public domain
+	 worldwide. This software is distributed without any warranty.
+
+	 You should have received a copy of the CC Public Domain Dedication along with
+	 this software. If not, see <http://creativecommons.org/licenses/by-sa/3.0/legalcode>.
+ */
+
+/dts-v1/;
+/plugin/;
+
+/ {
+	compatible = "ti,beaglebone", "ti,beaglebone-black";
+
+	/* identification */
+	part-number = "PUGGLE";
+
+	/* Pins for ADC CONST and EOC */
+	fragment@0 {
+		target = <&am33xx_pinmux>;
+		__overlay__ {
+pinctrl_test: pinctrl_test_7_pins {
+								pinctrl-single,pins = <
+									0x1A4	0xD /* P9.27, CONVST, OUTPUT | MODE5 */
+									0x184 0x2E /* P9.24, ADC EOC, INPUT | MODE6 */
+									>;
+							};
+		};
+	};
+
+	fragment@1 {
+		target = <&ocp>;
+		__overlay__ {
+test_helper: helper {
+							 compatible = "bone-pinmux-helper";
+							 pinctrl-names = "default";
+							 pinctrl-0 = <&pinctrl_test>;
+							 status = "okay";
+						 };
+		};
+	};
+
+	/* Pins for MCSPI 1 - ADC/DAC */
+	fragment@2 {
+		target = <&am33xx_pinmux>;
+		__overlay__ {
+spi1_pins: pinmux_spi1_pins {
+						 pinctrl-single,pins = <
+							 0x190 0xB		/* spi1_sclk, OUTPUT | MODE3 */
+							 0x194 0xB		/* spi1_d0, OUTPUT  | MODE3 */
+							 0x198 0x2B		/* spi1_d1, INPUT | MODE3 */
+							 0x19c 0xB		/* spi1_cs0, OUTPUT | MODE3 */
+							 0x164 0xA		/* spi1_cs1, OUTPUT | MODE2 */
+							 >;
+					 };
+		};
+	};
+
+	fragment@3 {
+		target = <&spi1>;
+		__overlay__ {
+			status = "okay";
+			pinctrl-names = "default";
+			pinctrl-0 = <&spi1_pins>;
+		};
+	};
+
+	/* Pins for MCSPI 0 - INTANT */
+	fragment@4 {
+		target = <&am33xx_pinmux>;
+		__overlay__ {
+spi0_pins: pinmux_spi0_pins {
+						 pinctrl-single,pins = <
+							 0x150 0x8		/* spi0_sclk, OUTPUT | MODE0 */
+							 0x154 0x8		/* spi0_d0, OUTPUT  | MODE0 */
+							 0x158 0x28		/* spi0_d1, INPUT | MODE0 */
+							 0x15c 0x8		/* spi0_cs0, OUTPUT | MODE0 */
+							 >;
+					 };
+		};
+	};
+
+	fragment@5 {
+		target = <&spi0>;
+		__overlay__ {
+#address-cells	= <1>;
+#size-cells = <0>;
+			status = "okay";
+			pinctrl-names = "default";
+			pinctrl-0 = <&spi0_pins>;
+		};
+	};
+};
