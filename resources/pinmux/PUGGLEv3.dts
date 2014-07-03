@@ -23,7 +23,7 @@
 	compatible = "ti,beaglebone", "ti,beaglebone-black";
 
 	/* identification */
-	part-number = "PUGGLE";
+	part-number = "PUGGLEv3";
 
 	/* Pins for ADC CONST and EOC */
 	fragment@0 {
