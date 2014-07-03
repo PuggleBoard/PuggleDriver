@@ -17,6 +17,8 @@
  */
 
 #include <linux/module.h>
+#include <linux/fs.h>
+#include <linux/cdev.h>
 #include <linux/init.h>
 #include <linux/errno.h>
 #include <linux/types.h>
@@ -26,10 +28,14 @@
 #include <linux/sysctl.h>
 #include <linux/mm.h>
 #include <linux/dma-mapping.h>
-
+#include <linux/kfifo.h>
 #include <mach/hardware.h>
 #include <mach/irqs.h>
-#include <mach/edma.h>
+#include <asm/uaccess.h>
+#include <linux/platform_data/edma.h>
+#include <linux/memory.h>
+
+//#include "puggle.h"
 
 #undef EDMA3_DEBUG
 /*#define EDMA3_DEBUG*/
