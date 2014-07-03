@@ -17,3 +17,9 @@
  */
 
 obj-m += puggle_dma.o
+
+all:
+	make ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- -C /media/rootfs/lib/modules/3.8.13xenomai-bone53/build M=$(PWD) modules
+
+clean:
+	make ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- -C /media/rootfs/lib/modules/3.8.13xenomai-bone53/build M=$(PWD) clean
