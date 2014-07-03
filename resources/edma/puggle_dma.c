@@ -6,7 +6,10 @@
 
 	 -------------------------------------------------------------------------
 
-	 Written in 2013 by: Yogi Patel <yapatel@gatech.edu>
+	 Written in 2013 by: Yogi Patel <yapatel@gatech.edu
+
+	 Parts of this code are modified from the TI EDMA sample application and code from Terrence McGuckin <terrence@ephemeron-labs.com>
+	 and Andrew Righter <q@crypto.com> from Ephemeron Labs
 
 	 To the extent possible under law, the author(s) have dedicated all copyright
 	 and related and neighboring rights to this software to the public domain
@@ -35,7 +38,7 @@
 #include <linux/platform_data/edma.h>
 #include <linux/memory.h>
 
-//#include "puggle.h"
+#include "puggle.h"
 
 #undef EDMA3_DEBUG
 /*#define EDMA3_DEBUG*/
