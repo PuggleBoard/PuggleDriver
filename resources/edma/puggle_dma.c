@@ -8,7 +8,8 @@
 
 	 Written in 2013 by: Yogi Patel <yapatel@gatech.edu
 
-	 Parts of this code are modified from the TI EDMA sample application and code from Terrence McGuckin <terrence@ephemeron-labs.com>
+	 Parts of this code are modified from the TI EDMA sample application
+	 and also from code developed by Terrence McGuckin <terrence@ephemeron-labs.com>
 	 and Andrew Righter <q@crypto.com> from Ephemeron Labs
 
 	 To the extent possible under law, the author(s) have dedicated all copyright
@@ -17,7 +18,7 @@
 
 	 You should have received a copy of the CC Public Domain Dedication along with
 	 this software. If not, see <http://creativecommons.org/licenses/by-sa/3.0/legalcode>.
- */
+*/
 
 #include <linux/module.h>
 #include <linux/fs.h>
@@ -37,11 +38,12 @@
 #include <asm/uaccess.h>
 #include <linux/platform_data/edma.h>
 #include <linux/memory.h>
+#include <linux/kdev_t.h>
 
 #include "puggle.h"
 
-#undef EDMA3_DEBUG
-/*#define EDMA3_DEBUG*/
+//#undef EDMA3_DEBUG
+#define EDMA3_DEBUG
 
 #ifdef EDMA3_DEBUG
 #define DMA_PRINTK(ARGS...)  printk(KERN_INFO "<%s>: ",__FUNCTION__);printk(ARGS)
@@ -63,9 +65,19 @@
 static volatile int irqraised1 = 0;
 static volatile int irqraised2 = 0;
 
+/* 
+ * Function prototypes
 int edma3_memtomemcpytest_dma(int acnt, int bcnt, int ccnt, int sync_mode, int event_queue);
 int edma3_memtomemcpytest_dma_link(int acnt, int bcnt, int ccnt, int sync_mode, int event_queue);
 int edma3_memtomemcpytest_dma_chain(int acnt, int bcnt, int ccnt, int sync_mode, int event_queue);
+*/
+static int stop_ppbuffer(int *ch, int *slot1, int *slot2);
+
+/*
+ * Variable declarations
+*/
+dev_t rev = MKDEV(1, 0);
+struct stop_ppbuffer;
 
 dma_addr_t dmaphyssrc1 = 0;
 dma_addr_t dmaphyssrc2 = 0;
@@ -149,7 +161,7 @@ static int __init puggle_init(void) {
 
 				/* Run all EDMA3 test cases */
 				DMA_PRINTK ("Starting edma3_memtomemcpytest_dma\n");
-				result = edma3_memtomemcpytest_dma(acnt, bcnt, ccnt, i, j);
+				/*result = edma3_memtomemcpytest_dma(acnt, bcnt, ccnt, i, j);
 				if (0 == result) {
 					printk("edma3_memtomemcpytest_dma passed\n");
 				} else {
@@ -174,7 +186,7 @@ static int __init puggle_init(void) {
 					} else {
 						printk("edma3_memtomemcpytest_dma_chain failed\n");
 					}
-				}
+				}*/
 			}
 		}
 	}
@@ -192,8 +204,33 @@ void puggle_exit(void) {
 	printk ("\nExiting puggle module\n");
 }
 
+/*
+ * Stop ping/pong buffer and free DMA channels
+*/
+static int stop_ppbuffer(int *ch, int *slot1, int *slot2) {
+	edma_stop(*ch);
+	edma_free_channel(*ch);
+	edma_free_slot(*slot1);
+	edma_free_slot(*slot2);
+	DMA_PRINTK("DMA channels stopped and freed");
+	return 0;
+}
+
+/*
+ * Interface options for Userland to communicate with this module
+struct file_io = {
+	owner: THIS_MODULE,
+	read: puggle_read,
+	write: puggle_write,
+	unlocked_ioctl: puggle_ioctl,
+	open: puggle_open,
+	release: puggle_release,
+};
+*/
+
 module_init(puggle_init);
 module_exit(puggle_exit);
 
 MODULE_AUTHOR("Yogi Patel <yapatel@gatech.edu>");
+MODULE_DESCRIPTION("Puggle EDMA3 Driver");
 MODULE_LICENSE("Creative Commons 3.0");
