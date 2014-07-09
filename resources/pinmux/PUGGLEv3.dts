@@ -75,7 +75,7 @@ spi1_pins: pinmux_spi1_pins {
 		};
 	};
 
-	/* Pins for MCSPI 0 - INTANT */
+	/* Pins for MCSPI 0 - INTAN */
 	fragment@4 {
 		target = <&am33xx_pinmux>;
 		__overlay__ {

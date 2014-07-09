@@ -70,7 +70,6 @@
 // Configure SYSCONFIG
 #define CM_PER_SPI0_CLK_EN      0x2
 #define CM_PER_SPI1_CLK_EN      0x2
-#define RESET                   0x2
 #define MODCONTROL              0x100
 
 #define ADC_IRQENABLE           0x00000000
@@ -94,22 +93,25 @@
 #define DAC_RESET								0x00000000
 
 // Other Control Pins
-#define ADC_CONVST							r30.t7
+#define ADC_CONVST							r30.t5
+#define EOC											r31.t16
 
 // INTAN Read Check
-#define READ_I	0xE800
-#define WRITE   0xB80F
-#define READ_N	0xE900
-#define READ_T	0xEA00
-#define READ_A	0xEB00
-#define READ_N2 0xEC00
-#define READ_ID 0xFF00
+#define READ_I									0xE800
+#define WRITE   								0xB80F
+#define READ_N									0xE900
+#define READ_T									0xEA00
+#define READ_A									0xEB00
+#define READ_N2 								0xEC00
+#define READ_ID 								0xFF00
 
-#define ACQUIRE 0x3F00
+// INTAN Acquisition Commands
+#define AUTO_ACQUIRE 						0x3F00
+#define CONVERT_ZERO            0x0000
 
 #define RESET_IRQ_STAT          0xffffffff
-#define DIS_CH                  0x00000000
 #define EN_CH                   0x00000001
+#define DIS_CH                  0x00000000
 #define MAGIC               		0x01a01a01
 
 // Configure global registers
@@ -185,4 +187,54 @@ delayTwenty
     LSR			TEMP, TEMP, 8
     AND     dst.w0.b1, TEMP, 0xFF
     MOV     dst.w2, 0x0031
+.endm
+
+.macro READ_INTAN
+// READ ID from Register 64
+// ID = 0x1
+CALL ENABLE_CH0
+MOV addr, MCSPI0_TX0
+MOV val, READ_ID
+SBBO val, addr, 0, 4
+CALL DISABLE_CH0
+
+// Read I from Register 40
+// I = 0x49
+CALL ENABLE_CH0
+MOV addr, MCSPI0_TX0
+MOV val, READ_I
+SBBO val, addr, 0, 4
+CALL DISABLE_CH0
+
+// Read N from Register 41
+// N = 0x4E
+CALL ENABLE_CH0
+MOV addr, MCSPI0_TX0
+MOV val, READ_N
+SBBO val, addr, 0, 4
+CALL DISABLE_CH0
+
+// Read T from Register 42
+// T = 0x54
+CALL ENABLE_CH0
+MOV addr, MCSPI0_TX0
+MOV val, READ_T
+SBBO val, addr, 0, 4
+CALL DISABLE_CH0
+
+// Read A from Register 43
+// A = 0x41
+CALL ENABLE_CH0
+MOV addr, MCSPI0_TX0
+MOV val, READ_A
+SBBO val, addr, 0, 4
+CALL DISABLE_CH0
+
+// Read N from Register 44
+// N = 0x4E
+CALL ENABLE_CH0
+MOV addr, MCSPI0_TX0
+MOV val, READ_N2
+SBBO val, addr, 0, 4
+CALL DISABLE_CH0
 .endm

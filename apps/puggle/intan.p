@@ -2,6 +2,7 @@
 .entrypoint START
 #include "puggle.hp"
 
+//////////////////////////////////////
 START:
 // Enable OCP master port
 LBCO r0, C4, 4, 4
@@ -19,6 +20,7 @@ LBBO val, addr, 0, 4
 SET val.t1
 SBBO val, addr, 0, 4
 
+//////////////////////////////////////
 // Validate reset
 CHECKRESET:
 MOV addr, MCSPI0_SYSSTATUS
@@ -45,12 +47,11 @@ MOV addr, MCSPI0_IRQENABLE
 MOV val, ADC_IRQENABLE
 SBBO val, addr, 0, 4
 
+//////////////////////////////////////
 // Configure MCSPI0 channel 0 - RHD2132
 
 // Disable channel 0
-MOV addr, MCSPI0_CH0CTRL
-MOV val, DIS_CH
-SBBO val, addr, 0 ,4
+CALL DISABLE_CH0
 
 // Configure channel 0
 MOV addr, MCSPI0_CH0CONF     
@@ -62,199 +63,174 @@ MOV addr, MCSPI0_XFERLEVEL
 MOV val, ADC_XFER
 SBBO val, addr, 0, 4
 
-delay
-
-//JMP CONFIGURE
-
-// ******************** TEST READ ********************
-
-// Read I from Register 40
-// I = 0x49
-CALL ENABLE_CH0
-MOV addr, MCSPI0_TX0
-MOV val, READ_I
-SBBO val, addr, 0, 4
-CALL DISABLE_CH0
-
-delay
-
-// Read N from Register 41
-// N = 0x4E
-CALL ENABLE_CH0
-MOV addr, MCSPI0_TX0
-MOV val, READ_N
-SBBO val, addr, 0, 4
-CALL DISABLE_CH0
-
-delay
-
-// Read T from Register 42
-// T = 0x54
-CALL ENABLE_CH0
-MOV addr, MCSPI0_TX0
-MOV val, READ_T
-SBBO val, addr, 0, 4
-CALL DISABLE_CH0
-
-delay
-
-// Read A from Register 43
-// A = 0x41
-CALL ENABLE_CH0
-MOV addr, MCSPI0_TX0
-MOV val, READ_A
-SBBO val, addr, 0, 4
-CALL DISABLE_CH0
-
-delay
-
-// Read N from Register 44
-// N = 0x4E
-CALL ENABLE_CH0
-MOV addr, MCSPI0_TX0
-MOV val, READ_N2
-SBBO val, addr, 0, 4
-CALL DISABLE_CH0
-
-JMP EXIT
-
-// ******************** END TEST ********************
-
+//////////////////////////////////////
 // ******************** CONFIGURE INTAN REGISTERS ********************
+
+delay
 
 CONFIGURE:
 
-CALL ENABLE_CH0
-
 // Write R0 Config
+CALL ENABLE_CH0
 MOV addr, MCSPI0_TX0
 MOV val, 0x80FE 
 SBBO val, addr, 0, 4
+CALL DISABLE_CH0
 
-CALL ENABLE_CH0
+delayTwenty
 
 // Write R1 Config
+CALL ENABLE_CH0
 MOV addr, MCSPI0_TX0
 MOV val, 0x8102
 SBBO val, addr, 0, 4
+CALL DISABLE_CH0
 
-CALL ENABLE_CH0
+delayTwenty
 
 // Write R2 Config
+CALL ENABLE_CH0
 MOV addr, MCSPI0_TX0
 MOV val, 0x8204
 SBBO val, addr, 0, 4
+CALL DISABLE_CH0
 
-CALL ENABLE_CH0
+delayTwenty
 
 // Write R3 Config
+CALL ENABLE_CH0
 MOV addr, MCSPI0_TX0
 MOV val, 0x8300
 SBBO val, addr, 0, 4
+CALL DISABLE_CH0
 
-CALL ENABLE_CH0
+delayTwenty
 
 // Write R4 Config
+CALL ENABLE_CH0
 MOV addr, MCSPI0_TX0
 MOV val, 0x8450
 SBBO val, addr, 0, 4
+CALL DISABLE_CH0
 
-CALL ENABLE_CH0
+delayTwenty
 
 // Write R5 Config
+CALL ENABLE_CH0
 MOV addr, MCSPI0_TX0
 MOV val, 0x8500
 SBBO val, addr, 0, 4
+CALL DISABLE_CH0
 
-CALL ENABLE_CH0
+delayTwenty
 
 // Write R6 Config
+CALL ENABLE_CH0
 MOV addr, MCSPI0_TX0
 MOV val, 0x8600
 SBBO val, addr, 0, 4
+CALL DISABLE_CH0
 
-CALL ENABLE_CH0
+delayTwenty
 
 // Write R7 Config
+CALL ENABLE_CH0
 MOV addr, MCSPI0_TX0
 MOV val, 0x8700
 SBBO val, addr, 0, 4
+CALL DISABLE_CH0
 
-CALL ENABLE_CH0
+delayTwenty
 
 // Write R8 Config
+CALL ENABLE_CH0
 MOV addr, MCSPI0_TX0
 MOV val, 0x8800
 SBBO val, addr, 0, 4
+CALL DISABLE_CH0
 
-CALL ENABLE_CH0
+delayTwenty
 
 // Write R9 Config
+CALL ENABLE_CH0
 MOV addr, MCSPI0_TX0
 MOV val, 0x8900
 SBBO val, addr, 0, 4
+CALL DISABLE_CH0
 
-CALL ENABLE_CH0
+delayTwenty
 
 // Write R10 Config
+CALL ENABLE_CH0
 MOV addr, MCSPI0_TX0
 MOV val, 0x8A00
 SBBO val, addr, 0, 4
+CALL DISABLE_CH0
 
-CALL ENABLE_CH0
+delayTwenty
 
 // Write R11 Config
+CALL ENABLE_CH0
 MOV addr, MCSPI0_TX0
 MOV val, 0x8B00
 SBBO val, addr, 0, 4
+CALL DISABLE_CH0
 
-CALL ENABLE_CH0
+delayTwenty
 
 // Write R12 Config
+CALL ENABLE_CH0
 MOV addr, MCSPI0_TX0
 MOV val, 0x8C00 
 SBBO val, addr, 0, 4
+CALL DISABLE_CH0
 
-CALL ENABLE_CH0
+delayTwenty
 
 // Write R13 Config
+CALL ENABLE_CH0
 MOV addr, MCSPI0_TX0
 MOV val, 0x8D00 
 SBBO val, addr, 0, 4
+CALL DISABLE_CH0
 
-CALL ENABLE_CH0
+delayTwenty
 
 // Write R14 Config
+CALL ENABLE_CH0
 MOV addr, MCSPI0_TX0
 MOV val, 0x8EFF 
 SBBO val, addr, 0, 4
+CALL DISABLE_CH0
 
-CALL ENABLE_CH0
+delayTwenty
 
 // Write R15 Config
+CALL ENABLE_CH0
 MOV addr, MCSPI0_TX0
 MOV val, 0x8FFF 
 SBBO val, addr, 0, 4
+CALL DISABLE_CH0
 
-CALL ENABLE_CH0
+delayTwenty
 
 // Write R16 Config
+CALL ENABLE_CH0
 MOV addr, MCSPI0_TX0
 MOV val, 0x90FF 
 SBBO val, addr, 0, 4
+CALL DISABLE_CH0
 
-CALL ENABLE_CH0
+delayTwenty
 
 // Write R17 Config
+CALL ENABLE_CH0
 MOV addr, MCSPI0_TX0
 MOV val, 0x91FF 
 SBBO val, addr, 0, 4
+CALL DISABLE_CH0
 
-// Disable channel 0
-MOV addr, MCSPI0_CH0CTRL
-MOV val, DIS_CH
-SBBO val, addr, 0 ,4
-
+//////////////////////////////////////
 // ******************** BEGIN ACQUISITION ********************
 
 delay
@@ -262,31 +238,30 @@ delay
 // Clear convert command
 CALL ENABLE_CH0
 MOV addr, MCSPI0_TX0
-MOV val, 0x0000
-SBBO val, addr, 1, 4
-
-// Disable channel 0
+MOV val, CONVERT_ZERO
+SBBO val, addr, 0, 4
 CALL DISABLE_CH0
 
 delay
+
+MOV TEMP, 0
 
 RUN_AQ:
 
 // Read data in autocycle mode
 CALL ENABLE_CH0
 MOV addr, MCSPI0_TX0
-MOV val, ACQUIRE
-SBBO val, addr, 1, 4
-
-// Disable channel 0
+MOV val, AUTO_ACQUIRE
+SBBO val, addr, 0, 4
 CALL DISABLE_CH0
 
 delay
 
+ADD TEMP, TEMP, 1
+QBEQ EXIT, TEMP, 32
 JMP RUN_AQ
 
-// ******************** END ACQUISITION ********************
-
+//////////////////////////////////////
 // Check to make sure data is ready
 CHECKTX0:
 MOV addr, MCSPI0_CH0STAT

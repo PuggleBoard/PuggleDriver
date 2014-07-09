@@ -78,6 +78,7 @@ MOV val, DAC_CH1_CONF
 SBBO val, addr, 0, 4
 
 //////////////////////////////////////
+// ******************** CONFIGURE ********************
 CONFIGURE:
 
 CALL ENABLE_CH0
@@ -129,7 +130,9 @@ delay
 delayTwenty
 
 MOV r3, 1
+
 //////////////////////////////////////
+// ******************** BEGIN ACQUISITION ********************
 RUN_AQ:
 
 // WAIT ~1500ns
