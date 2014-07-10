@@ -179,10 +179,10 @@ delayTwenty
 // Sets dst = 0x00310000 | (MISO & 0x0000FFFF)
 //
 .macro  MakeWrUpA
-.mparam dst
+.mparam dst, data
 		MOV			addr, MCSPI_RX0
 		LBBO		TEMP, addr, 0, 4
-		//MOV			TEMP, 0xF000
+		//MOV			TEMP, 0xFFF0
     AND     dst.w0.b0, TEMP, 0xFF
     LSR			TEMP, TEMP, 8
     AND     dst.w0.b1, TEMP, 0xFF

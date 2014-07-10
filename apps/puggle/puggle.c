@@ -177,7 +177,7 @@ void intHandler(int val) {
 		 * from PRU Shared space to User Space on PRU0
 		 */
 		info.pru_params->run_flag = 1;
-		prussdrv_exec_program(PRU_NUM0, "./intan.bin");
+		prussdrv_exec_program(PRU_NUM0, "./puggle.bin");
 		printf("Data acquisition status: started.\n");
 	}
 }
@@ -246,7 +246,7 @@ int main(int argc, char *argv[]) {
 		retval = createTask(&puggle);
 		printf("%d\n",retval);*/
 
-	prussdrv_exec_program(PRU_NUM0, "./intan.bin");
+	prussdrv_exec_program(PRU_NUM0, "./puggle.bin");
 	printf("Data acquisition status: started.\n");
 
 	// Wait until PRU0 has finished execution

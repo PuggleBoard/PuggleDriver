@@ -163,7 +163,7 @@ MakeWrUpA DAC_OUTPUT
 
 CALL ENABLE_CH1
 
-// Write DAC configuration to SPI_TX1
+// Write DAC command to SPI_TX1
 MOV addr, MCSPI_TX1
 MOV val, DAC_OUTPUT
 SBBO val, addr, 0, 4
