@@ -31,8 +31,8 @@
 		__overlay__ {
 pinctrl_test: pinctrl_test_7_pins {
 								pinctrl-single,pins = <
-									0x1A4	0xD /* P9.27, CONVST, OUTPUT | MODE5 */
 									0x184 0x2E /* P9.24, ADC EOC, INPUT | MODE6 */
+									//0x1A4	0xD /* P9.27, CONVST, OUTPUT | MODE5 */
 									>;
 							};
 		};

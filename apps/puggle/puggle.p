@@ -81,10 +81,9 @@ SBBO val, addr, 0, 4
 // ******************** CONFIGURE ********************
 CONFIGURE:
 
-CALL ENABLE_CH0
-
 // Write ADC configuration to SPI_TX0
 // Sets ADC CMR and CFR to default
+CALL ENABLE_CH0
 
 MOV addr, MCSPI_TX0
 MOV val, ADC_CONFIG
@@ -99,9 +98,8 @@ delay
 delayTwenty
 
 // Set ADC Channel to 0 before starting autocycle
-CALL ENABLE_CH0
-
 // Write ADC command to SPI_TX0
+CALL ENABLE_CH0
 MOV addr, MCSPI_TX0
 MOV val, ADC_CH0
 SBBO val, addr, 0, 4
@@ -114,9 +112,8 @@ SBBO val, addr, 0 ,4
 delay
 delayTwenty
 
-CALL ENABLE_CH1
-
 // Write DAC configuration to SPI_TX1
+CALL ENABLE_CH1
 MOV addr, MCSPI_TX1
 MOV val, DAC_CONFIG
 SBBO val, addr, 0, 4
@@ -127,9 +124,10 @@ MOV val, DIS_CH
 SBBO val, addr, 0 ,4
 
 delay
-delayTwenty
+delay
 
 MOV r3, 1
+MOV TEMP, 0
 
 //////////////////////////////////////
 // ******************** BEGIN ACQUISITION ********************
@@ -139,9 +137,8 @@ RUN_AQ:
 delay
 delayTwenty
 
-CALL ENABLE_CH0
-
 // Write ADC command to SPI_TX0
+CALL ENABLE_CH0
 MOV addr, MCSPI_TX0
 MOV val, READ_ADC_DATA
 SBBO val, addr, 0, 4
@@ -149,21 +146,15 @@ SBBO val, addr, 0, 4
 // Disable channel 0
 MOV addr, MCSPI_CH0CTRL
 MOV val, DIS_CH
-SBBO val, addr, 0 ,4
+SBBO val, addr, 0, 4
 
 delay
-
-// SEND CONVST
-CLR ADC_CONVST
-delayFourtyns
-SET ADC_CONVST
 
 // Setup output
 MakeWrUpA DAC_OUTPUT
 
-CALL ENABLE_CH1
-
 // Write DAC command to SPI_TX1
+CALL ENABLE_CH1
 MOV addr, MCSPI_TX1
 MOV val, DAC_OUTPUT
 SBBO val, addr, 0, 4
@@ -177,7 +168,7 @@ delay
 delayTwenty
 
 //ADD r3, r3, 1
-//QBEQ EXIT, r3, 10
+//QBEQ EXIT, r3, 65000
 JMP RUN_AQ
 
 //////////////////////////////////////

@@ -76,25 +76,25 @@
 #define ADC_SYSCONFIG           0x00000311
 #define ADC_XFER 								0xFF0a
 
-#define ADC_CH0_CONF 						0x100E87C6
+#define ADC_CH0_CONF 						0x100687C6 //0x100E87C6
 #define DAC_CH1_CONF 						0x000E2BC6
 #define INTAN_CH0_CONF					0x100E87C4
 
 #define READ_ADC_CFR  					0x0000C000
 #define READ_ADC_DATA           0x0000D000
-#define ADC_CONFIG							0x0000E7FF //0x0000F000
+#define ADC_CONFIG							0x0000ECFD //0x0000E7FF 0x0000F000
 #define ADC_CH0                 0x00000000
 #define DAC_CONFIG							0x00000000
-#define DAC_OUTPUT							r4
-#define TEMP										r5
+#define DAC_OUTPUT							R4
+#define TEMP										R5
 
 // RESETS
 #define ADC_RESET								0x0000F000
 #define DAC_RESET								0x00000000
 
 // Other Control Pins
-#define ADC_CONVST							r30.t5
-#define EOC											r31.t16
+#define ADC_CONVST							R30.t5
+#define EOC											R31.t16
 
 // INTAN Read Check
 #define READ_I									0xE800
@@ -115,9 +115,9 @@
 #define MAGIC               		0x01a01a01
 
 // Configure global registers
-#define addr        r1
-#define val         r2
-#define NOP					MOV r29, r29
+#define addr        R1
+#define val         R2
+#define NOP					MOV R29, R29
 
 .macro delayTwenty
 NOP
@@ -179,14 +179,15 @@ delayTwenty
 // Sets dst = 0x00310000 | (MISO & 0x0000FFFF)
 //
 .macro  MakeWrUpA
-.mparam dst, data
-		MOV			addr, MCSPI_RX0
-		LBBO		TEMP, addr, 0, 4
-		//MOV			TEMP, 0xFFF0
+.mparam dst
+		//MOV			addr, MCSPI_RX0
+		//LBBO		TEMP, addr, 0, 4
     AND     dst.w0.b0, TEMP, 0xFF
     LSR			TEMP, TEMP, 8
     AND     dst.w0.b1, TEMP, 0xFF
-    MOV     dst.w2, 0x0031
+    ADD     TEMP, TEMP, 1
+    //MOV     dst.w0, TEMP
+    MOV     dst.w2, 0x0038
 .endm
 
 .macro READ_INTAN
