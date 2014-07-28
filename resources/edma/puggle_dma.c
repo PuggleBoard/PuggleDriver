@@ -65,12 +65,10 @@
 static volatile int irqraised1 = 0;
 static volatile int irqraised2 = 0;
 
-/* 
- * Function prototypes
+/* Function prototypes */
 int edma3_memtomemcpytest_dma(int acnt, int bcnt, int ccnt, int sync_mode, int event_queue);
 int edma3_memtomemcpytest_dma_link(int acnt, int bcnt, int ccnt, int sync_mode, int event_queue);
 int edma3_memtomemcpytest_dma_chain(int acnt, int bcnt, int ccnt, int sync_mode, int event_queue);
-*/
 static int stop_ppbuffer(int *ch, int *slot1, int *slot2);
 
 /*
@@ -204,9 +202,7 @@ void puggle_exit(void) {
 	printk ("\nExiting puggle module\n");
 }
 
-/*
- * Stop ping/pong buffer and free DMA channels
-*/
+/* Stop ping/pong buffer and free DMA channels */
 static int stop_ppbuffer(int *ch, int *slot1, int *slot2) {
 	edma_stop(*ch);
 	edma_free_channel(*ch);
@@ -216,8 +212,7 @@ static int stop_ppbuffer(int *ch, int *slot1, int *slot2) {
 	return 0;
 }
 
-/*
- * Interface options for Userland to communicate with this module
+/*  Interface options for Userland to communicate with this module */
 struct file_io = {
 	owner: THIS_MODULE,
 	read: puggle_read,
@@ -226,7 +221,6 @@ struct file_io = {
 	open: puggle_open,
 	release: puggle_release,
 };
-*/
 
 module_init(puggle_init);
 module_exit(puggle_exit);
