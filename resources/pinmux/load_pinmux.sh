@@ -28,12 +28,26 @@ echo "done"
 echo "installing config-pin utility"
 cp -v config-pin /usr/bin/
 
-set -x
-set -e
-export SLOTS=/sys/devices/bone_capemgr.9/slots
-export PINS=/sys/kernel/debug/pinctrl/44e10800.pinmux/pins
-dtc -O dtb -o PUGGLEv3-00A0.dtbo -b 0 -@ PUGGLEv3.dts
-cp PUGGLEv3-00A0.dtbo /lib/firmware/
-cat $SLOTS
-echo PUGGLEv3 > $SLOTS
-cat $SLOTS
+echo cape-universal > /sys/devices/bone_capemgr.9/slots
+
+config-pin 9.28 spi
+config-pin 9.42 spics
+config-pin 9.31 spi
+config-pin 9.29 spi
+config-pin 9.30 spi
+config-pin 9.27 pruout
+config-pin 9.24 pruin
+config-pin 9.17 spi
+config-pin 9.22 spi
+config-pin 9.21 spi
+config-pin 9.18 spi
+
+#set -x
+#set -e
+#export SLOTS=/sys/devices/bone_capemgr.9/slots
+#export PINS=/sys/kernel/debug/pinctrl/44e10800.pinmux/pins
+#dtc -O dtb -o PUGGLEv3-00A0.dtbo -b 0 -@ PUGGLEv3.dts
+#cp PUGGLEv3-00A0.dtbo /lib/firmware/
+#cat $SLOTS
+#echo PUGGLEv3 > $SLOTS
+#cat $SLOTS
