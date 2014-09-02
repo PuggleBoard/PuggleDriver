@@ -1,0 +1,4 @@
+# Ignore executables created by netbeans IDE
+
+dist/
+build/
