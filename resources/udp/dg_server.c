@@ -14,7 +14,7 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <arpa/inet.h>
-#include "dg_client.h"
+#include "dg_stream.h"
 
 // Start listening to messages on PORT
 int server_start(char *servargs[]) 
@@ -23,6 +23,8 @@ int server_start(char *servargs[])
     int sockfd; // Socket file descriptor
     struct addrinfo hints, *servinfo;
     int rv;
+    float frame[NCHAN*BUFSAMP] = {};
+    int framesize = sizeof(frame);
 
     // Clear hints and fill out relevant fields
     memset(&hints, 0, sizeof hints);
@@ -45,12 +47,16 @@ int server_start(char *servargs[])
     
     printf("server: sockfd = %d\n", sockfd);
     
+    // Get data frame
+    server_getframe(frame, NCHAN*BUFSAMP);
+    
     // Send message
-    if ((rv = server_send(&sockfd, servargs, servinfo)) == -1)
+    if ((rv = server_sendframe(&sockfd, frame, framesize, servinfo)) == -1)
     {
         fprintf(stderr, "sendto: failed to send message\n");
         exit(1);
     } 
+    printf("server: sent %d frames\n", rv);
     
     // Free up the servinfo struct now that we are bound
     freeaddrinfo(servinfo);
@@ -95,15 +101,15 @@ int server_bindsocket(int *sfd, struct addrinfo *si)
 // Send message
 int server_send(int *sfd, char *servargs[], struct addrinfo *si)
 {
-    struct addrinfo *p = si;
+    
     struct sockaddr_storage their_addr;
-    char buf[MAXBUFLEN];
-    socklen_t addr_len = sizeof(their_addr);
+    //char buf[MAXBUFLEN];
+    //socklen_t addr_len = sizeof(their_addr);
     int numbytes;
     char s[INET6_ADDRSTRLEN];           // Use INET6 length since this will work for IPv4 too.
     
     
-    if ((numbytes = sendto(*sfd, servargs[1], strlen(servargs[1]), 0, p->ai_addr, p->ai_addrlen)) == -1) 
+    if ((numbytes = sendto(*sfd, servargs[1], strlen(servargs[1]), 0, si->ai_addr, si->ai_addrlen)) == -1) 
     {
 	perror("server: sendto");
 	return numbytes;
@@ -115,13 +121,34 @@ int server_send(int *sfd, char *servargs[], struct addrinfo *si)
 }
 
 // Serialize floating point value
-int server_sendframe(int nchan, int nsamp, float **data_frame)
+int server_sendframe(int *sfd, float *data_frame, int framesize, struct addrinfo *si)
 {
-
-    if ((numbytes = sendto(*sfd, data_frame, nchan*nsamp*4, 0, p->ai_addr, p->ai_addrlen)) == -1)
+    int numbytes;
+    
+    if ((numbytes = sendto(*sfd, data_frame, framesize, 0, si->ai_addr, si->ai_addrlen)) == -1)
     {
         perror("server: sendto");
         return numbytes;
     }
 }
+
+int server_getframe(float *data_frame, int count)
+{
+    // For now we are just going to create a data frame
+    count--;
+    while(count >= 0)
+    {
+        data_frame[count] = (float)(count);
+        count--;
+    }
+    
+    return 0;
+    
+}
+
+//void server_configure(frame_config *fc)
+//{
+//    fc.
+//    
+//}
 

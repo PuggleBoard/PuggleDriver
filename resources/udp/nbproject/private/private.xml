@@ -7,8 +7,9 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/jon/Dev/datagram-streamer/dg_server.c</file>
-            <file>file:/home/jon/Dev/datagram-streamer/dg_stream.h</file>
+            <file>file:/home/jon/Public/puggle/PuggleDriver/resources/udp/dg_server.c</file>
+            <file>file:/home/jon/Public/puggle/PuggleDriver/resources/udp/dg_client.c</file>
+            <file>file:/home/jon/Public/puggle/PuggleDriver/resources/udp/dg_stream.h</file>
         </group>
     </open-files>
 </project-private>

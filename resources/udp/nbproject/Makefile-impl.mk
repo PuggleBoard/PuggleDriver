@@ -24,7 +24,7 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 
 
 # Project Name
-PROJECTNAME=datagram-streamer
+PROJECTNAME=udp
 
 # Active Configuration
 DEFAULTCONF=Debug

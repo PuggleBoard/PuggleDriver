@@ -17,6 +17,19 @@
 #include "dg_stream.h"
 
 
+// Get sockaddr, IPv4 or IPv6
+void *getinaddr(struct sockaddr *sa)
+{
+    // See if this is IPv4
+    if (sa->sa_family == AF_INET) 
+    {
+        return &(((struct sockaddr_in*)sa)->sin_addr);
+    }
+
+    // Else get the IPv6 address
+    return &(((struct sockaddr_in6*)sa)->sin6_addr);
+}
+
 // Start listening to messages on PORT
 int client_start() {
     
@@ -52,7 +65,7 @@ int client_start() {
     printf("client: waiting for recvfrom...\n");
 
     // Receive packets
-    while((rv = client_receive(&sockfd)) != -1)
+    while((rv = client_receiveframe(&sockfd)) != -1)
     {
         // Success
         //return rv;
@@ -130,4 +143,37 @@ int client_receive(int *sfd)
     printf("client: packet contains \"%s\"\n",buf);
 
     return 0;
+}
+
+int client_receiveframe(int *sfd) 
+{
+    struct sockaddr_storage their_addr;
+    float buf[MAXBUFLEN];
+    socklen_t addr_len = sizeof(their_addr);
+    int numbytes;
+    char s[INET6_ADDRSTRLEN];           // Use INET6 length since this will work for IPv4 too.
+
+    if ((numbytes = recvfrom(*sfd, &buf, MAXBUFLEN-1, 0, (struct sockaddr *)&their_addr, &addr_len)) == -1)
+    {
+        perror("recvfrom");
+        return numbytes;
+    }
+
+    printf("client: got packet from %s\n", 
+            inet_ntop(their_addr.ss_family,
+            getinaddr((struct sockaddr *)&their_addr),
+            s,
+            sizeof(s)));
+    printf("client: packet is %d bytes long\n", numbytes);
+    buf[numbytes] = '\0';
+    printf("client: packet contains\"\n");
+    
+    int i;
+    for(i = 0; i < NCHAN*BUFSAMP; i++)
+    {
+        printf("%f\n",buf[i]);
+    }
+
+    return 0;
+    
 }

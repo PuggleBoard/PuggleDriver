@@ -9,19 +9,19 @@ CND_DISTDIR=dist
 # Debug configuration
 CND_PLATFORM_Debug=GNU-Linux-x86
 CND_ARTIFACT_DIR_Debug=dist/Debug/GNU-Linux-x86
-CND_ARTIFACT_NAME_Debug=datagram-streamer
-CND_ARTIFACT_PATH_Debug=dist/Debug/GNU-Linux-x86/datagram-streamer
+CND_ARTIFACT_NAME_Debug=udp
+CND_ARTIFACT_PATH_Debug=dist/Debug/GNU-Linux-x86/udp
 CND_PACKAGE_DIR_Debug=dist/Debug/GNU-Linux-x86/package
-CND_PACKAGE_NAME_Debug=datagram-streamer.tar
-CND_PACKAGE_PATH_Debug=dist/Debug/GNU-Linux-x86/package/datagram-streamer.tar
+CND_PACKAGE_NAME_Debug=udp.tar
+CND_PACKAGE_PATH_Debug=dist/Debug/GNU-Linux-x86/package/udp.tar
 # Release configuration
 CND_PLATFORM_Release=GNU-Linux-x86
 CND_ARTIFACT_DIR_Release=dist/Release/GNU-Linux-x86
-CND_ARTIFACT_NAME_Release=datagram-streamer
-CND_ARTIFACT_PATH_Release=dist/Release/GNU-Linux-x86/datagram-streamer
+CND_ARTIFACT_NAME_Release=udp
+CND_ARTIFACT_PATH_Release=dist/Release/GNU-Linux-x86/udp
 CND_PACKAGE_DIR_Release=dist/Release/GNU-Linux-x86/package
-CND_PACKAGE_NAME_Release=datagram-streamer.tar
-CND_PACKAGE_PATH_Release=dist/Release/GNU-Linux-x86/package/datagram-streamer.tar
+CND_PACKAGE_NAME_Release=udp.tar
+CND_PACKAGE_PATH_Release=dist/Release/GNU-Linux-x86/package/udp.tar
 #
 # include compiler specific variables
 #
