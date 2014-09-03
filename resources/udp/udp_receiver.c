@@ -1,6 +1,6 @@
 /* 
 *
-* dg_client.c -- a datagram sockets 'client'
+* receiver.c -- a datagram sockets 'client'
 *
 */
 
@@ -14,7 +14,7 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <arpa/inet.h>
-#include "dg_stream.h"
+#include "udp_stream.h"
 
 
 // Get sockaddr, IPv4 or IPv6
@@ -31,7 +31,7 @@ void *getinaddr(struct sockaddr *sa)
 }
 
 // Start listening to messages on PORT
-int client_start() {
+int receiver_start() {
     
     int sockfd; // Socket file descriptor
     struct addrinfo hints, *servinfo;
@@ -52,7 +52,7 @@ int client_start() {
     } 
 
     // Bind to to socket
-    if ((rv = client_bindsocket(&sockfd, servinfo)) != 0)
+    if ((rv = receiver_bindsocket(&sockfd, servinfo)) != 0)
     {
         fprintf(stderr, "bindsocket: failed to bind socket\n");
         return rv;
@@ -65,7 +65,7 @@ int client_start() {
     printf("client: waiting for recvfrom...\n");
 
     // Receive packets
-    while((rv = client_receiveframe(&sockfd)) != -1)
+    while((rv = receiver_receiveframe(&sockfd)) != -1)
     {
         // Success
         //return rv;
@@ -78,7 +78,7 @@ int client_start() {
 }
 
 // Bind with error checking
-int client_bindsocket(int *sfd, struct addrinfo *si)
+int receiver_bindsocket(int *sfd, struct addrinfo *si)
 {
     // Bind call return status
     int stat;
@@ -118,7 +118,7 @@ int client_bindsocket(int *sfd, struct addrinfo *si)
 }
 
 // Receive message
-int client_receive(int *sfd)
+int receiver_receive(int *sfd)
 {
 
     struct sockaddr_storage their_addr;
@@ -145,7 +145,7 @@ int client_receive(int *sfd)
     return 0;
 }
 
-int client_receiveframe(int *sfd) 
+int receiver_receiveframe(int *sfd) 
 {
     struct sockaddr_storage their_addr;
     float buf[MAXBUFLEN];

@@ -1,6 +1,6 @@
 /* 
 *
-* dg_server.c -- a datagram 'server'
+* streamer.c -- a datagram 'server'
 *
 */
 
@@ -14,10 +14,10 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <arpa/inet.h>
-#include "dg_stream.h"
+#include "udp_stream.h"
 
 // Start listening to messages on PORT
-int server_start(char *servargs[]) 
+int streamer_start(char *servargs[]) 
 {
     
     int sockfd; // Socket file descriptor
@@ -39,7 +39,7 @@ int server_start(char *servargs[])
     }
 
     // Bind to to socket
-    if ((rv = server_bindsocket(&sockfd, servinfo)) != 0)
+    if ((rv = streamer_bindsocket(&sockfd, servinfo)) != 0)
     {
         fprintf(stderr, "bindsocket: failed to bind socket\n");
         return rv;
@@ -48,26 +48,24 @@ int server_start(char *servargs[])
     printf("server: sockfd = %d\n", sockfd);
     
     // Get data frame
-    server_getframe(frame, NCHAN*BUFSAMP);
+    steamer_getframe(frame, NCHAN*BUFSAMP);
     
     // Send message
-    if ((rv = server_sendframe(&sockfd, frame, framesize, servinfo)) == -1)
+    if ((rv = streamer_sendframe(&sockfd, frame, framesize, servinfo)) == -1)
     {
-        fprintf(stderr, "sendto: failed to send message\n");
+        fprintf(stderr, "sendto: failed to send frame\n");
         exit(1);
     } 
     printf("server: sent %d frames\n", rv);
     
-    // Free up the servinfo struct now that we are bound
-    freeaddrinfo(servinfo);
-    close(sockfd);
+   
     
     return 0;
 
 }
 
-// Bind with error checking
-int server_bindsocket(int *sfd, struct addrinfo *si)
+// Bind socket
+int streamer_bindsocket(int *sfd, struct addrinfo *si)
 {
     // Bind call return status
     int stat;
@@ -84,7 +82,6 @@ int server_bindsocket(int *sfd, struct addrinfo *si)
         }
 
         break;
-        
     }
     
     if (p == NULL) 
@@ -99,7 +96,7 @@ int server_bindsocket(int *sfd, struct addrinfo *si)
 }
 
 // Send message
-int server_send(int *sfd, char *servargs[], struct addrinfo *si)
+int streamer_send(int *sfd, char *servargs[], struct addrinfo *si)
 {
     
     struct sockaddr_storage their_addr;
@@ -121,7 +118,7 @@ int server_send(int *sfd, char *servargs[], struct addrinfo *si)
 }
 
 // Serialize floating point value
-int server_sendframe(int *sfd, float *data_frame, int framesize, struct addrinfo *si)
+int streamer_sendframe(int *sfd, float *data_frame, int framesize, struct addrinfo *si)
 {
     int numbytes;
     
@@ -132,7 +129,7 @@ int server_sendframe(int *sfd, float *data_frame, int framesize, struct addrinfo
     }
 }
 
-int server_getframe(float *data_frame, int count)
+int steamer_getframe(float *data_frame, int count)
 {
     // For now we are just going to create a data frame
     count--;
@@ -146,7 +143,15 @@ int server_getframe(float *data_frame, int count)
     
 }
 
-//void server_configure(frame_config *fc)
+int streamer_close(int *sfd, struct addrinfo *si)
+{
+     // Free up the servinfo struct and close the socket
+    freeaddrinfo(*si);
+    close(*sfd);
+   
+}
+
+//void configure(frame_config *fc)
 //{
 //    fc.
 //    

@@ -64,12 +64,12 @@ int main(int argc, char* argv[]) {
 		exit(1);
             }
         
-        server_start(optargs);
+        streamer_start(optargs);
         break;       
         }
         case CLIENT_MODE:
         { 
-            client_start();
+            receiver_start();
             break;       
         }
         default:

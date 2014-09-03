@@ -34,26 +34,25 @@ extern "C" {
         int samples_per_channel_per_frame;
         int samples_per_frame;
         int channel_count;
-        //int digital_zero = 2^15;
+        int digital_zero;
         int socket_buffer_bytes;
     } frame_config;
     
     /* Prototypes */
-    int server_bindsocket(int *sfd, struct addrinfo *si);
-    int server_send(int *sfd, char *servargs[], struct addrinfo *si);
-    int server_configure();
-    int server_sendconfig(int *sfd, char *servargs[], struct addrinfo *si);
-    //int server_serializeframe(float *data_frame[]);
-    int server_sendframe(int *sfd, float data_frame[], int framesize, struct addrinfo *si);
-    int server_getframe(float data_frame[], int count);
-    int server_start(char *servargs[]);
-    int server_close(void);
+    int configure();
+    int streamer_bindsocket(int *sfd, struct addrinfo *si);
+    int streamer_send(int *sfd, char *servargs[], struct addrinfo *si);
+    int streamer_sendconfig(int *sfd, char *servargs[], struct addrinfo *si);
+    int streamer_sendframe(int *sfd, float data_frame[], int framesize, struct addrinfo *si);
+    int steamer_getframe(float data_frame[], int count);
+    int streamer_start(char *servargs[]);
+    int streamer_close(int *sfd, struct addrinfo *si);
     
-    int client_bindsocket(int *sfd, struct addrinfo *si);
-    int client_receive(int *sfd);
-    int client_receiveframe(int *sfd);
-    int client_start(void);
-    int client_close(void);
+    int receiver_bindsocket(int *sfd, struct addrinfo *si);
+    int receiver_receive(int *sfd);
+    int receiver_receiveframe(int *sfd);
+    int receiver_start(void);
+    int receiver_close(void);
     
     
     /* Common methods */
