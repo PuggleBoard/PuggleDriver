@@ -49,13 +49,14 @@ extern "C" {
     int streamer_close(int *sfd, struct addrinfo *si);
     
     int receiver_bindsocket(int *sfd, struct addrinfo *si);
-    int receiver_receive(int *sfd);
-    int receiver_receiveframe(int *sfd);
+    int receiver_receive(int *sfd, unsigned long *bytecount);
+    int receiver_receiveframe(int *sfd, unsigned long *bytecount);
     int receiver_start(void);
     int receiver_close(void);
     
     
     /* Common methods */
+    //void exit(void);
 
 #ifdef	__cplusplus
 }

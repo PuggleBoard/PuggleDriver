@@ -14,6 +14,7 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <arpa/inet.h>
+#include <time.h>
 #include "udp_stream.h"
 
 // Start listening to messages on PORT
@@ -25,6 +26,14 @@ int streamer_start(char *servargs[])
     int rv;
     float frame[NCHAN*BUFSAMP] = {};
     int framesize = sizeof(frame);
+    unsigned long framecount = 0; 
+    
+    // Timing stuff
+    time_t now;
+    time_t then;
+    time(&now);
+    struct tm beg = *localtime(&now);
+    double dtsec;
 
     // Clear hints and fill out relevant fields
     memset(&hints, 0, sizeof hints);
@@ -51,12 +60,22 @@ int streamer_start(char *servargs[])
     steamer_getframe(frame, NCHAN*BUFSAMP);
     
     // Send message
-    if ((rv = streamer_sendframe(&sockfd, frame, framesize, servinfo)) == -1)
+    while(1)
     {
-        fprintf(stderr, "sendto: failed to send frame\n");
-        exit(1);
-    } 
-    printf("server: sent %d frames\n", rv);
+        
+        if ((rv = streamer_sendframe(&sockfd, frame, framesize, servinfo)) == -1)
+        {
+            fprintf(stderr, "sendto: failed to send frame\n");
+            exit(1);
+        } 
+        
+        dtsec = difftime(time(&then), now);
+        framecount++;
+        if ((framecount % 100000) == 0)
+        {
+            printf("server: sent %lu frames in %f seconds\n", framecount,dtsec);
+        }
+    }
     
    
     
@@ -146,7 +165,7 @@ int steamer_getframe(float *data_frame, int count)
 int streamer_close(int *sfd, struct addrinfo *si)
 {
      // Free up the servinfo struct and close the socket
-    freeaddrinfo(*si);
+    freeaddrinfo(si);
     close(*sfd);
    
 }

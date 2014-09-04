@@ -9,7 +9,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdbool.h>
-//#include <dg_stream.h>
 
 /*
  * 
@@ -22,18 +21,18 @@ int main(int argc, char* argv[]) {
     char *optargs[2] = {" "," "};
 
     // Non optional arguments
-    while ((opt = getopt(argc, argv, "sc")) != -1) 
+    while ((opt = getopt(argc, argv, "sr")) != -1) 
     {
         switch (opt) 
         {
         case 's': 
             mode = SERVER_MODE; 
             break;
-        case 'c': 
+        case 'r': 
             mode = CLIENT_MODE; 
             break;
         default:
-            fprintf(stderr, "Usage: %s [-sc] [hostname message]\n", argv[0]);
+            fprintf(stderr, "Usage: %s [-sr] [hostname message]\n", argv[0]);
             exit(EXIT_FAILURE);
         }
     }
@@ -73,7 +72,7 @@ int main(int argc, char* argv[]) {
             break;       
         }
         default:
-            fprintf(stderr, "Usage: %s [-sc] [hostname message]\n", argv[0]);
+            fprintf(stderr, "Usage: %s [-sr] [hostname message]\n", argv[0]);
             exit(EXIT_FAILURE);
     }
     

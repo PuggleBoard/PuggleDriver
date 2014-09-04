@@ -37,6 +37,8 @@ int receiver_start() {
     struct addrinfo hints, *servinfo;
     int rv;
     char s[INET6_ADDRSTRLEN];               // Use INET6 length since this will work for IPv4 too.
+    unsigned long framecount = 0; 
+    unsigned long bytecount = 0;
 
     // Clear hints and fill out relevant fields
     memset(&hints, 0, sizeof hints);
@@ -65,10 +67,15 @@ int receiver_start() {
     printf("client: waiting for recvfrom...\n");
 
     // Receive packets
-    while((rv = receiver_receiveframe(&sockfd)) != -1)
+    while((rv = receiver_receiveframe(&sockfd, &bytecount)) != -1)
     {
         // Success
         //return rv;
+        framecount++;
+        if ((framecount % 100000) == 0)
+        {
+            printf("receiver: received %lu frames\n", bytecount);
+        }
     }
     
     // Else exit with failure
@@ -118,7 +125,7 @@ int receiver_bindsocket(int *sfd, struct addrinfo *si)
 }
 
 // Receive message
-int receiver_receive(int *sfd)
+int receiver_receive(int *sfd, unsigned long *bytecount)
 {
 
     struct sockaddr_storage their_addr;
@@ -132,6 +139,8 @@ int receiver_receive(int *sfd)
         perror("recvfrom");
         return numbytes;
     }
+    
+    *bytecount += numbytes;
 
     printf("client: got packet from %s\n", 
             inet_ntop(their_addr.ss_family,
@@ -145,7 +154,7 @@ int receiver_receive(int *sfd)
     return 0;
 }
 
-int receiver_receiveframe(int *sfd) 
+int receiver_receiveframe(int *sfd, unsigned long *bytecount) 
 {
     struct sockaddr_storage their_addr;
     float buf[MAXBUFLEN];
@@ -158,21 +167,23 @@ int receiver_receiveframe(int *sfd)
         perror("recvfrom");
         return numbytes;
     }
-
-    printf("client: got packet from %s\n", 
-            inet_ntop(their_addr.ss_family,
-            getinaddr((struct sockaddr *)&their_addr),
-            s,
-            sizeof(s)));
-    printf("client: packet is %d bytes long\n", numbytes);
-    buf[numbytes] = '\0';
-    printf("client: packet contains\"\n");
     
-    int i;
-    for(i = 0; i < NCHAN*BUFSAMP; i++)
-    {
-        printf("%f\n",buf[i]);
-    }
+    *bytecount += (unsigned long)numbytes;
+
+//    printf("client: got packet from %s\n", 
+//            inet_ntop(their_addr.ss_family,
+//            getinaddr((struct sockaddr *)&their_addr),
+//            s,
+//            sizeof(s)));
+//    printf("client: packet is %d bytes long\n", numbytes);
+//    buf[numbytes] = '\0';
+//    printf("client: packet contains\"\n");
+//    
+//    int i;
+//    for(i = 0; i < NCHAN*BUFSAMP; i++)
+//    {
+//        printf("%f\n",buf[i]);
+//    }
 
     return 0;
     
