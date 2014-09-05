@@ -26,16 +26,16 @@ extern "C" {
     struct addrinfo;
     
     typedef struct {
-        int sample_freq_hz;
-        int frame_freq_hz;
-        int bytes_per_sample;
-        int bytes_per_channel_per_frame;
-        int bytes_per_frame;
-        int samples_per_channel_per_frame;
-        int samples_per_frame;
-        int channel_count;
-        int digital_zero;
-        int socket_buffer_bytes;
+        size_t sample_freq_hz;
+        size_t frame_freq_hz;
+        size_t bytes_per_sample;
+        size_t bytes_per_channel_per_frame;
+        size_t bytes_per_frame;
+        size_t samples_per_channel_per_frame;
+        size_t samples_per_frame;
+        size_t channel_count;
+        size_t digital_zero;
+        size_t socket_buffer_bytes;
     } frame_config;
     
     /* Prototypes */
@@ -44,7 +44,7 @@ extern "C" {
     int streamer_send(int *sfd, char *servargs[], struct addrinfo *si);
     int streamer_sendconfig(int *sfd, char *servargs[], struct addrinfo *si);
     int streamer_sendframe(int *sfd, float data_frame[], int framesize, struct addrinfo *si);
-    int steamer_getframe(float data_frame[], int count);
+    int steamer_getframe(int *fifo, float data_frame[], int count);
     int streamer_start(char *servargs[]);
     int streamer_close(int *sfd, struct addrinfo *si);
     

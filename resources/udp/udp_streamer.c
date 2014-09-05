@@ -9,6 +9,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include <string.h>
+#include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -16,13 +17,15 @@
 #include <arpa/inet.h>
 #include <time.h>
 #include "udp_stream.h"
+#include "fifo_defs.h"
 
 // Start listening to messages on PORT
 int streamer_start(char *servargs[]) 
 {
     
-    int sockfd; // Socket file descriptor
-    struct addrinfo hints, *servinfo;
+    int sockfd;                         // Socket file descriptor
+    int fifo;                           // FIFO file descritor for getting data from BB's RAM
+    struct addrinfo hints, *servinfo;   
     int rv;
     float frame[NCHAN*BUFSAMP] = {};
     int framesize = sizeof(frame);
@@ -54,15 +57,18 @@ int streamer_start(char *servargs[])
         return rv;
     } 
     
-    printf("server: sockfd = %d\n", sockfd);
+    printf("streamer: sockfd = %d\n", sockfd);
     
-    // Get data frame
-    steamer_getframe(frame, NCHAN*BUFSAMP);
+    // Open FIFO
+    streamer_openfifo(&fifo);
     
     // Send message
     while(1)
     {
-        
+        // Pull data fram RAWFIFO
+        steamer_getframe(frame, NCHAN*BUFSAMP);
+         
+         
         if ((rv = streamer_sendframe(&sockfd, frame, framesize, servinfo)) == -1)
         {
             fprintf(stderr, "sendto: failed to send frame\n");
@@ -73,7 +79,7 @@ int streamer_start(char *servargs[])
         framecount++;
         if ((framecount % 100000) == 0)
         {
-            printf("server: sent %lu frames in %f seconds\n", framecount,dtsec);
+            printf("streamer: sent %lu frames in %f seconds\n", framecount,dtsec);
         }
     }
     
@@ -96,7 +102,7 @@ int streamer_bindsocket(int *sfd, struct addrinfo *si)
     {
         if ((*sfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) == -1)
         {
-            perror("server: socket");
+            perror("streamer: socket");
             continue;
         }
 
@@ -105,12 +111,12 @@ int streamer_bindsocket(int *sfd, struct addrinfo *si)
     
     if (p == NULL) 
     {
-        fprintf(stderr, "server: failed to bind socket\n");
+        fprintf(stderr, "streamer: failed to bind socket\n");
         return 2;
     }
 
     // Success
-    printf("server: bound to port %s\n",PORT);
+    printf("streamer: bound to port %s\n",PORT);
     return stat;
 }
 
@@ -119,19 +125,17 @@ int streamer_send(int *sfd, char *servargs[], struct addrinfo *si)
 {
     
     struct sockaddr_storage their_addr;
-    //char buf[MAXBUFLEN];
-    //socklen_t addr_len = sizeof(their_addr);
     int numbytes;
     char s[INET6_ADDRSTRLEN];           // Use INET6 length since this will work for IPv4 too.
     
     
     if ((numbytes = sendto(*sfd, servargs[1], strlen(servargs[1]), 0, si->ai_addr, si->ai_addrlen)) == -1) 
     {
-	perror("server: sendto");
+	perror("streamer: sendto");
 	return numbytes;
     }
 
-    printf("server: sent %d bytes to %s\n", numbytes, servargs[1]);
+    printf("streamer: sent %d bytes to %s\n", numbytes, servargs[1]);
 
     return 0;
 }
@@ -143,20 +147,52 @@ int streamer_sendframe(int *sfd, float *data_frame, int framesize, struct addrin
     
     if ((numbytes = sendto(*sfd, data_frame, framesize, 0, si->ai_addr, si->ai_addrlen)) == -1)
     {
-        perror("server: sendto");
+        perror("streamer: sendto");
         return numbytes;
     }
 }
 
-int steamer_getframe(float *data_frame, int count)
-{
-    // For now we are just going to create a data frame
-    count--;
-    while(count >= 0)
-    {
-        data_frame[count] = (float)(count);
-        count--;
+int streamer_openfifo(int *fifo) {
+    
+    //  Create FIFO over which data will be received
+    if( mkfifo( RAWFIFO, 0666) < 0 ) {
+        if (errno != EEXIST) {
+            perror( "streamer: mkfifo");
+            exit( EXIT_FAILURE);
+        }
     }
+    
+    // Open the FIFO
+    fifo = open( "PUGGLE-STREAM", O_RDWR );
+    if( fifo < 0 ) {
+        perror( "streamer: open FIFO" );
+        quit( EXIT_FAILURE );
+    }
+    
+    // Success
+    printf("streamer: RAWFIFO open, listening for incoming data.");
+    return 0;
+    
+}
+
+int steamer_getframe(int *fifo, float *data_frame, float count)
+{
+//    // For now we are just going to create a data frame
+//    count--;
+//    while(count >= 0)
+//    {
+//        data_frame[count] = (float)(count);
+//        count--;
+//    }
+    
+    int numbytes;
+    
+    // Pull data from the fifo buffer
+    if (numbytes = read(fifo, &data_frame, count) < 0) {
+        perror("streamer: fifo read");
+	return numbytes;
+    };
+    
     
     return 0;
     
