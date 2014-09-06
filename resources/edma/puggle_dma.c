@@ -139,12 +139,12 @@ struct stop_ppbuffer;
 
 /* Begin File Operations for Communication with Userland */
 static int puggle_open(struct inode *inode, struct file *file) {
-	DMA_PRINTK("successful\n");
+	DMA_PRINTK("Puggle: Open successful");
 	return 0;
 }
 
 static int puggle_release(struct inode *inode, struct file *file) {
-	DMA_PRINTK("successful\n");
+	DMA_PRINTK("Puggle: Release successful");
 	return 0;
 }
 
@@ -168,7 +168,7 @@ static ssize_t puggle_read(struct file *file, char __user *buf, size_t count, lo
 }
 
 static ssize_t puggle_write(struct file *file, const char *buf, size_t count, loff_t * ppos) {
-	DMA_PRINTK("accepting zero bytes\n");
+	DMA_PRINTK("Puggle: Accepting zero bytes");
 	return 0;
 }
 
@@ -176,11 +176,11 @@ static long puggle_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 	int result = 0;
 	int ret = 0;
 	void __user *argp = (void __user *)arg;
-	printk("cmd=%d, arg=%ld\n", cmd, arg);
+	DMA_PRINTK("Puggle: cmd=%d, arg=%ld", cmd, arg);
 
 	switch (cmd) {
 		case PUGGLE_STOP:
-			printk("stoping Puggle DMA");
+			DMA_PRINTK("Puggle: Stopping Puggle DMA");
 			stop_ppbuffer(&ch, &slot1, &slot2);
 			ack = 0;
 			break;
@@ -188,7 +188,7 @@ static long puggle_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 			// Make sure we stop channel first before we allocate otherwise may fail
 			stop_ppbuffer(&ch, &slot1, &slot2);
 			ret = copy_from_user(&puggle, argp, sizeof(puggle));
-			printk("Starting Puggle DMA %d BCNT %d CCNT", puggle.bcnt, puggle.ccnt);
+			DMA_PRINTK("Puggle: Starting Puggle DMA %d BCNT %d CCNT", puggle.bcnt, puggle.ccnt);
 			acnt = 4;
 			bcnt = puggle.bcnt;
 			ccnt = puggle.ccnt;
@@ -209,19 +209,19 @@ static long puggle_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 // Register Char Device
 static int setup_puggle_dev(void){
 	if (alloc_chrdev_region(&puggle_dev, puggle_first_minor, 1, "puggle_dma") < 0) {
-		printk(KERN_ERR "Puggle: unable to find free device numbers\n");
+		DMA_PRINTK(KERN_ERR "Puggle: unable to find free device numbers");
 		return -EIO;
 	}
 
 	cdev_init(puggle_cdev, &puggle_fops);
 
 	if (cdev_add(puggle_cdev, puggle_dev, 1) < 0) {
-		printk(KERN_ERR "broken: unable to add a character device\n");
+		DMA_PRINTK(KERN_ERR "Puggle: Broken: unable to add a character device");
 		unregister_chrdev_region(puggle_dev, puggle_count);
 		return -EIO;
 	}
 
-	printk(KERN_INFO "Loaded the puggle driver: major = %d, minor = %d\n",
+	DMA_PRINTK(KERN_INFO "Puggle: Loaded the puggle driver: major = %d, minor = %d", 
 			MAJOR(puggle_dev), MINOR(puggle_dev));
 
 	return 0;
@@ -236,16 +236,16 @@ static int __init puggle_init(void) {
 	int i,j;
 	int registered;
 
-	printk ("\nInitializing Puggle DMA module\n");
+	DMA_PRINTK("Puggle: Initializing Puggle DMA module");
 
 	registered = setup_puggle_dev();
 	if (registered < 0) {
-		printk("Puggle: Error registering puggle device\n");
+		DMA_PRINTK("Puggle: Error registering puggle device");
 	}
 
-	printk("\nPuggle: Registered module successfully!\n");
+	DMA_PRINTK("Puggle: Registered module successfully!");
 
-	DMA_PRINTK ( "\nACNT=%d, BCNT=%d, CCNT=%d", acnt, bcnt, ccnt);
+	DMA_PRINTK("Puggle: ACNT=%d, BCNT=%d, CCNT=%d", acnt, bcnt, ccnt);
 
 	/* allocate consistent memory for DMA
 	 * dmaphyssrc1(handle)= device viewed address.
@@ -253,24 +253,24 @@ static int __init puggle_init(void) {
 	 */
 
 	dmabufsrc1 = dma_alloc_coherent (NULL, MAX_DMA_TRANSFER_IN_BYTES,	&dmaphyssrc1, 0);
-	DMA_PRINTK( "\nSRC1:\t%x", dmaphyssrc1);
+	DMA_PRINTK("Puggle: SRC1:\t%x", dmaphyssrc1);
 	if (!dmabufsrc1) {
-		DMA_PRINTK ("dma_alloc_coherent failed for dmaphyssrc1\n");
+		DMA_PRINTK("Puggle: dma_alloc_coherent failed for dmaphyssrc1");
 		return -ENOMEM;
 	}
 
 	dmabufdest1 = dma_alloc_coherent (NULL, MAX_DMA_TRANSFER_IN_BYTES, &dmaphysdest1, 0);
-	DMA_PRINTK( "\nDST1:\t%x", dmaphysdest1);
+	DMA_PRINTK("Puggle: DST1:\t%x", dmaphysdest1);
 	if (!dmabufdest1) {
-		DMA_PRINTK("dma_alloc_coherent failed for dmaphysdest1\n");
+		DMA_PRINTK("Puggle: dma_alloc_coherent failed for dmaphysdest1");
 		dma_free_coherent(NULL, MAX_DMA_TRANSFER_IN_BYTES, dmabufsrc1, dmaphyssrc1);
 		return -ENOMEM;
 	}
 
 	dmabufsrc2 = dma_alloc_coherent (NULL, MAX_DMA_TRANSFER_IN_BYTES,	&dmaphyssrc2, 0);
-	DMA_PRINTK( "\nSRC2:\t%x", dmaphyssrc2);
+	DMA_PRINTK("Puggle: SRC2:\t%x", dmaphyssrc2);
 	if (!dmabufsrc2) {
-		DMA_PRINTK ("dma_alloc_coherent failed for dmaphyssrc2\n");
+		DMA_PRINTK("Puggle: dma_alloc_coherent failed for dmaphyssrc2");
 
 		dma_free_coherent(NULL, MAX_DMA_TRANSFER_IN_BYTES, dmabufsrc1, dmaphyssrc1);
 		dma_free_coherent(NULL, MAX_DMA_TRANSFER_IN_BYTES, dmabufdest1,	dmaphysdest1);
@@ -278,9 +278,9 @@ static int __init puggle_init(void) {
 	}
 
 	dmabufdest2 = dma_alloc_coherent (NULL, MAX_DMA_TRANSFER_IN_BYTES, &dmaphysdest2, 0);
-	DMA_PRINTK( "\nDST2:\t%x", dmaphysdest2);
+	DMA_PRINTK("Puggle: DST2:\t%x", dmaphysdest2);
 	if (!dmabufdest2) {
-		DMA_PRINTK ("dma_alloc_coherent failed for dmaphysdest2\n");
+		DMA_PRINTK("Puggle: dma_alloc_coherent failed for dmaphysdest2");
 
 		dma_free_coherent(NULL, MAX_DMA_TRANSFER_IN_BYTES, dmabufsrc1, dmaphyssrc1);
 		dma_free_coherent(NULL, MAX_DMA_TRANSFER_IN_BYTES, dmabufdest1, dmaphysdest1);
@@ -289,37 +289,35 @@ static int __init puggle_init(void) {
 	}
 
 	dmabufping = dma_alloc_coherent (NULL, MAX_DMA_TRANSFER_IN_BYTES, &dmaphysping, 0);
-	DMA_PRINTK( "\nDST1:\t%x", dmaphysping);
+	DMA_PRINTK("Puggle: DST1:\t%x", dmaphysping);
 	if (!dmabufping) {
-		DMA_PRINTK("dma_alloc_coherent failed for dmaphysdping\n");
+		DMA_PRINTK("dma_alloc_coherent failed for dmaphysdping");
 		//dma_free_coherent(NULL, MAX_DMA_TRANSFER_IN_BYTES, dmabufping, dmaphysping);
 		return -ENOMEM;
 	}
 
 	dmabufpong = dma_alloc_coherent (NULL, MAX_DMA_TRANSFER_IN_BYTES, &dmaphyspong, 0);
-	DMA_PRINTK( "\nDST1:\t%x", dmaphyspong);
+	DMA_PRINTK("Puggle: DST1:\t%x", dmaphyspong);
 	if (!dmabufpong) {
-		DMA_PRINTK("dma_alloc_coherent failed for dmaphysdest1\n");
+		DMA_PRINTK("Puggle: dma_alloc_coherent failed for dmaphysdest1");
 		dma_free_coherent(NULL, MAX_DMA_TRANSFER_IN_BYTES, dmabufping, dmaphysping);
 		return -ENOMEM;
 	}
 
 	for (iterations = 0 ; iterations < 10 ; iterations++) {
-		DMA_PRINTK ("Iteration = %d\n", iterations);
-
+		DMA_PRINTK("Puggle: Iteration = %d", iterations);
 		for (j = 0 ; j < numTCs ; j++) { //TC
-			DMA_PRINTK ("TC = %d\n", j);
-
+			DMA_PRINTK("Puggle: TC = %d", j);
 			for (i = 0 ; i < modes ; i++) {	//sync_mode
-				DMA_PRINTK ("Mode = %d\n", i);
+				DMA_PRINTK("Puggle: Mode = %d", i);
 
 				if (0 == result) {
-					DMA_PRINTK ("Starting edma3_fifotomemcpytest_dma_chain\n");
+					DMA_PRINTK("Puggle: Starting edma3_fifotomemcpytest_dma_chain");
 					result = edma3_fifotomemcpytest_dma_link(acnt, bcnt, ccnt, i, j);
 					if (0 == result) {
-						printk("edma3_fifotomemcpytest_dma_chain passed\n");
+						DMA_PRINTK("Puggle: edma3_fifotomemcpytest_dma_chain passed");
 					} else {
-						printk("edma3_fifotomemcpytest_dma_chain failed\n");
+						DMA_PRINTK("Puggle: edma3_fifotomemcpytest_dma_chain failed");
 					}
 				}
 			}
@@ -332,11 +330,11 @@ static void callback1(unsigned lch, u16 ch_status, void *data) {
 	switch(ch_status) {
 		case DMA_COMPLETE:
 			irqraised1 = 1;
-			DMA_PRINTK("\n From Callback 1: Channel %d status is: %u\n",lch, ch_status);
+			DMA_PRINTK("Puggle: From Callback 1: Channel %d status is: %u",lch, ch_status);
 			break;										
 		case DMA_CC_ERROR:
 			irqraised1 = -1;
-			DMA_PRINTK("\nFrom Callback 1: DMA_CC_ERROR occured on Channel %d\n", lch);
+			DMA_PRINTK("Puggle: From Callback 1: DMA_CC_ERROR occured on Channel %d", lch);
 			break;
 		default:
 			break;
@@ -347,16 +345,16 @@ static void callback_pingpong(unsigned lch, u16 ch_status, void *data) {
 	switch(ch_status) {
 		case DMA_COMPLETE:
 			irqraised1 = 1;
-			DMA_PRINTK ("Puggle: From Callback PingPong: Channel %d status is: %u\n",lch, ch_status); 
+			DMA_PRINTK("Puggle: From Callback PingPong: Channel %d status is: %u",lch, ch_status); 
 			// TODO use callabck put data into proper buffer, incrment a counter etc...
 			++transfer_counter;
 			if(ping == 1){
 				++ping_counter;
-				DMA_PRINTK ("Puggle: Transfer from Ping: ping_counter is %d transfer_counter is: %d", ping_counter, transfer_counter); 
+				DMA_PRINTK("Puggle: Transfer from Ping: ping_counter is %d transfer_counter is: %d", ping_counter, transfer_counter); 
 
 				// Transfer to circular buffer
 				cirbuff =  kfifo_len(&test);
-				printk("Puggle: puggle_dma cirbuff len is %d \n", cirbuff);
+				DMA_PRINTK("Puggle: puggle_dma cirbuff len is %d", cirbuff);
 
 				// Add headers/counters to buffer
 				kfifo_in(&test, &buf_header, 1); 
@@ -368,18 +366,18 @@ static void callback_pingpong(unsigned lch, u16 ch_status, void *data) {
 				kfifo_in(&test, dmabufping, bcnt*ccnt);
 
 				cirbuff =  kfifo_len(&test);
-				printk("Puggle: puggle_dma cirbuff len is %d \n", cirbuff);
+				DMA_PRINTK("Puggle: puggle_dma cirbuff len is %d", cirbuff);
 
 				ping = 0;
 				break;
 			}
 			else if(ping == 0){
 				++pong_counter;
-				DMA_PRINTK ("\nTransfer from Pong: pong_counter is %d transfer_counter is: %d", pong_counter, transfer_counter);
+				DMA_PRINTK("Puggle: Transfer from Pong: pong_counter is %d transfer_counter is: %d", pong_counter, transfer_counter);
 
 				// Transfer to circular buffer
 				cirbuff =  kfifo_len(&test);
-				printk("\n Puggle: puggle_dma cirbuff len is %d \n", cirbuff);
+				DMA_PRINTK("Puggle: puggle_dma cirbuff len is %d", cirbuff);
 
 				// Add headers/counters to buffer
 				kfifo_in(&test, &buf_header, 1); 
@@ -391,7 +389,7 @@ static void callback_pingpong(unsigned lch, u16 ch_status, void *data) {
 				kfifo_in(&test, dmabufpong, bcnt*ccnt);
 
 				cirbuff =  kfifo_len(&test);
-				printk("\n Puggle: puggle_dma cirbuff len is %d \n", cirbuff);
+				DMA_PRINTK("Puggle: puggle_dma cirbuff len is %d", cirbuff);
 
 				ping = 1;
 				break;
@@ -400,7 +398,7 @@ static void callback_pingpong(unsigned lch, u16 ch_status, void *data) {
 				break;										
 		case DMA_CC_ERROR:
 			irqraised1 = -1;
-			DMA_PRINTK ("\nFrom Callback PingPong : DMA_CC_ERROR occured on Channel %d\n", lch);
+			DMA_PRINTK ("From Callback PingPong : DMA_CC_ERROR occured on Channel %d", lch);
 			break;
 		default:
 			break;
@@ -415,12 +413,12 @@ void puggle_exit(void) {
 	dma_free_coherent(NULL, MAX_DMA_TRANSFER_IN_BYTES, dmabufdest2, dmaphysdest2);
 	dma_free_coherent(NULL, MAX_DMA_TRANSFER_IN_BYTES, dmabufping, dmaphysping);
 	dma_free_coherent(NULL, MAX_DMA_TRANSFER_IN_BYTES, dmabufpong, dmaphyspong);
-	printk("Puggle: Unregistering Driver\n");
+	DMA_PRINTK("Puggle: Unregistering Driver");
 
 	cdev_del(puggle_cdev);
 	unregister_chrdev_region(puggle_dev, puggle_count);
-	printk(KERN_INFO "Unloaded the Puggle driver!\n");
-	printk("Puggle: Exiting edma_test module\n");
+	DMA_PRINTK(KERN_INFO "Puggle: Unloaded the Puggle driver!");
+	DMA_PRINTK("Puggle: Exiting edma_test module");
 }
 
 /* 2 DMA Channels Linked, Mem-2-Mem Copy, ASYNC Mode, INCR Mode */
@@ -460,7 +458,7 @@ int edma3_memtomemcpytest_dma_link(int acnt, int bcnt, int ccnt, int sync_mode, 
 
 	result = edma_alloc_channel (EDMA_CHANNEL_ANY, callback1, NULL, event_queue);
 	if (result < 0) {
-		DMA_PRINTK ("edma3_memtomemcpytest_dma_link::edma_alloc_channel failed for dma_ch1, error:%d\n", result);
+		DMA_PRINTK("Puggle: edma3_memtomemcpytest_dma_link::edma_alloc_channel failed for dma_ch1, error:%d", result);
 		return result;
 	}
 	dma_ch1 = result;
@@ -482,7 +480,7 @@ int edma3_memtomemcpytest_dma_link(int acnt, int bcnt, int ccnt, int sync_mode, 
 	// Request a Link Channel
 	result = edma_alloc_slot (0, EDMA_SLOT_ANY);
 	if (result < 0) {
-		DMA_PRINTK ("\nedma3_memtomemcpytest_dma_link::edma_alloc_slot failed for dma_ch2, error:%d\n", result);
+		DMA_PRINTK("Puggle: edma3_memtomemcpytest_dma_link::edma_alloc_slot failed for dma_ch2, error:%d", result);
 		return result;
 	}
 	dma_ch2 = result;
@@ -514,7 +512,7 @@ int edma3_memtomemcpytest_dma_link(int acnt, int bcnt, int ccnt, int sync_mode, 
 		 */
 		result = edma_start(dma_ch1);
 		if (result != 0) {
-			DMA_PRINTK ("edma3_memtomemcpytest_dma_link: davinci_start_dma failed \n");
+			DMA_PRINTK("Puggle: edma3_memtomemcpytest_dma_link: davinci_start_dma failed");
 			break;
 		}
 
@@ -523,7 +521,7 @@ int edma3_memtomemcpytest_dma_link(int acnt, int bcnt, int ccnt, int sync_mode, 
 		/* Check the status of the completed transfer */
 		if (irqraised1 < 0) {
 			/* Some error occured, break from the FOR loop. */
-			DMA_PRINTK ("edma3_memtomemcpytest_dma_link: Event Miss Occured!!!\n");
+			DMA_PRINTK("Puggle: edma3_memtomemcpytest_dma_link: Event Miss Occured!!!");
 			break;
 		}
 	}
@@ -537,7 +535,7 @@ int edma3_memtomemcpytest_dma_link(int acnt, int bcnt, int ccnt, int sync_mode, 
 			 */
 			result = edma_start(dma_ch1);
 			if (result != 0) {
-				DMA_PRINTK ("\nedma3_memtomemcpytest_dma_link: davinci_start_dma failed \n");
+				DMA_PRINTK("Puggle: edma3_memtomemcpytest_dma_link: davinci_start_dma failed");
 				break;
 			}
 			/* Wait for the Completion ISR. */
@@ -545,8 +543,7 @@ int edma3_memtomemcpytest_dma_link(int acnt, int bcnt, int ccnt, int sync_mode, 
 			/* Check the status of the completed transfer */
 			if (irqraised1 < 0) {
 				/* Some error occured, break from the FOR loop. */
-				DMA_PRINTK ("edma3_memtomemcpytest_dma_link: "
-						"Event Miss Occured!!!\n");
+				DMA_PRINTK("Puggle: edma3_memtomemcpytest_dma_link: Event Miss Occured!!!");
 				break;
 			}
 		}
@@ -555,8 +552,8 @@ int edma3_memtomemcpytest_dma_link(int acnt, int bcnt, int ccnt, int sync_mode, 
 	if (0 == result) {
 		for (i = 0; i < (acnt*bcnt*ccnt); i++) {
 			if (dmabufsrc1[i] != dmabufdest1[i]) {
-				DMA_PRINTK ("\nedma3_memtomemcpytest_dma_link(1): Data "
-						"write-read matching failed at = %u\n",i);
+				DMA_PRINTK("Puggle: edma3_memtomemcpytest_dma_link(1): Data "
+						"write-read matching failed at = %u",i);
 				Istestpassed1 = 0u;
 				break;
 			}
@@ -566,8 +563,8 @@ int edma3_memtomemcpytest_dma_link(int acnt, int bcnt, int ccnt, int sync_mode, 
 		}
 		for (i = 0; i < (acnt*bcnt*ccnt); i++) {
 			if (dmabufsrc2[i] != dmabufdest2[i]) {
-				DMA_PRINTK ("\nedma3_memtomemcpytest_dma_link(2): Data "
-						"write-read matching failed at = %u\n",i);
+				DMA_PRINTK("Puggle: edma3_memtomemcpytest_dma_link(2): Data "
+						"write-read matching failed at = %u",i);
 				Istestpassed2 = 0u;
 				break;
 			}
@@ -583,9 +580,9 @@ int edma3_memtomemcpytest_dma_link(int acnt, int bcnt, int ccnt, int sync_mode, 
 	}
 
 	if ((Istestpassed1 == 1u) && (Istestpassed2 == 1u)) {
-		DMA_PRINTK ("\nedma3_memtomemcpytest_dma_link: EDMA Data Transfer Successfull\n");
+		DMA_PRINTK("Puggle: edma3_memtomemcpytest_dma_link: EDMA Data Transfer Successfull");
 	} else {
-		DMA_PRINTK ("\nedma3_memtomemcpytest_dma_link: EDMA Data Transfer Failed\n");
+		DMA_PRINTK("Puggle: edma3_memtomemcpytest_dma_link: EDMA Data Transfer Failed");
 	}
 
 	return result;
@@ -626,9 +623,9 @@ int edma3_fifotomemcpytest_dma_link(int acnt, int bcnt, int ccnt, int sync_mode,
 	descidx = bcnt * acnt;
 
 	// GRAB all the channels and slots we need for linking ping pong buffers and circling them
-	result = edma_alloc_channel (ch, callback_pingpong, NULL, event_queue);
+	result = edma_alloc_channel(ch, callback_pingpong, NULL, event_queue);
 	if (result < 0) {
-		DMA_PRINTK ("edma3_fifotomemcpytest_dma_link::edma_alloc_channel failed for dma_ch1, error:%d\n", result);
+		DMA_PRINTK("Puggle: edma3_fifotomemcpytest_dma_link::edma_alloc_channel failed for dma_ch1, error:%d", result);
 		return result;
 	}
 	dma_ch1 = result;
@@ -637,7 +634,7 @@ int edma3_fifotomemcpytest_dma_link(int acnt, int bcnt, int ccnt, int sync_mode,
 	// Request a Link Channel for slot1
 	result = edma_alloc_slot (0, EDMA_SLOT_ANY);
 	if (result < 0) {
-		DMA_PRINTK ("\nedma3_fifotomemcpytest_dma_link::edma_alloc_slot failed for dma_ch1, error:%d\n", result);
+		DMA_PRINTK("Puggle: edma3_fifotomemcpytest_dma_link::edma_alloc_slot failed for dma_ch1, error:%d", result);
 		return result;
 	}
 	dma_slot1 = result;
@@ -646,7 +643,7 @@ int edma3_fifotomemcpytest_dma_link(int acnt, int bcnt, int ccnt, int sync_mode,
 	// Request a Link Channel for slot2
 	result = edma_alloc_slot (0, EDMA_SLOT_ANY);
 	if (result < 0) {
-		DMA_PRINTK ("\nedma3_fifotomemcpytest_dma_link::edma_alloc_slot failed for dma_ch2, error:%d\n", result);
+		DMA_PRINTK("Puggle: edma3_fifotomemcpytest_dma_link::edma_alloc_slot failed for dma_ch2, error:%d", result);
 		return result;
 	}
 	dma_slot2 = result;
@@ -670,7 +667,7 @@ int edma3_fifotomemcpytest_dma_link(int acnt, int bcnt, int ccnt, int sync_mode,
 	param_set.opt |= (1 << TCINTEN_SHIFT); // | 1 << TCCHEN_SHIFT);
 	param_set.opt |= EDMA_TCC(EDMA_CHAN_SLOT(dma_ch1));
 	edma_write_slot(dma_ch1, &param_set);
-	DMA_PRINTK("\n opt for ch %u", param_set.opt); 
+	DMA_PRINTK("Puggle: opt for ch %u", param_set.opt); 
 
 	// Test to see if we can get CCNT to remain the same
 	edma_set_src (dma_slot1, (unsigned long long)MCSPI0_FIFO_ADDR, FIFO, W32BIT);
@@ -693,11 +690,11 @@ int edma3_fifotomemcpytest_dma_link(int acnt, int bcnt, int ccnt, int sync_mode,
 	param_set.opt |= (1 << TCINTEN_SHIFT); // | 1 << TCCHEN_SHIFT);
 	param_set.opt |= EDMA_TCC(EDMA_CHAN_SLOT(dma_ch1)); // This May be key
 	edma_write_slot(dma_slot2, &param_set);
-	DMA_PRINTK("\n opt for link%u slot %u",dma_slot2, param_set.opt); 
+	DMA_PRINTK("Puggle: opt for link%u slot %u",dma_slot2, param_set.opt); 
 
 	result = edma_start(dma_ch1);
 	if (result != 0) {
-		DMA_PRINTK ("edma3_fifotomemcpytest_dma_link: davinci_start_dma failed \n");
+		DMA_PRINTK("Puggle: edma3_fifotomemcpytest_dma_link: davinci_start_dma failed");
 	}
 
 	return result;
@@ -709,7 +706,7 @@ static int stop_ppbuffer(int *ch, int *slot1, int *slot2) {
 	edma_free_channel(*ch);
 	edma_free_slot(*slot1);
 	edma_free_slot(*slot2);
-	DMA_PRINTK("DMA channels stopped and freed");
+	DMA_PRINTK("Puggle: DMA channels stopped and freed");
 	return 0;
 }
 
