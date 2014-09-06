@@ -19,10 +19,10 @@
 
 #!/bin/bash
 
-echo "----->Running latency test under load. Please wait (approx 5 minutes)"
+echo "----->Running latency test under load. Please wait (approx 2 minutes)"
 echo "----->Do not interrupt."
 
 # Run latency test under dynamic load
-stress --cpu 1 --io 1 --vm 1 --hdd 1 --timeout 300 & sudo /usr/xenomai/bin/./latency -T 300 -p 100
+stress --cpu 1 --io 1 --vm 1 --hdd 1 --timeout 120 & sudo /usr/xenomai/bin/./latency -T 120 -p 100
 
 exit 0
