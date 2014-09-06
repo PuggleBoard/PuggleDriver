@@ -81,6 +81,7 @@ struct  puggle_cnt{
 	unsigned int bcnt;
 	unsigned int ccnt;
 };
+
 int ch = 17;
 int slot1;
 int slot2;
@@ -237,6 +238,10 @@ static int __init puggle_init(void) {
 	int registered;
 
 	DMA_PRINTK("Puggle: Initializing Puggle DMA module");
+
+	// Free channel 17 incase
+	edma_stop(ch);
+	edma_free_channel(ch);
 
 	registered = setup_puggle_dev();
 	if (registered < 0) {
@@ -581,7 +586,7 @@ int edma3_memtomemcpytest_dma_link(int acnt, int bcnt, int ccnt, int sync_mode, 
 	}
 
 	if ((Istestpassed1 == 1u) && (Istestpassed2 == 1u)) {
-		DMA_PRINTK("Puggle: edma3_memtomemcpytest_dma_link: EDMA Data Transfer Successfull");
+		DMA_PRINTK("Puggle: edma3_memtomemcpytest_dma_link: EDMA Data Transfer Successful");
 	} else {
 		DMA_PRINTK("Puggle: edma3_memtomemcpytest_dma_link: EDMA Data Transfer Failed");
 	}
