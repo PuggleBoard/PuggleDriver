@@ -408,7 +408,7 @@ static void callback_pingpong(unsigned lch, u16 ch_status, void *data) {
 }
 /* Required exit function for all kernel modules */
 void puggle_exit(void) {
-	stop_ping_pong (&ch, &slot1, &slot2);
+	stop_ppbuffer(&ch, &slot1, &slot2);
 	dma_free_coherent(NULL, MAX_DMA_TRANSFER_IN_BYTES, dmabufsrc1, dmaphyssrc1);
 	dma_free_coherent(NULL, MAX_DMA_TRANSFER_IN_BYTES, dmabufdest1, dmaphysdest1);
 	dma_free_coherent(NULL, MAX_DMA_TRANSFER_IN_BYTES, dmabufsrc2, dmaphyssrc2);
