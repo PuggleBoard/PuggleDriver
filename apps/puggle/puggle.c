@@ -14,7 +14,7 @@
 
 	 You should have received a copy of the CC Public Domain Dedication along with
 	 this software. If not, see <http://creativecommons.org/licenses/by-sa/3.0/legalcode>.
- */
+	 */
 
 // System includes
 #include <stdio.h>
@@ -104,7 +104,7 @@ static uint32_t read_uint32_hex_from_file(const char *file) {
 static int load_pruss_dram_info(app_data *info) {
 	info->ddr_size = read_uint32_hex_from_file(UIO_PRUSS_DRAM_SIZE);
 	info->ddr_base_address = read_uint32_hex_from_file(UIO_PRUSS_DRAM_ADDR);
-	//printf("DDR size is %dMB starting at address 0x%08lX\n", (unsigned int)info->ddr_size/1024, info->ddr_base_address);
+	printf("DDR size is %dMB starting at address 0x%08lX\n", (unsigned int)info->ddr_size/1024, info->ddr_base_address);
 	return 0;
 }
 
@@ -153,6 +153,9 @@ static int init(app_data *info) {
 	// Write dac offset
 	info->pru_params->dac_offset = 0x000000ff;
 
+	// Loading binary onto PRU0
+	prussdrv_exec_program(PRU_NUM0, "./intan.bin");
+
 	printf("Initialization complete.\n");
 	return(0);
 }
@@ -172,12 +175,8 @@ void intHandler(int val) {
 		printf("Data acquisition status: stopped.\n");
 	}
 	else {
-		/* Enable run/stop bit and start PRUs
-		 * Generate SPI on PRU1 and Transfer data
-		 * from PRU Shared space to User Space on PRU0
-		 */
+		// Enable run/stop bit and start PRUs
 		info.pru_params->run_flag = 1;
-		prussdrv_exec_program(PRU_NUM0, "./puggle.bin");
 		printf("Data acquisition status: started.\n");
 	}
 }
@@ -204,7 +203,6 @@ int main(int argc, char *argv[]) {
 	printf("Starting PuggleDriver.\n");
 
 	system_status = 1;
-
 	unsigned int retval = 0;
 	unsigned int ret;
 	pthread_t tid;
@@ -231,23 +229,17 @@ int main(int argc, char *argv[]) {
 	// Initialize interrupts
 	prussdrv_pruintc_init(&pruss_intc_initdata);
 
+	// Initialize flags and controller for start/stop of PRUs
+	signal(SIGINT, intHandler);
+
 	// Initialize memory settings
 	init(&info);
 
-	// Initialize flags and controller for start/stop of PRUs
-	//signal(SIGINT, intHandler);
-
 	// Initialize RT thread
-	initialize();
+	init_rt_thread();
 
-	// Create worker thread
+	// Create worker thread -- this needs fixing YP
 	pthread_create(&tid, NULL, &module_thread, NULL);
-	/*xenomai_task_t *puggle;
-		retval = createTask(&puggle);
-		printf("%d\n",retval);*/
-
-	prussdrv_exec_program(PRU_NUM0, "./puggle.bin");
-	printf("Data acquisition status: started.\n");
 
 	// Wait until PRU0 has finished execution
 	prussdrv_pru_wait_event(PRU_EVTOUT_0);
@@ -260,7 +252,7 @@ int main(int argc, char *argv[]) {
 	return(0);
 }
 
-int initialize(void) {
+int init_rt_thread(void) {
 	rt_timer_set_mode(TM_ONESHOT);
 
 	// override blocking limit on memory
@@ -275,7 +267,7 @@ int initialize(void) {
 	pthread_key_create(&is_rt_key,0);
 	init_rt = true;
 
-	printf("Thread initialization complete.\n");
+	printf("RT thread initialization complete.\n");
 	return 0;
 }
 
@@ -287,7 +279,7 @@ int createTask(Task *task) {
 	int resval = 0;
 	xenomai_task_t *t = &task;
 
-	if((resval = rt_task_create(&t->puggle_rt_task, "Puggle", 0, 99, T_FPU | T_JOINABLE))) {
+	if((resval = rt_task_create(&t->puggle_rt_task, "Puggle RT Thread", 0, 99, T_FPU | T_JOINABLE))) {
 		ERROR_MSG("Failed to create task.\n");
 		return resval;
 	}

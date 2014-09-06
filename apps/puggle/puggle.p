@@ -84,7 +84,6 @@ CONFIGURE:
 // Write ADC configuration to SPI_TX0
 // Sets ADC CMR and CFR to default
 CALL ENABLE_CH0
-
 MOV addr, MCSPI_TX0
 MOV val, ADC_CONFIG
 SBBO val, addr, 0, 4
@@ -126,9 +125,6 @@ SBBO val, addr, 0 ,4
 delay
 delay
 
-MOV r3, 1
-MOV TEMP, 0
-
 //////////////////////////////////////
 // ******************** BEGIN ACQUISITION ********************
 RUN_AQ:
@@ -140,7 +136,7 @@ delayTwenty
 // Write ADC command to SPI_TX0
 CALL ENABLE_CH0
 MOV addr, MCSPI_TX0
-MOV val, READ_ADC_DATA
+MOV val,  READ_ADC_DATA
 SBBO val, addr, 0, 4
 
 // Disable channel 0
@@ -168,7 +164,7 @@ delay
 delayTwenty
 
 //ADD r3, r3, 1
-//QBEQ EXIT, r3, 65000
+//QBEQ EXIT, r3, 255
 JMP RUN_AQ
 
 //////////////////////////////////////

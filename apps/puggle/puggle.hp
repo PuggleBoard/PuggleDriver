@@ -70,8 +70,8 @@
 // Configure SYSCONFIG
 #define CM_PER_SPI0_CLK_EN      0x2
 #define CM_PER_SPI1_CLK_EN      0x2
-#define MODCONTROL              0x100
 
+#define MODCONTROL              0x100
 #define ADC_IRQENABLE           0x00000000
 #define ADC_SYSCONFIG           0x00000311
 #define ADC_XFER 								0xFF0a
@@ -180,14 +180,14 @@ delayTwenty
 //
 .macro  MakeWrUpA
 .mparam dst
-		//MOV			addr, MCSPI_RX0
-		//LBBO		TEMP, addr, 0, 4
+		MOV			addr, MCSPI_DAFRX //MCSPI_RX0
+		LBBO		TEMP, addr, 0, 4
     AND     dst.w0.b0, TEMP, 0xFF
     LSR			TEMP, TEMP, 8
     AND     dst.w0.b1, TEMP, 0xFF
-    ADD     TEMP, TEMP, 1
-    //MOV     dst.w0, TEMP
-    MOV     dst.w2, 0x0038
+    //ADD     TEMP, TEMP, 1
+    MOV     dst.w0, TEMP
+    MOV     dst.w2, 0x0031
 .endm
 
 .macro READ_INTAN
