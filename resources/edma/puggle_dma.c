@@ -138,7 +138,7 @@ struct puggle_cnt puggle;
 struct file_operations puggle_fops;
 struct stop_ppbuffer;
 
-/* Begin File Operations for Communication with Userland */
+/* Begin file operations for communication with userland */
 static int puggle_open(struct inode *inode, struct file *file) {
 	DMA_PRINTK("Puggle: Open successful");
 	return 0;
@@ -150,21 +150,23 @@ static int puggle_release(struct inode *inode, struct file *file) {
 }
 
 static ssize_t puggle_read(struct file *file, char __user *buf, size_t count, loff_t *ppos) {
-	//Returns number requested otherwise sends back the amount of data that is in the fifo
+	// Returns number requested otherwise sends back the amount of data that is in the fifo
 	int ret ;
 	unsigned int copied;
 	unsigned int length;
 
-	//divide by 4 is neccassry to get the right number of ints in the array
+	// Divide by 4 is neccassry to get the right number of ints in the array
 	if (kfifo_len(&test) >= (count >> 2) ) {
 		ret = kfifo_to_user(&test, buf, count, &copied);
 	}
 	else if(kfifo_len(&test) > 0 ) {
-		length = kfifo_len(&test) << 2; // need to convert to number of chars in fifo
+		length = kfifo_len(&test) << 2; // Convert to number of chars in fifo
 		ret = kfifo_to_user(&test, buf, length, &copied);
 	}
 	else
 		ret = -1;
+
+	DMA_PRINTK("Read returned %d", ret);
 	return ret ? ret : copied;
 }
 
@@ -327,21 +329,6 @@ static int __init puggle_init(void) {
 	return result;
 }
 
-static void callback1(unsigned lch, u16 ch_status, void *data) {
-	switch(ch_status) {
-		case DMA_COMPLETE:
-			irqraised1 = 1;
-			DMA_PRINTK("Puggle: From Callback 1: Channel %d status is: %u",lch, ch_status);
-			break;										
-		case DMA_CC_ERROR:
-			irqraised1 = -1;
-			DMA_PRINTK("Puggle: From Callback 1: DMA_CC_ERROR occured on Channel %d", lch);
-			break;
-		default:
-			break;
-	}
-}
-
 static void callback_pingpong(unsigned lch, u16 ch_status, void *data) {
 	switch(ch_status) {
 		case DMA_COMPLETE:
@@ -457,7 +444,7 @@ int edma3_memtomemcpytest_dma_link(int acnt, int bcnt, int ccnt, int sync_mode, 
 	srccidx = bcnt * acnt;
 	descidx = bcnt * acnt;
 
-	result = edma_alloc_channel (EDMA_CHANNEL_ANY, callback1, NULL, event_queue);
+	result = edma_alloc_channel (EDMA_CHANNEL_ANY, callback_pingpong, NULL, event_queue);
 	if (result < 0) {
 		DMA_PRINTK("Puggle: edma3_memtomemcpytest_dma_link::edma_alloc_channel failed for dma_ch1, error:%d", result);
 		return result;
