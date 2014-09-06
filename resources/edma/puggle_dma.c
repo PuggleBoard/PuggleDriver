@@ -318,8 +318,8 @@ static int __init puggle_init(void) {
 				DMA_PRINTK("Puggle: Mode = %d", i);
 				if (0 == result) {
 					DMA_PRINTK("Puggle: Starting edma3_fifotomemcpytest_dma_link");
-					//result = edma3_fifotomemcpytest_dma_link(acnt, bcnt, ccnt, i, j);
-					result = edma3_memtomemcpytest_dma_link(acnt, bcnt, ccnt, i, j);
+					result = edma3_fifotomemcpytest_dma_link(acnt, bcnt, ccnt, i, j);
+					//result = edma3_memtomemcpytest_dma_link(acnt, bcnt, ccnt, i, j);
 					if (0 == result) {
 						DMA_PRINTK("Puggle: edma3_fifotomemcpytest_dma_link passed");
 					} else {
