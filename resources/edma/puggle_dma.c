@@ -240,7 +240,9 @@ static int __init puggle_init(void) {
 	DMA_PRINTK("Puggle: Initializing Puggle DMA module");
 
 	// Free channel 17 incase
+	DMA_PRINTK("Puggle: Resetting channel %d", ch);
 	edma_stop(ch);
+	edma_clean_channel(ch);
 	edma_free_channel(ch);
 
 	registered = setup_puggle_dev();
