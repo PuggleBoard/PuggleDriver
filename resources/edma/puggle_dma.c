@@ -306,11 +306,11 @@ static int __init puggle_init(void) {
 	}
 
 	// Test routine
-	for (iterations = 0 ; iterations < 10 ; iterations++) {
+	for(iterations = 0; iterations < 5 ; iterations++) {
 		DMA_PRINTK("Puggle: Iteration = %d", iterations);
-		for (j = 0 ; j < numTCs ; j++) { //TC
+		for(j = 0 ; j < numTCs ; j++) { //TC
 			DMA_PRINTK("Puggle: TC = %d", j);
-			for (i = 0 ; i < modes ; i++) {	//sync_mode
+			for(i = 0 ; i < modes ; i++) {	//sync_mode
 				DMA_PRINTK("Puggle: Mode = %d", i);
 				if (0 == result) {
 					DMA_PRINTK("Puggle: Starting edma3_fifotomemcpytest_dma_link");
@@ -608,6 +608,10 @@ int edma3_fifotomemcpytest_dma_link(int acnt, int bcnt, int ccnt, int sync_mode,
 		dmabufping[count] = 0;
 		dmabufpong[count] = 0;
 	}
+
+	// Init DMA channels
+	edma_stop(ch);
+	edma_free_channel(ch);
 
 	// Set B count reload as B count.
 	BRCnt = bcnt; //changed from bcnt may not affect anything
