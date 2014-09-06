@@ -330,10 +330,11 @@ static int __init puggle_init(void) {
 }
 
 static void callback_pingpong(unsigned lch, u16 ch_status, void *data) {
+	DMA_PRINTK("Puggle: Hello from callback with %u", ch_status);
 	switch(ch_status) {
 		case DMA_COMPLETE:
 			irqraised1 = 1;
-			DMA_PRINTK("Puggle: From Callback PingPong: Channel %d status is: %u",lch, ch_status); 
+			DMA_PRINTK("Puggle: From callback_pingpong: Channel %d status is: %u",lch, ch_status); 
 			// TODO use callabck put data into proper buffer, incrment a counter etc...
 			++transfer_counter;
 			if(ping == 1){
