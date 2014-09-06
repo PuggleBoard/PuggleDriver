@@ -82,7 +82,7 @@ struct  puggle_cnt{
 	unsigned int ccnt;
 };
 
-int ch = 17;
+int ch = 19;
 int slot1;
 int slot2;
 int *ch_ptr = &ch;
@@ -608,7 +608,6 @@ int edma3_fifotomemcpytest_dma_link(int acnt, int bcnt, int ccnt, int sync_mode,
 	int srccidx = 0;
 	int descidx = 0;
 	struct edmacc_param param_set;
-	int ch_test = 0;
 
 	// Initalize source and destination buffers
 	for (count = 0u; count < (bcnt*ccnt); count++) {
@@ -628,12 +627,11 @@ int edma3_fifotomemcpytest_dma_link(int acnt, int bcnt, int ccnt, int sync_mode,
 	descidx = bcnt * acnt;
 
 	// GRAB all the channels and slots we need for linking ping pong buffers and circling them
-	result = edma_alloc_channel(ch_test, callback_pingpong, NULL, event_queue);
+	result = edma_alloc_channel(ch, callback_pingpong, NULL, event_queue);
 	if (result < 0) {
 		DMA_PRINTK("Puggle: edma3_fifotomemcpytest_dma_link::edma_alloc_channel failed for dma_ch1, error:%d", result);
 		return result;
 	}
-	DMA_PRINTK("ch is %d", ch_test);
 	dma_ch1 = result;
 	*ch_ptr = result; //Make sure we keep the same info on the channel
 
