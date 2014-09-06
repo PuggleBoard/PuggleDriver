@@ -239,12 +239,6 @@ static int __init puggle_init(void) {
 
 	DMA_PRINTK("Puggle: Initializing Puggle DMA module");
 
-	// Free channel 17 incase
-	DMA_PRINTK("Puggle: Resetting channel %d", ch);
-	edma_stop(ch);
-	edma_clean_channel(ch);
-	edma_free_channel(ch);
-
 	registered = setup_puggle_dev();
 	if (registered < 0) {
 		DMA_PRINTK("Puggle: Error registering puggle device");
@@ -694,7 +688,7 @@ int edma3_fifotomemcpytest_dma_link(int acnt, int bcnt, int ccnt, int sync_mode,
 	param_set.opt |= (1 << TCINTEN_SHIFT); // | 1 << TCCHEN_SHIFT);
 	param_set.opt |= EDMA_TCC(EDMA_CHAN_SLOT(dma_ch1)); // This May be key
 	edma_write_slot(dma_slot2, &param_set);
-	DMA_PRINTK("Puggle: opt for link%u slot %u",dma_slot2, param_set.opt); 
+	DMA_PRINTK("Puggle: opt for link %u slot %u",dma_slot2, param_set.opt); 
 
 	result = edma_start(dma_ch1);
 	if (result != 0) {

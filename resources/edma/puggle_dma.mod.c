@@ -22,7 +22,6 @@ __attribute__((section("__versions"))) = {
 	{ 0x812bbccc, "cdev_add" },
 	{ 0x78a570d9, "cdev_init" },
 	{ 0x29537c9e, "alloc_chrdev_region" },
-	{ 0x8c705b8c, "edma_clean_channel" },
 	{ 0xfbc74f64, "__copy_from_user" },
 	{ 0xfa2a45e, "__memzero" },
 	{ 0x83d70683, "edma_start" },
@@ -55,4 +54,4 @@ __attribute__((section(".modinfo"))) =
 "depends=";
 
 
-MODULE_INFO(srcversion, "690908CD5B6CEE7B2E42AE1");
+MODULE_INFO(srcversion, "341D7528C96416575297031");
