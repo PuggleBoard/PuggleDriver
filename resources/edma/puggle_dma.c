@@ -609,6 +609,10 @@ int edma3_fifotomemcpytest_dma_link(int acnt, int bcnt, int ccnt, int sync_mode,
 		dmabufpong[count] = 0;
 	}
 
+	// Reset channels
+	edma_stop(ch);
+	edma_free_channel(ch);
+
 	// Set B count reload as B count.
 	BRCnt = bcnt; //changed from bcnt may not affect anything
 
