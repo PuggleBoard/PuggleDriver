@@ -19,11 +19,11 @@ __used
 __attribute__((section("__versions"))) = {
 	{ 0x465ae224, "module_layout" },
 	{ 0x15692c87, "param_ops_int" },
+	{ 0xfbc74f64, "__copy_from_user" },
+	{ 0xfa2a45e, "__memzero" },
 	{ 0x812bbccc, "cdev_add" },
 	{ 0x78a570d9, "cdev_init" },
 	{ 0x29537c9e, "alloc_chrdev_region" },
-	{ 0xfbc74f64, "__copy_from_user" },
-	{ 0xfa2a45e, "__memzero" },
 	{ 0x83d70683, "edma_start" },
 	{ 0x4e9ce9f9, "edma_link" },
 	{ 0x60541702, "edma_alloc_slot" },
@@ -54,4 +54,4 @@ __attribute__((section(".modinfo"))) =
 "depends=";
 
 
-MODULE_INFO(srcversion, "C6A6D9CEE49316CD75F479A");
+MODULE_INFO(srcversion, "59BF17C1B2306FEB39AE124");

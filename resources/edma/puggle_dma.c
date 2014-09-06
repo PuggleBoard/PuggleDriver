@@ -304,20 +304,21 @@ static int __init puggle_init(void) {
 		return -ENOMEM;
 	}
 
+	// Test routine
 	for (iterations = 0 ; iterations < 10 ; iterations++) {
 		DMA_PRINTK("Puggle: Iteration = %d", iterations);
 		for (j = 0 ; j < numTCs ; j++) { //TC
 			DMA_PRINTK("Puggle: TC = %d", j);
 			for (i = 0 ; i < modes ; i++) {	//sync_mode
 				DMA_PRINTK("Puggle: Mode = %d", i);
-
 				if (0 == result) {
-					DMA_PRINTK("Puggle: Starting edma3_fifotomemcpytest_dma_chain");
-					result = edma3_fifotomemcpytest_dma_link(acnt, bcnt, ccnt, i, j);
+					DMA_PRINTK("Puggle: Starting edma3_fifotomemcpytest_dma_link");
+					//result = edma3_fifotomemcpytest_dma_link(acnt, bcnt, ccnt, i, j);
+					result = edma3_memtomemcpytest_dma_link(acnt, bcnt, ccnt, i, j);
 					if (0 == result) {
-						DMA_PRINTK("Puggle: edma3_fifotomemcpytest_dma_chain passed");
+						DMA_PRINTK("Puggle: edma3_fifotomemcpytest_dma_link passed");
 					} else {
-						DMA_PRINTK("Puggle: edma3_fifotomemcpytest_dma_chain failed");
+						DMA_PRINTK("Puggle: edma3_fifotomemcpytest_dma_link failed");
 					}
 				}
 			}
@@ -594,7 +595,6 @@ int edma3_memtomemcpytest_dma_link(int acnt, int bcnt, int ccnt, int sync_mode, 
 int edma3_fifotomemcpytest_dma_link(int acnt, int bcnt, int ccnt, int sync_mode, int event_queue) {
 	int result = 0;
 	unsigned int dma_ch1 = 0;
-	unsigned int dma_ch2 = 0;
 	unsigned int dma_slot1 = 0;
 	unsigned int dma_slot2 = 0;
 	int count = 0;
@@ -634,7 +634,7 @@ int edma3_fifotomemcpytest_dma_link(int acnt, int bcnt, int ccnt, int sync_mode,
 	// Request a Link Channel for slot1
 	result = edma_alloc_slot(0, EDMA_SLOT_ANY);
 	if (result < 0) {
-		DMA_PRINTK("Puggle: edma3_fifotomemcpytest_dma_link::edma_alloc_slot failed for dma_ch1, error:%d", result);
+		DMA_PRINTK("Puggle: edma3_fifotomemcpytest_dma_link::edma_alloc_slot failed for slot 1, error:%d", result);
 		return result;
 	}
 	dma_slot1 = result;
@@ -643,7 +643,7 @@ int edma3_fifotomemcpytest_dma_link(int acnt, int bcnt, int ccnt, int sync_mode,
 	// Request a Link Channel for slot2
 	result = edma_alloc_slot (0, EDMA_SLOT_ANY);
 	if (result < 0) {
-		DMA_PRINTK("Puggle: edma3_fifotomemcpytest_dma_link::edma_alloc_slot failed for dma_ch2, error:%d", result);
+		DMA_PRINTK("Puggle: edma3_fifotomemcpytest_dma_link::edma_alloc_slot failed for slot 2, error:%d", result);
 		return result;
 	}
 	dma_slot2 = result;
