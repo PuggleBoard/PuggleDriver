@@ -632,7 +632,7 @@ int edma3_fifotomemcpytest_dma_link(int acnt, int bcnt, int ccnt, int sync_mode,
 	*ch_ptr = result; //Make sure we keep the same info on the channel
 
 	// Request a Link Channel for slot1
-	result = edma_alloc_slot (0, EDMA_SLOT_ANY);
+	result = edma_alloc_slot(0, EDMA_SLOT_ANY);
 	if (result < 0) {
 		DMA_PRINTK("Puggle: edma3_fifotomemcpytest_dma_link::edma_alloc_slot failed for dma_ch1, error:%d", result);
 		return result;
