@@ -82,7 +82,7 @@ struct  puggle_cnt{
 	unsigned int ccnt;
 };
 
-int ch = 18;
+int ch = 17;
 int slot1;
 int slot2;
 int *ch_ptr = &ch;
