@@ -154,7 +154,7 @@ static int init(app_data *info) {
 	info->pru_params->dac_offset = 0x000000ff;
 
 	// Loading binary onto PRU0
-	prussdrv_exec_program(PRU_NUM0, "./intan.bin");
+	prussdrv_exec_program(PRU_NUM0, "./puggle.bin");
 
 	printf("Initialization complete.\n");
 	return(0);
@@ -230,7 +230,7 @@ int main(int argc, char *argv[]) {
 	prussdrv_pruintc_init(&pruss_intc_initdata);
 
 	// Initialize flags and controller for start/stop of PRUs
-	signal(SIGINT, intHandler);
+	signal(SIGQUIT, intHandler);
 
 	// Initialize memory settings
 	init(&info);

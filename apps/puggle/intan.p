@@ -73,7 +73,7 @@ CONFIGURE:
 // Write R0 Config
 CALL ENABLE_CH0
 MOV addr, MCSPI0_TX0
-MOV val, 0x80FE 
+MOV val, 0x80DE 
 SBBO val, addr, 0, 4
 CALL DISABLE_CH0
 
@@ -100,7 +100,7 @@ delayTwenty
 // Write R3 Config
 CALL ENABLE_CH0
 MOV addr, MCSPI0_TX0
-MOV val, 0x8300
+MOV val, 0x8302
 SBBO val, addr, 0, 4
 CALL DISABLE_CH0
 
@@ -109,7 +109,7 @@ delayTwenty
 // Write R4 Config
 CALL ENABLE_CH0
 MOV addr, MCSPI0_TX0
-MOV val, 0x8450
+MOV val, 0x845F
 SBBO val, addr, 0, 4
 CALL DISABLE_CH0
 
@@ -145,7 +145,7 @@ delayTwenty
 // Write R8 Config
 CALL ENABLE_CH0
 MOV addr, MCSPI0_TX0
-MOV val, 0x8800
+MOV val, 0x8811
 SBBO val, addr, 0, 4
 CALL DISABLE_CH0
 
@@ -154,7 +154,7 @@ delayTwenty
 // Write R9 Config
 CALL ENABLE_CH0
 MOV addr, MCSPI0_TX0
-MOV val, 0x8900
+MOV val, 0x8980
 SBBO val, addr, 0, 4
 CALL DISABLE_CH0
 
@@ -163,7 +163,7 @@ delayTwenty
 // Write R10 Config
 CALL ENABLE_CH0
 MOV addr, MCSPI0_TX0
-MOV val, 0x8A00
+MOV val, 0x8A10
 SBBO val, addr, 0, 4
 CALL DISABLE_CH0
 
@@ -172,7 +172,7 @@ delayTwenty
 // Write R11 Config
 CALL ENABLE_CH0
 MOV addr, MCSPI0_TX0
-MOV val, 0x8B00
+MOV val, 0x8B80
 SBBO val, addr, 0, 4
 CALL DISABLE_CH0
 
@@ -181,7 +181,7 @@ delayTwenty
 // Write R12 Config
 CALL ENABLE_CH0
 MOV addr, MCSPI0_TX0
-MOV val, 0x8C00 
+MOV val, 0x8C10 
 SBBO val, addr, 0, 4
 CALL DISABLE_CH0
 
@@ -190,7 +190,7 @@ delayTwenty
 // Write R13 Config
 CALL ENABLE_CH0
 MOV addr, MCSPI0_TX0
-MOV val, 0x8D00 
+MOV val, 0x8DDC 
 SBBO val, addr, 0, 4
 CALL DISABLE_CH0
 
