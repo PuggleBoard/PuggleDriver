@@ -244,7 +244,7 @@ CALL DISABLE_CH0
 
 delay
 
-MOV TEMP, 0
+MOV COUNTER, 0
 
 RUN_AQ:
 
@@ -257,8 +257,8 @@ CALL DISABLE_CH0
 
 delay
 
-ADD TEMP, TEMP, 1
-QBEQ EXIT, TEMP, 32
+ADD COUNTER, COUNTER, 1
+QBEQ EXIT, COUNTER, 32
 JMP RUN_AQ
 
 //////////////////////////////////////

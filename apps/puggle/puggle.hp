@@ -6,9 +6,9 @@
 #define GPIO_SETDATAOUT 0x194
 
 // Configure MCSPI Module
-// ADC+DAC
+// MCSPI1 - ADC+DAC
 #define MCSPI1 0x481a0000
-// Intan
+// MCSPI0 - Intan
 #define MCSPI0 0x48030000 
 
 #define CM_PER 0x44E00000
@@ -79,8 +79,10 @@
 #define ADC_XFER 								0xFF0a
 
 // MCSPI Channel Configurations
-#define ADC_CH0_CONF 						0x100687C4
+// MCSPI1 Channels
+#define ADC_CH0_CONF 						0x100687C6
 #define DAC_CH1_CONF 						0x000E2BC6
+// MCSPI0 Channels
 #define INTAN_CH0_CONF					0x100E87C4
 
 // MCSPI Channel Controls
@@ -122,10 +124,11 @@
 #define MAGIC               		0x01a01a01
 
 // Global registers
-#define addr        R1
-#define val         R2
-#define TEMP				R5
-#define NOP					MOV R29, R29
+#define addr        r1
+#define val         r2
+#define	COUNTER			r3
+#define DATA				r5
+#define NOP					MOV r29, r29
 
 .macro delayTwenty
 NOP
@@ -174,7 +177,7 @@ delayTwenty
 delayTwenty
 .endm
 
-// MakeWrUpA : Create the 24 bit config write and update command for DAC A
+// MakeDACOutput : Create the 24 bit config write and update command for DAC A
 //             with the current 16 data bits on MISO.
 //              [23-20] Command bits = 0x3
 //              [19-16] Address bits = 0x1 (DAC A)
@@ -185,15 +188,14 @@ delayTwenty
 //
 // Sets dst = 0x00310000 | (MISO & 0x0000FFFF)
 
-.macro  MakeWrUpA
+.macro  MakeDACOutput
 .mparam dst
-		//MOV			addr, MCSPI1_DAFRX
-		//LBBO		TEMP, addr, 0, 4
-		MOV			TEMP, r3
-    AND     dst.w0.b0, TEMP, 0xFF
-    LSR			TEMP, TEMP, 8
-    AND     dst.w0.b1, TEMP, 0xFF
-    MOV     dst.w2, 0x0031
+MOV			addr, MCSPI1_DAFRX
+LBBO		DATA, addr, 0, 4
+AND     dst.w0.b0, DATA, 0xFF
+LSR			DATA, DATA, 8
+AND     dst.w0.b1, DATA, 0xFF
+MOV     dst.w2, 0x003F
 .endm
 
 .macro READ_INTAN

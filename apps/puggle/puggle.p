@@ -149,7 +149,7 @@ SBBO val, addr, 0, 4
 delay
 
 // Setup output
-MakeWrUpA DAC_OUTPUT
+MakeDACOutput DAC_OUTPUT
 
 // Write DAC command to SPI_TX1
 CALL ENABLE_CH1
