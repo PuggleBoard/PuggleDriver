@@ -6,8 +6,10 @@
 #define GPIO_SETDATAOUT 0x194
 
 // Configure MCSPI Module
-#define MCSPI0 0x48030000 
+// ADC+DAC
 #define MCSPI1 0x481a0000
+// Intan
+#define MCSPI0 0x48030000 
 
 #define CM_PER 0x44E00000
 #define CM_PER_SPI1_CLK_CTRL 0x50 | CM_PER
@@ -76,44 +78,50 @@
 #define ADC_SYSCONFIG           0x00000311
 #define ADC_XFER 								0xFF0a
 
-#define ADC_CH0_CONF 						0x000687C4 //0x100E87C6
+// MCSPI Channel Configurations
+#define ADC_CH0_CONF 						0x100687C4
 #define DAC_CH1_CONF 						0x000E2BC6
 #define INTAN_CH0_CONF					0x100E87C4
 
+// MCSPI Channel Controls
+#define EN_CH                   0x00000001
+#define DIS_CH                  0x00000000
+
+// Commands for peripherals
+// ADC Commands
 #define READ_ADC_CFR  					0x0000C000
 #define READ_ADC_DATA           0x0000D000
-#define ADC_CONFIG							0x0000ECFD //0x0000E7FF 0x0000F000
+#define ADC_CONFIG							0x0000ECFD
 #define ADC_CH0                 0x00000000
+
+// DAC commands
 #define DAC_CONFIG							0x00000000
 #define DAC_OUTPUT							R4
 
-// RESETS
+// Intan commands
+#define AUTO_ACQUIRE 						0x3F00
+#define CONVERT_ZERO            0x0000
+
+// Resets
 #define ADC_RESET								0x0000F000
 #define DAC_RESET								0x00000000
 
-// Other Control Pins
+// Other SPI Pins for ADC
 #define ADC_CONVST							R30.t5
-#define EOC											R31.t16
+#define ADC_EOC									R31.t16
 
-// INTAN Read Check
+// Intan debug output
 #define READ_I									0xE800
-#define WRITE   								0xB80F
 #define READ_N									0xE900
 #define READ_T									0xEA00
 #define READ_A									0xEB00
 #define READ_N2 								0xEC00
 #define READ_ID 								0xFF00
 
-// INTAN Acquisition Commands
-#define AUTO_ACQUIRE 						0x3F00
-#define CONVERT_ZERO            0x0000
-
 #define RESET_IRQ_STAT          0xffffffff
-#define EN_CH                   0x00000001
-#define DIS_CH                  0x00000000
 #define MAGIC               		0x01a01a01
 
-// Configure global registers
+// Global registers
 #define addr        R1
 #define val         R2
 #define TEMP				R5
