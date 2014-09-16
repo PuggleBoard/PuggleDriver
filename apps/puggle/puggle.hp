@@ -195,7 +195,28 @@ LBBO		DATA, addr, 0, 4
 AND     dst.w0.b0, DATA, 0xFF
 LSR			DATA, DATA, 8
 AND     dst.w0.b1, DATA, 0xFF
-MOV     dst.w2, 0x003F
+MOV     dst.w2, 0x0031
+.endm
+
+// MakeIntanDACOutput : Create the 24 bit config write and update command for DAC A
+//             with the current 16 data bits on MISO.
+//              [23-20] Command bits = 0x3
+//              [19-16] Address bits = 0x1 (DAC A)
+//              [15-0]  Data bits    = lower 16 bits of MISO
+//
+// Usage:
+//      MakeWrUpA dst
+//
+// Sets dst = 0x00310000 | (MISO & 0x0000FFFF)
+
+.macro  MakeIntanDACOutput
+.mparam dst
+MOV			addr, MCSPI0_DAFRX
+LBBO		DATA, addr, 0, 4
+AND     dst.w0.b0, DATA, 0xFF
+LSR			DATA, DATA, 8
+AND     dst.w0.b1, DATA, 0xFF
+MOV     dst.w2, 0x0031
 .endm
 
 .macro READ_INTAN

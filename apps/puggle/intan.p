@@ -244,8 +244,6 @@ CALL DISABLE_CH0
 
 delay
 
-MOV COUNTER, 0
-
 RUN_AQ:
 
 // Read data in autocycle mode
@@ -257,8 +255,6 @@ CALL DISABLE_CH0
 
 delay
 
-ADD COUNTER, COUNTER, 1
-QBEQ EXIT, COUNTER, 32
 JMP RUN_AQ
 
 //////////////////////////////////////
