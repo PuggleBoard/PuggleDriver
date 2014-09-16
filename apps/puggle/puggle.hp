@@ -54,18 +54,18 @@
 #define MCSPI1_DAFRX 						0x481a01a0
 
 // Configure registers for CH0 - ADC
-#define MCSPI_CH0CONF 					0x481a012c
-#define MCSPI_CH0STAT 					0x481a0130
-#define MCSPI_CH0CTRL 					0x481a0134
-#define MCSPI_TX0 							0x481a0138
-#define MCSPI_RX0 							0x481a013c
+#define MCSPI1_CH0CONF 					0x481a012c
+#define MCSPI1_CH0STAT 					0x481a0130
+#define MCSPI1_CH0CTRL 					0x481a0134
+#define MCSPI1_TX0 							0x481a0138
+#define MCSPI1_RX0 							0x481a013c
 
 // Configure registers for CH1 - DAC
-#define MCSPI_CH1CONF 					0x481a0140
-#define MCSPI_CH1STAT 					0x481a0144
-#define MCSPI_CH1CTRL 					0x481a0148
-#define MCSPI_TX1 							0x481a014c
-#define MCSPI_RX1 							0x481a0150
+#define MCSPI1_CH1CONF 					0x481a0140
+#define MCSPI1_CH1STAT 					0x481a0144
+#define MCSPI1_CH1CTRL 					0x481a0148
+#define MCSPI1_TX1 							0x481a014c
+#define MCSPI1_RX1 							0x481a0150
 
 // Configure SYSCONFIG
 #define CM_PER_SPI0_CLK_EN      0x2

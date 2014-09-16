@@ -169,15 +169,12 @@ void deinit(int val) {
 
 void intHandler(int val) {
 	thread_status = (info.pru_params->run_flag == 1 ? 0 : 1);
-	if(!thread_status) {
+	if(thread_status) {
 		// Disable run/stop bit and reset PRUs
+		prussdrv_pru_disable(PRU_NUM0);
 		info.pru_params->run_flag = 0;
 		printf("Data acquisition status: stopped.\n");
-	}
-	else {
-		// Enable run/stop bit and start PRUs
-		info.pru_params->run_flag = 1;
-		printf("Data acquisition status: started.\n");
+		deinit(&info);
 	}
 }
 
@@ -230,7 +227,7 @@ int main(int argc, char *argv[]) {
 	prussdrv_pruintc_init(&pruss_intc_initdata);
 
 	// Initialize flags and controller for start/stop of PRUs
-	signal(SIGQUIT, intHandler);
+	signal(SIGINT, intHandler);
 
 	// Initialize memory settings
 	init(&info);
@@ -268,6 +265,7 @@ int init_rt_thread(void) {
 	init_rt = true;
 
 	printf("RT thread initialization complete.\n");
+	thread_status = 1;
 	return 0;
 }
 
