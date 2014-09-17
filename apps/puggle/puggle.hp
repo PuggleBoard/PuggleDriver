@@ -80,10 +80,10 @@
 
 // MCSPI Channel Configurations
 // MCSPI1 Channels
-#define ADC_CH0_CONF 						0x100687C6
-#define DAC_CH1_CONF 						0x000E2BC6
+#define ADC_CH0_CONF 		0x100687C6
+#define DAC_CH1_CONF 		0x000E2BC6
 // MCSPI0 Channels
-#define INTAN_CH0_CONF					0x100E87C4
+#define INTAN_CH0_CONF		0x100E87C4
 
 // MCSPI Channel Controls
 #define EN_CH                   0x00000001
@@ -91,14 +91,14 @@
 
 // Commands for peripherals
 // ADC Commands
-#define READ_ADC_CFR  					0x0000C000
+#define READ_ADC_CFR  		0x0000C000
 #define READ_ADC_DATA           0x0000D000
-#define ADC_CONFIG							0x0000ECFD
+#define ADC_CONFIG		0x0000EFFD
 #define ADC_CH0                 0x00000000
 
 // DAC commands
-#define DAC_CONFIG							0x00000000
-#define DAC_OUTPUT							R4
+#define DAC_CONFIG		0x00000000
+#define DAC_OUTPUT		R4
 
 // Intan commands
 #define AUTO_ACQUIRE 						0x3F00
@@ -130,17 +130,7 @@
 #define DATA				r5
 #define NOP					MOV r29, r29
 
-.macro delayTwenty
-NOP
-NOP
-NOP
-NOP
-NOP
-NOP
-NOP
-NOP
-NOP
-NOP
+.macro delay_50ns
 NOP
 NOP
 NOP
@@ -153,28 +143,22 @@ NOP
 NOP
 .endm
 
-.macro delayFourtyns
-NOP
-NOP
-NOP
-NOP
-NOP
-NOP
-NOP
-NOP
+.macro delay_100ns
+delay_50ns
+delay_50ns
 .endm
 
-.macro delay
-delayTwenty
-delayTwenty
-delayTwenty
-delayTwenty
-delayTwenty
-delayTwenty
-delayTwenty
-delayTwenty
-delayTwenty
-delayTwenty
+.macro delay_1us
+delay_100ns
+delay_100ns
+delay_100ns
+delay_100ns
+delay_100ns
+delay_100ns
+delay_100ns
+delay_100ns
+delay_100ns
+delay_100ns
 .endm
 
 // MakeDACOutput : Create the 24 bit config write and update command for DAC A

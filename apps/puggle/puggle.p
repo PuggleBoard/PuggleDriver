@@ -93,8 +93,8 @@ MOV addr, MCSPI1_CH0CTRL
 MOV val, DIS_CH
 SBBO val, addr, 0 ,4
 
-delay
-delayTwenty
+delay_1us
+delay_100ns
 
 // Set ADC Channel to 0 before starting autocycle
 // Write ADC command to SPI_TX0
@@ -108,8 +108,8 @@ MOV addr, MCSPI1_CH0CTRL
 MOV val, DIS_CH
 SBBO val, addr, 0 ,4
 
-delay
-delayTwenty
+delay_1us
+delay_100ns
 
 // Write DAC configuration to SPI_TX1
 CALL ENABLE_CH1
@@ -122,18 +122,26 @@ MOV addr, MCSPI1_CH1CTRL
 MOV val, DIS_CH
 SBBO val, addr, 0 ,4
 
-delay
-delay
+delay_1us
+delay_1us
 
 MOV r3, 1
 
 //////////////////////////////////////
 // ******************** BEGIN ACQUISITION ********************
 RUN_AQ:
+// Trigger ADC aquisition
+CLR ADC_CONVST
+delay_50ns
+SET ADC_CONVST
 
 // WAIT ~1500ns
-delay
-delayTwenty
+delay_1us
+delay_100ns
+delay_100ns
+delay_100ns
+delay_100ns
+delay_50ns
 
 // Write ADC command to SPI_TX0
 CALL ENABLE_CH0
@@ -146,7 +154,7 @@ MOV addr, MCSPI1_CH0CTRL
 MOV val, DIS_CH
 SBBO val, addr, 0, 4
 
-delay
+delay_1us
 
 // Setup output
 MakeDACOutput DAC_OUTPUT
@@ -162,8 +170,8 @@ MOV addr, MCSPI1_CH1CTRL
 MOV val, DIS_CH
 SBBO val, addr, 0 ,4
 
-delay
-delayTwenty
+delay_1us
+delay_100ns
 
 ADD r3, r3, 10
 QBEQ EXIT, r3, 255

@@ -66,7 +66,7 @@ SBBO val, addr, 0, 4
 //////////////////////////////////////
 // ******************** CONFIGURE INTAN REGISTERS ********************
 
-delay
+delay_1us
 
 CONFIGURE:
 
@@ -77,7 +77,7 @@ MOV val, 0x80DE
 SBBO val, addr, 0, 4
 CALL DISABLE_CH0
 
-delayTwenty
+delay_100ns
 
 // Write R1 Config
 CALL ENABLE_CH0
@@ -86,7 +86,7 @@ MOV val, 0x8102
 SBBO val, addr, 0, 4
 CALL DISABLE_CH0
 
-delayTwenty
+delay_100ns
 
 // Write R2 Config
 CALL ENABLE_CH0
@@ -95,7 +95,7 @@ MOV val, 0x8204
 SBBO val, addr, 0, 4
 CALL DISABLE_CH0
 
-delayTwenty
+delay_100ns
 
 // Write R3 Config
 CALL ENABLE_CH0
@@ -104,7 +104,7 @@ MOV val, 0x8302
 SBBO val, addr, 0, 4
 CALL DISABLE_CH0
 
-delayTwenty
+delay_100ns
 
 // Write R4 Config
 CALL ENABLE_CH0
@@ -113,7 +113,7 @@ MOV val, 0x845F
 SBBO val, addr, 0, 4
 CALL DISABLE_CH0
 
-delayTwenty
+delay_100ns
 
 // Write R5 Config
 CALL ENABLE_CH0
@@ -122,7 +122,7 @@ MOV val, 0x8500
 SBBO val, addr, 0, 4
 CALL DISABLE_CH0
 
-delayTwenty
+delay_100ns
 
 // Write R6 Config
 CALL ENABLE_CH0
@@ -131,7 +131,7 @@ MOV val, 0x8600
 SBBO val, addr, 0, 4
 CALL DISABLE_CH0
 
-delayTwenty
+delay_100ns
 
 // Write R7 Config
 CALL ENABLE_CH0
@@ -140,7 +140,7 @@ MOV val, 0x8700
 SBBO val, addr, 0, 4
 CALL DISABLE_CH0
 
-delayTwenty
+delay_100ns
 
 // Write R8 Config
 CALL ENABLE_CH0
@@ -149,7 +149,7 @@ MOV val, 0x8811
 SBBO val, addr, 0, 4
 CALL DISABLE_CH0
 
-delayTwenty
+delay_100ns
 
 // Write R9 Config
 CALL ENABLE_CH0
@@ -158,7 +158,7 @@ MOV val, 0x8980
 SBBO val, addr, 0, 4
 CALL DISABLE_CH0
 
-delayTwenty
+delay_100ns
 
 // Write R10 Config
 CALL ENABLE_CH0
@@ -167,7 +167,7 @@ MOV val, 0x8A10
 SBBO val, addr, 0, 4
 CALL DISABLE_CH0
 
-delayTwenty
+delay_100ns
 
 // Write R11 Config
 CALL ENABLE_CH0
@@ -176,7 +176,7 @@ MOV val, 0x8B80
 SBBO val, addr, 0, 4
 CALL DISABLE_CH0
 
-delayTwenty
+delay_100ns
 
 // Write R12 Config
 CALL ENABLE_CH0
@@ -185,7 +185,7 @@ MOV val, 0x8C10
 SBBO val, addr, 0, 4
 CALL DISABLE_CH0
 
-delayTwenty
+delay_100ns
 
 // Write R13 Config
 CALL ENABLE_CH0
@@ -194,7 +194,7 @@ MOV val, 0x8DDC
 SBBO val, addr, 0, 4
 CALL DISABLE_CH0
 
-delayTwenty
+delay_100ns
 
 // Write R14 Config
 CALL ENABLE_CH0
@@ -203,7 +203,7 @@ MOV val, 0x8EFF
 SBBO val, addr, 0, 4
 CALL DISABLE_CH0
 
-delayTwenty
+delay_100ns
 
 // Write R15 Config
 CALL ENABLE_CH0
@@ -212,7 +212,7 @@ MOV val, 0x8FFF
 SBBO val, addr, 0, 4
 CALL DISABLE_CH0
 
-delayTwenty
+delay_100ns
 
 // Write R16 Config
 CALL ENABLE_CH0
@@ -221,7 +221,7 @@ MOV val, 0x90FF
 SBBO val, addr, 0, 4
 CALL DISABLE_CH0
 
-delayTwenty
+delay_100ns
 
 // Write R17 Config
 CALL ENABLE_CH0
@@ -233,7 +233,7 @@ CALL DISABLE_CH0
 //////////////////////////////////////
 // ******************** BEGIN ACQUISITION ********************
 
-delay
+delay_1us
 
 // Clear convert command
 CALL ENABLE_CH0
@@ -242,7 +242,7 @@ MOV val, CONVERT_ZERO
 SBBO val, addr, 0, 4
 CALL DISABLE_CH0
 
-delay
+delay_1us
 
 RUN_AQ:
 
@@ -253,7 +253,7 @@ MOV val, AUTO_ACQUIRE
 SBBO val, addr, 0, 4
 CALL DISABLE_CH0
 
-delay
+delay_1us
 
 JMP RUN_AQ
 
@@ -278,7 +278,7 @@ DISABLE_CH0:
 MOV addr, MCSPI0_CH0CTRL
 MOV val, DIS_CH
 SBBO val, addr, 0 ,4
-delay
+delay_1us
 RET
 
 EXIT:
