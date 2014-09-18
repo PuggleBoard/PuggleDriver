@@ -35,8 +35,8 @@ config-pin 9.42 spics
 config-pin 9.31 spi
 config-pin 9.29 spi
 config-pin 9.30 spi
-config-pin 9.27 pruout
 config-pin 9.24 pruin
+config-pin 9.27 pruout
 config-pin 9.17 spi
 config-pin 9.22 spi
 config-pin 9.21 spi

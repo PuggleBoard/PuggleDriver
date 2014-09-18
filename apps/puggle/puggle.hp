@@ -109,8 +109,8 @@
 #define DAC_RESET								0x00000000
 
 // Other SPI Pins for ADC
-#define ADC_CONVST							R30.t5
-#define ADC_EOC									R31.t16
+#define ADC_CONVST							r30.t5
+#define ADC_EOC									r31.t16
 
 // Intan debug output
 #define READ_I									0xE800
