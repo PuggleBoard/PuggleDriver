@@ -93,7 +93,7 @@
 // ADC Commands
 #define READ_ADC_CFR  		0x0000C000
 #define READ_ADC_DATA           0x0000D000
-#define ADC_CONFIG		0x0000EFFD
+#define ADC_CONFIG		0x0000E7FF//FFFF //EFFD
 #define ADC_CH0                 0x00000000
 
 // DAC commands
