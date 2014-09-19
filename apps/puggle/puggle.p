@@ -81,6 +81,9 @@ SBBO val, addr, 0, 4
 // ******************** CONFIGURE ********************
 CONFIGURE:
 
+// Just incase
+SET ADC_CONVST
+
 // Write ADC configuration to SPI_TX0
 // Sets ADC CMR and CFR to default
 CALL ENABLE_CH0

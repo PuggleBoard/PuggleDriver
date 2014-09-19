@@ -466,7 +466,7 @@
             P9_17_gpio_pd_pin: pinmux_P9_17_gpio_pd_pin {
                 pinctrl-single,pins = <0x15c  0x27>; };     /* Mode 7, Pull-Down, RxActive */
             P9_17_spi_pin: pinmux_P9_17_spi_pin {
-                pinctrl-single,pins = <0x15c  0x30>; };     /* Mode 0, Pull-Up, RxActive */
+                pinctrl-single,pins = <0x15c  0x8>; };     /* Mode 0, Pull-Up, RxActive */
             P9_17_i2c_pin: pinmux_P9_17_i2c_pin {
                 pinctrl-single,pins = <0x15c  0x32>; };     /* Mode 2, Pull-Up, RxActive */
             P9_17_pwm_pin: pinmux_P9_17_pwm_pin {
@@ -482,7 +482,7 @@
             P9_18_gpio_pd_pin: pinmux_P9_18_gpio_pd_pin {
                 pinctrl-single,pins = <0x158  0x27>; };     /* Mode 7, Pull-Down, RxActive */
             P9_18_spi_pin: pinmux_P9_18_spi_pin {
-                pinctrl-single,pins = <0x158  0x30>; };     /* Mode 0, Pull-Up, RxActive */
+                pinctrl-single,pins = <0x158  0x28>; };     /* Mode 0, Pull-Up, RxActive */
             P9_18_i2c_pin: pinmux_P9_18_i2c_pin {
                 pinctrl-single,pins = <0x158  0x32>; };     /* Mode 2, Pull-Up, RxActive */
             P9_18_pwm_pin: pinmux_P9_18_pwm_pin {
@@ -502,7 +502,7 @@
             P9_21_gpio_pd_pin: pinmux_P9_21_gpio_pd_pin {
                 pinctrl-single,pins = <0x154  0x27>; };     /* Mode 7, Pull-Down, RxActive */
             P9_21_spi_pin: pinmux_P9_21_spi_pin {
-                pinctrl-single,pins = <0x154  0x30>; };     /* Mode 0, Pull-Up, RxActive */
+                pinctrl-single,pins = <0x154  0x8>; };     /* Mode 0, Pull-Up, RxActive */
             P9_21_uart_pin: pinmux_P9_21_uart_pin {
                 pinctrl-single,pins = <0x154  0x31>; };     /* Mode 1, Pull-Up, RxActive */
             P9_21_i2c_pin: pinmux_P9_21_i2c_pin {
@@ -520,7 +520,7 @@
             P9_22_gpio_pd_pin: pinmux_P9_22_gpio_pd_pin {
                 pinctrl-single,pins = <0x150  0x27>; };     /* Mode 7, Pull-Down, RxActive */
             P9_22_spi_pin: pinmux_P9_22_spi_pin {
-                pinctrl-single,pins = <0x150  0x30>; };     /* Mode 0, Pull-Up, RxActive */
+                pinctrl-single,pins = <0x150  0x8>; };     /* Mode 0, Pull-Up, RxActive */
             P9_22_uart_pin: pinmux_P9_22_uart_pin {
                 pinctrl-single,pins = <0x150  0x31>; };     /* Mode 1, Pull-Up, RxActive */
             P9_22_i2c_pin: pinmux_P9_22_i2c_pin {
@@ -556,7 +556,7 @@
             P9_24_i2c_pin: pinmux_P9_24_i2c_pin {
                 pinctrl-single,pins = <0x184  0x33>; };     /* Mode 3, Pull-Up, RxActive */
             P9_24_pruin_pin: pinmux_P9_24_pruin_pin {
-                pinctrl-single,pins = <0x184  0x36>; };     /* Mode 6, Pull-Up, RxActive */
+                pinctrl-single,pins = <0x184  0x2E>; };     /* Mode 6, Pull-Up, RxActive */
 
             /* P9_25 (ZCZ ball A14) Audio   */
             P9_25_default_pin: pinmux_P9_25_default_pin {
@@ -604,7 +604,7 @@
             P9_27_qep_pin: pinmux_P9_27_qep_pin {
                 pinctrl-single,pins = <0x1a4  0x21>; };     /* Mode 1, Pull-Down, RxActive */
             P9_27_pruout_pin: pinmux_P9_27_pruout_pin {
-                pinctrl-single,pins = <0x1a4  0x25>; };     /* Mode 5, Pull-Down, RxActive */
+                pinctrl-single,pins = <0x1a4  0xD>; };     /* Mode 5, Pull-Down, RxActive */
             P9_27_pruin_pin: pinmux_P9_27_pruin_pin {
                 pinctrl-single,pins = <0x1a4  0x26>; };     /* Mode 6, Pull-Down, RxActive */
 
@@ -620,7 +620,7 @@
             P9_28_pwm_pin: pinmux_P9_28_pwm_pin {
                 pinctrl-single,pins = <0x19c  0x21>; };     /* Mode 1, Pull-Down, RxActive */
             P9_28_spi_pin: pinmux_P9_28_spi_pin {
-                pinctrl-single,pins = <0x19c  0x23>; };     /* Mode 3, Pull-Down, RxActive */
+                pinctrl-single,pins = <0x19c  0xB>; };     /* Mode 3, Pull-Down, RxActive */
             P9_28_pwm2_pin: pinmux_P9_28_pwm2_pin {
                 pinctrl-single,pins = <0x19c  0x24>; };     /* Mode 4, Pull-Down, RxActive */
             P9_28_pruout_pin: pinmux_P9_28_pruout_pin {
@@ -640,7 +640,7 @@
             P9_29_pwm_pin: pinmux_P9_29_pwm_pin {
                 pinctrl-single,pins = <0x194  0x21>; };     /* Mode 1, Pull-Down, RxActive */
             P9_29_spi_pin: pinmux_P9_29_spi_pin {
-                pinctrl-single,pins = <0x194  0x23>; };     /* Mode 3, Pull-Down, RxActive */
+                pinctrl-single,pins = <0x194  0xB>; };     /* Mode 3, Pull-Down, RxActive */
             P9_29_pruout_pin: pinmux_P9_29_pruout_pin {
                 pinctrl-single,pins = <0x194  0x25>; };     /* Mode 5, Pull-Down, RxActive */
             P9_29_pruin_pin: pinmux_P9_29_pruin_pin {
@@ -658,7 +658,7 @@
             P9_30_pwm_pin: pinmux_P9_30_pwm_pin {
                 pinctrl-single,pins = <0x198  0x21>; };     /* Mode 1, Pull-Down, RxActive */
             P9_30_spi_pin: pinmux_P9_30_spi_pin {
-                pinctrl-single,pins = <0x198  0x23>; };     /* Mode 3, Pull-Down, RxActive */
+                pinctrl-single,pins = <0x198  0x2B>; };     /* Mode 3, Pull-Down, RxActive */
             P9_30_pruout_pin: pinmux_P9_30_pruout_pin {
                 pinctrl-single,pins = <0x198  0x25>; };     /* Mode 5, Pull-Down, RxActive */
             P9_30_pruin_pin: pinmux_P9_30_pruin_pin {
@@ -676,7 +676,7 @@
             P9_31_pwm_pin: pinmux_P9_31_pwm_pin {
                 pinctrl-single,pins = <0x190  0x21>; };     /* Mode 1, Pull-Down, RxActive */
             P9_31_spi_pin: pinmux_P9_31_spi_pin {
-                pinctrl-single,pins = <0x190  0x23>; };     /* Mode 3, Pull-Down, RxActive */
+                pinctrl-single,pins = <0x190  0xB>; };     /* Mode 3, Pull-Down, RxActive */
             P9_31_pruout_pin: pinmux_P9_31_pruout_pin {
                 pinctrl-single,pins = <0x190  0x25>; };     /* Mode 5, Pull-Down, RxActive */
             P9_31_pruin_pin: pinmux_P9_31_pruin_pin {
@@ -737,7 +737,7 @@
             P9_42_uart_pin: pinmux_P9_42_uart_pin {
                 pinctrl-single,pins = <0x164  0x21>; };     /* Mode 1, Pull-Down, RxActive */
             P9_42_spics_pin: pinmux_P9_42_spics_pin {
-                pinctrl-single,pins = <0x164  0x22>; };     /* Mode 2, Pull-Down, RxActive */
+                pinctrl-single,pins = <0x164  0xA>; };     /* Mode 2, Pull-Down, RxActive */
             P9_42_spiclk_pin: pinmux_P9_42_spiclk_pin {
                 pinctrl-single,pins = <0x164  0x24>; };     /* Mode 4, Pull-Down, RxActive */
 
