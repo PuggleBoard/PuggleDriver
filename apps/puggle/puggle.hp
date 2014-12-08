@@ -6,8 +6,10 @@
 #define GPIO_SETDATAOUT 0x194
 
 // Configure MCSPI Module
-#define MCSPI0 0x48030000
+// MCSPI1 - ADC+DAC
 #define MCSPI1 0x481a0000
+// MCSPI0 - Intan
+#define MCSPI0 0x48030000 
 
 #define CM_PER 0x44E00000
 #define CM_PER_SPI1_CLK_CTRL 0x50 | CM_PER
@@ -39,97 +41,96 @@
 #define MCSPI0_RX0 							0x4803013c
 
 // MCSPI_1 - ADC/DAC
-#define MCSPI_REVISION 					0x000
-#define MCSPI_SYSCONFIG 				0x481a0110
-#define MCSPI_SYSSTATUS 				0x481a0114
-#define MCSPI_IRQSTATUS 				0x481a0118
-#define MCSPI_IRQENABLE					0x481a011c
-#define MCSPI_WAKEUPENABLE 			0x481a0120
-#define MCSPI_SYST 							0x481a0124
-#define MCSPI_MODULCTRL 				0x481a0128
-#define MCSPI_XFERLEVEL 				0x481a017c
+#define MCSPI1_REVISION 					0x000
+#define MCSPI1_SYSCONFIG 				0x481a0110
+#define MCSPI1_SYSSTATUS 				0x481a0114
+#define MCSPI1_IRQSTATUS 				0x481a0118
+#define MCSPI1_IRQENABLE					0x481a011c
+#define MCSPI1_WAKEUPENABLE 			0x481a0120
+#define MCSPI1_SYST 							0x481a0124
+#define MCSPI1_MODULCTRL 				0x481a0128
+#define MCSPI1_XFERLEVEL 				0x481a017c
 
 // Registers for DMA aligned addresses with FIFO
-#define MCSPI_DAFTX							0x481a0180
-#define MCSPI_DAFRX 						0x481a01a0
+#define MCSPI1_DAFTX							0x481a0180
+#define MCSPI1_DAFRX 						0x481a01a0
 
 // Configure registers for CH0 - ADC
-#define MCSPI_CH0CONF 					0x481a012c
-#define MCSPI_CH0STAT 					0x481a0130
-#define MCSPI_CH0CTRL 					0x481a0134
-#define MCSPI_TX0 							0x481a0138
-#define MCSPI_RX0 							0x481a013c
+#define MCSPI1_CH0CONF 					0x481a012c
+#define MCSPI1_CH0STAT 					0x481a0130
+#define MCSPI1_CH0CTRL 					0x481a0134
+#define MCSPI1_TX0 							0x481a0138
+#define MCSPI1_RX0 							0x481a013c
 
 // Configure registers for CH1 - DAC
-#define MCSPI_CH1CONF 					0x481a0140
-#define MCSPI_CH1STAT 					0x481a0144
-#define MCSPI_CH1CTRL 					0x481a0148
-#define MCSPI_TX1 							0x481a014c
-#define MCSPI_RX1 							0x481a0150
+#define MCSPI1_CH1CONF 					0x481a0140
+#define MCSPI1_CH1STAT 					0x481a0144
+#define MCSPI1_CH1CTRL 					0x481a0148
+#define MCSPI1_TX1 							0x481a014c
+#define MCSPI1_RX1 							0x481a0150
 
 // Configure SYSCONFIG
 #define CM_PER_SPI0_CLK_EN      0x2
 #define CM_PER_SPI1_CLK_EN      0x2
-#define MODCONTROL              0x100
 
+#define MODCONTROL              0x100
 #define ADC_IRQENABLE           0x00000000
 #define ADC_SYSCONFIG           0x00000311
 #define ADC_XFER 								0xFF0a
 
-#define ADC_CH0_CONF 						0x100687C6 //0x100E87C6
-#define DAC_CH1_CONF 						0x000E2BC6
-#define INTAN_CH0_CONF					0x100E87C4
+// MCSPI Channel Configurations
+// MCSPI1 Channels
+#define ADC_CH0_CONF 		0x100687C6
+#define DAC_CH1_CONF 		0x000E2BC6
+// MCSPI0 Channels
+#define INTAN_CH0_CONF		0x100E87C4
 
-#define READ_ADC_CFR  					0x0000C000
+// MCSPI Channel Controls
+#define EN_CH                   0x00000001
+#define DIS_CH                  0x00000000
+
+// Commands for peripherals
+// ADC Commands
+#define READ_ADC_CFR  		0x0000C000
 #define READ_ADC_DATA           0x0000D000
-#define ADC_CONFIG							0x0000ECFD //0x0000E7FF 0x0000F000
+#define ADC_CONFIG		0x0000E7FF//FFFF //EFFD
 #define ADC_CH0                 0x00000000
-#define DAC_CONFIG							0x00000000
-#define DAC_OUTPUT							R4
-#define TEMP										R5
 
-// RESETS
+// DAC commands
+#define DAC_CONFIG		0x00000000
+#define DAC_OUTPUT		R4
+
+// Intan commands
+#define AUTO_ACQUIRE 						0x3F00
+#define CONVERT_ZERO            0x0000
+
+// Resets
 #define ADC_RESET								0x0000F000
 #define DAC_RESET								0x00000000
 
-// Other Control Pins
-#define ADC_CONVST							R30.t5
-#define EOC											R31.t16
+// Other SPI Pins for ADC
+#define ADC_CONVST							r30.t5
+#define ADC_EOC									r31.t16
 
-// INTAN Read Check
+// Intan debug output
 #define READ_I									0xE800
-#define WRITE   								0xB80F
 #define READ_N									0xE900
 #define READ_T									0xEA00
 #define READ_A									0xEB00
 #define READ_N2 								0xEC00
 #define READ_ID 								0xFF00
 
-// INTAN Acquisition Commands
-#define AUTO_ACQUIRE 						0x3F00
-#define CONVERT_ZERO            0x0000
-
 #define RESET_IRQ_STAT          0xffffffff
-#define EN_CH                   0x00000001
-#define DIS_CH                  0x00000000
 #define MAGIC               		0x01a01a01
 
-// Configure global registers
-#define addr        R1
-#define val         R2
-#define NOP					MOV R29, R29
+// Global registers
+#define addr        r1
+#define val         r2
+#define	COUNTER			r3
+#define DATA				r5
+#define NOP					MOV r29, r29
 
-.macro delayTwenty
-NOP
-NOP
-NOP
-NOP
-NOP
-NOP
-NOP
-NOP
-NOP
-NOP
+.macro delay_50ns
 NOP
 NOP
 NOP
@@ -142,32 +143,25 @@ NOP
 NOP
 .endm
 
-.macro delayFourtyns
-NOP
-NOP
-NOP
-NOP
-NOP
-NOP
-NOP
-NOP
+.macro delay_100ns
+delay_50ns
+delay_50ns
 .endm
 
-.macro delay
-delayTwenty
-delayTwenty
-delayTwenty
-delayTwenty
-delayTwenty
-delayTwenty
-delayTwenty
-delayTwenty
-delayTwenty
-delayTwenty
+.macro delay_1us
+delay_100ns
+delay_100ns
+delay_100ns
+delay_100ns
+delay_100ns
+delay_100ns
+delay_100ns
+delay_100ns
+delay_100ns
+delay_100ns
 .endm
 
-//
-// MakeWrUpA : Create the 24 bit config write and update command for DAC A
+// MakeDACOutput : Create the 24 bit config write and update command for DAC A
 //             with the current 16 data bits on MISO.
 //              [23-20] Command bits = 0x3
 //              [19-16] Address bits = 0x1 (DAC A)
@@ -177,17 +171,36 @@ delayTwenty
 //      MakeWrUpA dst
 //
 // Sets dst = 0x00310000 | (MISO & 0x0000FFFF)
-//
-.macro  MakeWrUpA
+
+.macro  MakeDACOutput
 .mparam dst
-		//MOV			addr, MCSPI_RX0
-		//LBBO		TEMP, addr, 0, 4
-    AND     dst.w0.b0, TEMP, 0xFF
-    LSR			TEMP, TEMP, 8
-    AND     dst.w0.b1, TEMP, 0xFF
-    ADD     TEMP, TEMP, 1
-    //MOV     dst.w0, TEMP
-    MOV     dst.w2, 0x0038
+MOV			addr, MCSPI1_DAFRX
+LBBO		DATA, addr, 0, 4
+AND     dst.w0.b0, DATA, 0xFF
+LSR			DATA, DATA, 8
+AND     dst.w0.b1, DATA, 0xFF
+MOV     dst.w2, 0x0031
+.endm
+
+// MakeIntanDACOutput : Create the 24 bit config write and update command for DAC A
+//             with the current 16 data bits on MISO.
+//              [23-20] Command bits = 0x3
+//              [19-16] Address bits = 0x1 (DAC A)
+//              [15-0]  Data bits    = lower 16 bits of MISO
+//
+// Usage:
+//      MakeWrUpA dst
+//
+// Sets dst = 0x00310000 | (MISO & 0x0000FFFF)
+
+.macro  MakeIntanDACOutput
+.mparam dst
+MOV			addr, MCSPI0_DAFRX
+LBBO		DATA, addr, 0, 4
+AND     dst.w0.b0, DATA, 0xFF
+LSR			DATA, DATA, 8
+AND     dst.w0.b1, DATA, 0xFF
+MOV     dst.w2, 0x0031
 .endm
 
 .macro READ_INTAN

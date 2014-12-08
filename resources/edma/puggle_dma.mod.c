@@ -19,7 +19,6 @@ __used
 __attribute__((section("__versions"))) = {
 	{ 0x465ae224, "module_layout" },
 	{ 0x15692c87, "param_ops_int" },
-	{ 0x7485e15e, "unregister_chrdev_region" },
 	{ 0x812bbccc, "cdev_add" },
 	{ 0x78a570d9, "cdev_init" },
 	{ 0x29537c9e, "alloc_chrdev_region" },
@@ -36,6 +35,8 @@ __attribute__((section("__versions"))) = {
 	{ 0x9276ce28, "edma_set_dest" },
 	{ 0x9bda4bb4, "edma_set_src" },
 	{ 0xfefb6077, "edma_alloc_channel" },
+	{ 0x7485e15e, "unregister_chrdev_region" },
+	{ 0x42ad5e, "cdev_del" },
 	{ 0x3516ff21, "arm_dma_ops" },
 	{ 0x7142c63c, "edma_free_slot" },
 	{ 0xa31e44ba, "edma_free_channel" },
@@ -53,4 +54,4 @@ __attribute__((section(".modinfo"))) =
 "depends=";
 
 
-MODULE_INFO(srcversion, "DABE4E45263291C5CAEAAB3");
+MODULE_INFO(srcversion, "BA89F1F2839B67FA42F6456");

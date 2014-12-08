@@ -1,0 +1,98 @@
+#define PRU0_ARM_INTERRUPT 19
+#define AM33XX
+
+#define GPIO1 0x4804c000
+#define GPIO_CLEARDATAOUT 0x190
+#define GPIO_SETDATAOUT 0x194
+
+#define MCSPI0 0x48030000
+#define MCSPI1 0x481a0000
+
+#define CM_PER 0x44E00000
+#define CM_PER_SPI1_CLK_CTRL 0x50 | CM_PER
+#define CM_PER_SPI0_CLK_CTRL 0x4C | CM_PER
+
+
+
+// Cn is the constants table for spi0 it is c6 address of 0x4803_0000
+// c16 is for spi10x481a_0000
+
+#define MCSPI_REVISION 0x000
+#define MCSPI_SYSCONFIG 0x481a0110
+#define MCSPI_SYSSTATUS 0x481a0114
+#define MCSPI_IRQSTATUS 0x481a0118
+#define MCSPI_IRQENABLE 0x481a011c
+#define MCSPI_WAKEUPENABLE 0x481a0120
+#define MCSPI_SYST 0x481a0124
+#define MCSPI_MODULCTRL 0x481a0128
+
+#define MCSPI_XFERLEVEL 0x481a017c
+#define MCSPI_DAFTX 0x481a0180   // DMA address aligned FIFO TX register
+#define MCSPI_DAFRX 0x481a01a0   // DMA address aligned FIFO RX register
+
+#define MCSPI_CH0CONF 0x481a012c
+#define MCSPI_CH0STAT 0x481a0130
+#define MCSPI_CH0CTRL 0x481a0134
+#define MCSPI_TX0 0x481a0138
+#define MCSPI_RX0 0x481a013c
+
+#define MCSPI_CH1CONF 0x481a0140
+#define MCSPI_CH1STAT 0x481a0144
+#define MCSPI_CH1CTRL 0x481a0148
+#define MCSPI_TX1 0x481a014c
+#define MCSPI_RX1 0x481a0150
+
+// This is where we can change the register configuartions values and put them all together
+
+// sysconfig register setup
+
+#define CM_PER_SPI1_CLK_EN      0x2
+#define RESET                   0x2
+
+#define ADC_SYSCONFIG           0x00000311 
+
+#define RESET_IRQ_STAT          0xffffffff
+#define DIS_CH                  0x00000000
+#define EN_CH                   0x00000001
+#define TEST_PATT               0xfff29999
+
+#define ADC_IRQENABLE           0x00000000
+
+#define MODCONTROL_SINGLE       0x00000001 //
+#define MODCONTROL              0x00000000
+
+#define ADC_XFER 0x40000
+
+
+#define ADC_TX_TURBO            0x281e28c9 // force CH low
+#define ADC_TX_TURBO_SINGLE     0x280e28c9 // No force CH low
+
+// ***************************************
+// *     Global Register Assignments     *
+// ***************************************
+
+#define addr        r1
+#define val         r2
+
+
+
+
+/// These are all the scan variables we need
+// setting up their own registers so we can be fast yo!!
+
+#define Sx          r3      //Slow x start position for line 
+#define Sy          r4      //Slow y start position for line
+#define sdx         r5      //Slow dx for each line
+#define sdy         r6      //Slow dy for each line
+
+#define Fx          r7      //new x position for Fast vector
+#define Fy          r8      //new y position for Fast vector
+#define dx          r9      //dx for Fast vector
+#define dy          r10     //dy for Fast vector
+#define pF          r11     //Points fast initial value
+#define pFc         r12     //Points fast count, used to decrement
+#define sF          r13     //Points slow count
+#define samples     r14     //Samples per point initial value
+#define sampc       r15     //Samples count
+
+
