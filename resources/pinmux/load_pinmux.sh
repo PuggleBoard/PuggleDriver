@@ -18,18 +18,21 @@
 
 #!/bin/sh
 
-## Below is from CDSteinkhuehler's Beaglebone Universal IO repo
-## to get around standard method of loading DTO for pinmux
-echo "compiling universal device tree overlays..."
-dtc -@ -I dts -O dtb -o /lib/firmware/cape-puggle-00A0.dtbo cape-puggle-00A0.dts
-dtc -@ -I dts -O dtb -o /lib/firmware/cape-universaln-00A0.dtbo cape-universaln-00A0.dts
-dtc -@ -I dts -O dtb -o /lib/firmware/cape-univ-emmc-00A0.dtbo cape-univ-emmc-00A0.dts
-echo "done"
-echo "installing config-pin utility"
-cp -v config-pin /usr/bin/
+echo "Compiling universal device tree overlays..."
+dtc -I dts -O dtb -o cape-puggle-00A0.dtbo cape-puggle-00A0.dts
+cp -vf cape-puggle-00A0.dtbo /lib/firmware/
+echo "...done"
+echo "Installing config-pin utility"
+cp -vf config-pin /usr/bin/
+echo "...done"
 
-echo cape-puggle > /sys/devices/bone_capemgr.9/slots
+# Update to initrd
+sudo update-initramfs -uk `uname -r` 
 
+# Load overlay
+sudo sh -c "echo 'cape-puggle' > /sys/devices/platform/bone_capemgr/slots"
+
+# Configure pins
 config-pin 9.28 spi
 config-pin 9.42 spics
 config-pin 9.31 spi
@@ -42,12 +45,15 @@ config-pin 9.22 spi
 config-pin 9.21 spi
 config-pin 9.18 spi
 
-#set -x
-#set -e
-#export SLOTS=/sys/devices/bone_capemgr.9/slots
-#export PINS=/sys/kernel/debug/pinctrl/44e10800.pinmux/pins
-#dtc -O dtb -o PUGGLEv3-00A0.dtbo -b 0 -@ PUGGLEv3.dts
-#cp PUGGLEv3-00A0.dtbo /lib/firmware/
-#cat $SLOTS
-#echo PUGGLEv3 > $SLOTS
-#cat $SLOTS
+# Check configuration
+config-pin -q 9.28
+config-pin -q 9.42 
+config-pin -q 9.31 
+config-pin -q 9.29 
+config-pin -q 9.30
+config-pin -q 9.24
+config-pin -q 9.27
+config-pin -q 9.17
+config-pin -q 9.22
+config-pin -q 9.21
+config-pin -q 9.18
