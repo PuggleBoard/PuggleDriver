@@ -1,7 +1,7 @@
 PuggleDriver
 ============
 
-Note: The PuggleBoard project is no longer under active development. For alternative low-cost electrophysiology options, please see <a href="http://github.com/rtxi/rtxi">RTXI</a> or <a href="http://github.com/open-ephys/">Open-Ephys</a>.
+Note: The PuggleBoard project is no longer under active development as of 06/2016. For alternative low-cost electrophysiology options, please see <a href="http://github.com/rtxi/rtxi">RTXI</a> or <a href="http://github.com/open-ephys/">Open-Ephys</a>.
 
 PuggleDriver is a set of high speed drivers written in x86 Assembly for controlling the <a href="https://github.com/PuggleBoard/PuggleBoard">PuggleBoard</a>.
 
